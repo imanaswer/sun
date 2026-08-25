@@ -1,0 +1,31 @@
+{
+  "name": "@higgsfield/quanta",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./icon": "./src/icon.tsx",
+    "./typography": "./src/typography.tsx",
+    "./media": "./src/media.tsx",
+    "./button": "./src/button.tsx",
+    "./modal": "./src/modal.tsx",
+    "./loader": "./src/loader.tsx",
+    "./avatar": "./src/avatar.tsx",
+    "./tabs": "./src/tabs.tsx",
+    "./input": "./src/input.tsx",
+    "./slider": "./src/slider.tsx",
+    "./sidebar": "./src/sidebar.tsx",
+    "./not-found": "./src/not-found.tsx",
+    "./grid": "./src/grid.tsx",
+    "./glass": "./src/glass.ts",
+    "./dropdown": "./src/dropdown.tsx",
+    "./card": "./src/card.ts",
+    "./tailwind.css": "./src/tailwind.css"
+  },
+  "dependencies": {
+    "lucide-react": "^1.23.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  }
+}

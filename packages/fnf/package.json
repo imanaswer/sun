@@ -1,0 +1,9 @@
+{
+  "name": "@higgsfield/fnf",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./client": "./src/client.ts",
+    "./media": "./src/media.ts"
+  }
+}

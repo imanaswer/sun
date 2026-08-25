@@ -1,0 +1,192 @@
+/* UMBERLLA site token layer — the standalone brand for this website.
+ * Palette and type are locked in app/design-brief.md. Raw hex lives here and
+ * in scroll-scrub-scenes.ts only; route files use var() references. */
+
+:root {
+  --u-navy: #101b33;
+  --u-well: #0b1324;
+  --u-slate: #2c3a56;
+  --u-bone: #f3efe4;
+  --u-yellow: #f2c230;
+  --u-muted: #9aa7bf;
+  --u-display: "Outfit", "Helvetica Neue", Arial, sans-serif;
+  --u-mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+.u-page {
+  background-color: var(--u-navy);
+  color: var(--u-bone);
+  font-family: var(--u-display);
+}
+
+.u-page ::selection {
+  background-color: var(--u-yellow);
+  color: var(--u-navy);
+}
+
+.u-mono {
+  font-family: var(--u-mono);
+  font-feature-settings: "tnum" 1;
+}
+
+/* Entrance motion: fires on mount, transform only, never opacity to zero. */
+@keyframes u-rise {
+  from {
+    transform: translate3d(0, 18px, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.u-rise {
+  animation: u-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.u-rise-2 {
+  animation: u-rise 700ms 90ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.u-rise-3 {
+  animation: u-rise 700ms 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* CTA 1: nav slab, yellow floods in from the left */
+.u-cta-slab {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--u-bone);
+  color: var(--u-bone);
+  isolation: isolate;
+}
+.u-cta-slab::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--u-yellow);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.u-cta-slab:hover::before,
+.u-cta-slab:focus-visible::before {
+  transform: scaleX(1);
+}
+.u-cta-slab:hover,
+.u-cta-slab:focus-visible {
+  color: var(--u-navy);
+  border-color: var(--u-yellow);
+}
+
+/* CTA 2: chapter link, underline draws across, arrow slides */
+.u-cta-draw {
+  color: var(--u-bone);
+}
+.u-cta-draw .u-cta-draw-line {
+  display: block;
+  height: 2px;
+  background-color: var(--u-yellow);
+  transform: scaleX(0.18);
+  transform-origin: left center;
+  transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.u-cta-draw:hover .u-cta-draw-line,
+.u-cta-draw:focus-visible .u-cta-draw-line {
+  transform: scaleX(1);
+}
+.u-cta-draw .u-cta-draw-arrow {
+  display: inline-block;
+  transition: transform 340ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.u-cta-draw:hover .u-cta-draw-arrow,
+.u-cta-draw:focus-visible .u-cta-draw-arrow {
+  transform: translateX(6px);
+}
+
+/* CTA 3: framed block, corner tick rotates */
+.u-cta-frame {
+  position: relative;
+  border: 1px solid var(--u-slate);
+  color: var(--u-bone);
+  transition:
+    border-color 260ms ease,
+    background-color 260ms ease;
+}
+.u-cta-frame .u-cta-frame-tick {
+  display: inline-block;
+  transition: transform 400ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.u-cta-frame:hover,
+.u-cta-frame:focus-visible {
+  border-color: var(--u-yellow);
+  background-color: rgb(242 194 48 / 0.08);
+}
+.u-cta-frame:hover .u-cta-frame-tick,
+.u-cta-frame:focus-visible .u-cta-frame-tick {
+  transform: rotate(90deg);
+}
+
+/* CTA 4: closing monolith, presses down when held */
+.u-cta-monolith {
+  background-color: var(--u-yellow);
+  color: var(--u-navy);
+  transition:
+    transform 160ms ease,
+    box-shadow 260ms ease;
+  box-shadow: 0 10px 0 0 rgb(11 19 36 / 0.55);
+}
+.u-cta-monolith:hover,
+.u-cta-monolith:focus-visible {
+  box-shadow: 0 14px 0 0 rgb(11 19 36 / 0.55);
+  transform: translateY(-2px);
+}
+.u-cta-monolith:active {
+  transform: translateY(1px);
+  box-shadow: 0 6px 0 0 rgb(11 19 36 / 0.55);
+}
+
+/* Rain-city marquee */
+.u-marquee {
+  display: flex;
+  width: max-content;
+  animation: u-marquee 38s linear infinite;
+}
+@keyframes u-marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.u-hairline {
+  border-top: 1px solid var(--u-slate);
+}
+
+.u-wordmark {
+  font-family: var(--u-display);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 0.82;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .u-rise,
+  .u-rise-2,
+  .u-rise-3,
+  .u-marquee {
+    animation: none !important;
+  }
+  .u-cta-slab::before,
+  .u-cta-draw .u-cta-draw-line,
+  .u-cta-draw .u-cta-draw-arrow,
+  .u-cta-frame .u-cta-frame-tick,
+  .u-cta-monolith {
+    transition: none !important;
+  }
+  .u-cta-draw .u-cta-draw-line {
+    transform: scaleX(1);
+  }
+}
