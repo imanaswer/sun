@@ -4,7 +4,7 @@
  * grid, the bestsellers strip, and the footer. Copy, prices and links come from
  * the live Shopify store via src/sun-data.ts.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion } from "motion/react";
 
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
@@ -19,6 +19,33 @@ const NAV_LINKS = [
   { href: "#next-gen", label: "Watch" },
   { href: "#contact", label: "Contact" },
 ];
+
+/** Rotated, white-bordered sticker badge (CRAV-style). */
+function Sticker({
+  children,
+  tone = "yellow",
+  rotate = -4,
+  className = "",
+}: {
+  children: ReactNode;
+  tone?: "yellow" | "navy" | "cream";
+  rotate?: number;
+  className?: string;
+}) {
+  const tones: Record<string, string> = {
+    yellow: "bg-[var(--u-yellow)] text-[var(--u-navy)]",
+    navy: "bg-[var(--u-navy)] text-white",
+    cream: "bg-[var(--u-bone)] text-[var(--u-navy)]",
+  };
+  return (
+    <span
+      className={`u-sticker ${tones[tone]} ${className}`}
+      style={{ transform: `rotate(${rotate}deg)` }}
+    >
+      {children}
+    </span>
+  );
+}
 
 export function SiteNav() {
   // Transparent over the dark hero (no logo, light links). Once the hero is
