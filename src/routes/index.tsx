@@ -6,6 +6,7 @@ import {
   CollectionsSection,
   SiteFooter,
   SiteNav,
+  TestimonialsSection,
   VideoReelSection,
 } from "@/components/umberlla/sections";
 import { scrollScrubTheme } from "@/scroll-scrub-scenes";
@@ -27,6 +28,7 @@ function Index() {
         <div id="hero-end" aria-hidden="true" />
         <VideoReelSection />
         <CollectionsSection />
+        <TestimonialsSection />
       </main>
       <SiteFooter />
     </div>

@@ -11,6 +11,8 @@
   --u-muted: #9aa7bf;
   --u-display: "Outfit", "Helvetica Neue", Arial, sans-serif;
   --u-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* Chunky rounded "bubble" display, CRAV-style — used for big statement type. */
+  --u-fun: "Fredoka", "Outfit", "Helvetica Neue", Arial, sans-serif;
 }
 
 .u-page {

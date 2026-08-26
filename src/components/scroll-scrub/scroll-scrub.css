@@ -179,12 +179,18 @@
 .scroll-scrub__title {
   max-width: 13ch;
   margin: 0;
-  color: var(--ss-ink);
+  /* CRAV-style sticker: bold yellow fill with a thick white outer outline.
+     paint-order:stroke draws the stroke behind the fill so it reads as a
+     border around the letters instead of thinning them. */
+  color: var(--u-yellow);
+  -webkit-text-stroke: 0.06em #fff;
+  paint-order: stroke fill;
   font: inherit;
-  font-size: clamp(2.75rem, 6vw, 6.75rem);
+  font-family: var(--u-fun);
+  font-size: clamp(2.75rem, 6.4vw, 7rem);
   font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.045em;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 

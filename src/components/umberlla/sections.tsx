@@ -5,9 +5,11 @@
  * the live Shopify store via src/sun-data.ts.
  */
 import { useEffect, useRef, useState } from "react";
+import { motion } from "motion/react";
 
+import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
-import { BESTSELLERS, COLLECTIONS, REEL, RETAIL } from "@/sun-data";
+import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -289,6 +291,50 @@ export function BestsellersSection() {
             </p>
           </div>
           <GetOne href={`${SHOP}/collections/all`}>Shop all umbrellas</GetOne>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const reviewCol1 = TESTIMONIALS.slice(0, 3);
+const reviewCol2 = TESTIMONIALS.slice(3, 6);
+const reviewCol3 = TESTIMONIALS.slice(6, 9);
+
+export function TestimonialsSection() {
+  return (
+    <section id="reviews" className="bg-white px-5 py-24 md:px-8 md:py-32">
+      <div className="mx-auto max-w-[1400px]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          viewport={{ once: true }}
+          className="mx-auto flex max-w-[560px] flex-col items-center text-center"
+        >
+          <p className="u-mono text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
+            Loved across India
+          </p>
+          <h2 className="mt-4 text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-5xl">
+            What our customers say
+          </h2>
+          <p className="mt-4 text-[var(--u-navy)]/65">
+            135 years of keeping India dry — here&rsquo;s what people carry, and why.
+          </p>
+        </motion.div>
+
+        <div className="mt-14 flex max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
+          <TestimonialsColumn testimonials={reviewCol1} duration={15} />
+          <TestimonialsColumn
+            testimonials={reviewCol2}
+            className="hidden md:block"
+            duration={19}
+          />
+          <TestimonialsColumn
+            testimonials={reviewCol3}
+            className="hidden lg:block"
+            duration={17}
+          />
         </div>
       </div>
     </section>

@@ -128,6 +128,71 @@ export const REEL: Reel[] = [
   },
 ];
 
+export interface TestimonialItem {
+  text: string;
+  image: string;
+  name: string;
+  role: string;
+}
+
+/** Sun Umbrella customer reviews (placeholder copy; swap for real reviews). */
+export const TESTIMONIALS: TestimonialItem[] = [
+  {
+    text: "Survived three Mumbai monsoons and still opens with one push. The auto-open is a lifesaver on a crowded local train.",
+    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    name: "Priya Nair",
+    role: "Mumbai",
+  },
+  {
+    text: "Bought the 3-fold for my bag — folds to a paperback, opens huge. The UV coating actually keeps the heat off on Chennai afternoons.",
+    image: "https://randomuser.me/api/portraits/men/32.jpg",
+    name: "Rahul Menon",
+    role: "Chennai",
+  },
+  {
+    text: "We ordered 500 branded umbrellas for our dealership event. Premium quality, delivered on time, and everyone kept one.",
+    image: "https://randomuser.me/api/portraits/women/44.jpg",
+    name: "Anjali Rao",
+    role: "Brand Manager",
+  },
+  {
+    text: "135 years and it shows — the frame took a Bengaluru pre-monsoon gust head-on and sprang right back into shape.",
+    image: "https://randomuser.me/api/portraits/men/52.jpg",
+    name: "Vikram Shetty",
+    role: "Bengaluru",
+  },
+  {
+    text: "My kids love their bright umbrellas and I love that they're genuinely windproof, not the flimsy ones that flip inside out.",
+    image: "https://randomuser.me/api/portraits/women/26.jpg",
+    name: "Fatima Sheikh",
+    role: "Kochi",
+  },
+  {
+    text: "The walking-stick model gives my father support and shelter in one. Beautifully made, and the rose-wood handle feels solid.",
+    image: "https://randomuser.me/api/portraits/women/12.jpg",
+    name: "Deepa Iyer",
+    role: "Mysuru",
+  },
+  {
+    text: "Gifted these to the whole team for Diwali. Everyone keeps asking where they're from — best corporate gift we've done.",
+    image: "https://randomuser.me/api/portraits/men/76.jpg",
+    name: "Arjun Kapoor",
+    role: "HR Lead",
+  },
+  {
+    text: "The rose-wood finish looks so premium people think it cost triple. Rain just beads and slides straight off the canopy.",
+    image: "https://randomuser.me/api/portraits/women/90.jpg",
+    name: "Sana Qureshi",
+    role: "Hyderabad",
+  },
+  {
+    text: "Ordered on Amazon, arrived next day, and it has already outlasted every cheap umbrella I've ever owned. Worth every rupee.",
+    image: "https://randomuser.me/api/portraits/men/18.jpg",
+    name: "Karthik Reddy",
+    role: "Pune",
+  },
+];
+
 export const RETAIL = [
   { name: "Amazon", image: "/assets/sun/retail-amazon.png" },
   { name: "Myntra", image: "/assets/sun/retail-myntra.png" },
