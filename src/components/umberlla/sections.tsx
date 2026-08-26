@@ -4,50 +4,74 @@
  * grid, the bestsellers strip, and the footer. Copy, prices and links come from
  * the live Shopify store via src/sun-data.ts.
  */
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { FindYourSize, GetOne, ShopTheRange } from "@/components/umberlla/ctas";
+import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import { BESTSELLERS, COLLECTIONS, REEL, RETAIL } from "@/sun-data";
 
 const SHOP = "https://sunumbrella.in";
 
+const NAV_LINKS = [
+  { href: "#collections", label: "Collections" },
+  { href: "#next-gen", label: "Watch" },
+  { href: "#contact", label: "Contact" },
+];
+
 export function SiteNav() {
+  // Transparent over the dark hero (no logo, light links). Once the hero is
+  // scrolled past and the white storefront begins, the bar turns white and the
+  // logo appears with dark links. Keyed to a #hero-end sentinel after the film.
+  const [pastHero, setPastHero] = useState(false);
+  useEffect(() => {
+    const check = () => {
+      const sentinel = document.getElementById("hero-end");
+      if (sentinel) setPastHero(sentinel.getBoundingClientRect().top < 90);
+    };
+    check();
+    window.addEventListener("scroll", check, { passive: true });
+    window.addEventListener("resize", check);
+    return () => {
+      window.removeEventListener("scroll", check);
+      window.removeEventListener("resize", check);
+    };
+  }, []);
+
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-[var(--u-slate)]/60 bg-[var(--u-navy)]/85 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:px-8">
-        <a href="#top" className="flex items-center gap-3">
-          <span className="inline-flex items-center rounded-lg bg-white px-2 py-1">
-            <img
-              src="/assets/sun/logo.png"
-              alt="Sun Umbrella — trusted over 100 years"
-              className="h-10 w-auto"
-            />
-          </span>
-          <span className="u-mono hidden text-[10px] uppercase tracking-[0.2em] text-[var(--u-yellow)] sm:inline">
-            Est. 1889
-          </span>
+    <header
+      className={[
+        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
+        pastHero
+          ? "bg-white shadow-[0_1px_0_rgba(16,27,51,0.08)]"
+          : "bg-transparent",
+      ].join(" ")}
+    >
+      <div className="mx-auto flex h-24 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
+        <a href="#top" className="flex h-20 items-center md:h-24">
+          <img
+            src="/assets/sun/logo.png"
+            alt="Sun Umbrella — trusted over 100 years"
+            className={[
+              "h-20 w-auto transition-opacity duration-300 md:h-24",
+              pastHero ? "opacity-100" : "opacity-0",
+            ].join(" ")}
+          />
         </a>
         <nav aria-label="Sections" className="hidden items-center gap-8 md:flex">
-          <a
-            href="#collections"
-            className="u-mono text-xs uppercase tracking-[0.18em] text-[var(--u-muted)] transition-colors hover:text-[var(--u-bone)]"
-          >
-            Collections
-          </a>
-          <a
-            href="#next-gen"
-            className="u-mono text-xs uppercase tracking-[0.18em] text-[var(--u-muted)] transition-colors hover:text-[var(--u-bone)]"
-          >
-            Watch
-          </a>
-          <a
-            href="#contact"
-            className="u-mono text-xs uppercase tracking-[0.18em] text-[var(--u-muted)] transition-colors hover:text-[var(--u-bone)]"
-          >
-            Contact
-          </a>
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className={[
+                "u-mono text-xs uppercase tracking-[0.18em] transition-colors",
+                pastHero
+                  ? "text-[var(--u-navy)]/70 hover:text-[var(--u-navy)]"
+                  : "text-[var(--u-bone)]/80 hover:text-[var(--u-bone)]",
+              ].join(" ")}
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
-        <ShopTheRange />
       </div>
     </header>
   );
@@ -111,14 +135,14 @@ export function VideoReelSection() {
   return (
     <section
       id="next-gen"
-      className="bg-[var(--u-well)] px-5 py-24 md:px-8 md:py-32"
+      className="bg-white px-5 py-24 md:px-8 md:py-32"
     >
       <div className="mx-auto max-w-[1400px]">
-        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-yellow)]">
+        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
           Next-gen premium umbrellas
         </p>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2 className="u-rise max-w-[18ch] text-4xl font-semibold tracking-tighter text-[var(--u-bone)] md:text-6xl">
+          <h2 className="u-rise max-w-[18ch] text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-6xl">
             Designed for style. Built for all weather.
           </h2>
           <GetOne href={`${SHOP}/collections/all`}>Shop all umbrellas</GetOne>
@@ -138,17 +162,17 @@ export function CollectionsSection() {
   return (
     <section
       id="collections"
-      className="bg-[var(--u-navy)] px-5 py-24 md:px-8 md:py-32"
+      className="bg-white px-5 py-24 md:px-8 md:py-32"
     >
       <div className="mx-auto max-w-[1400px]">
-        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-yellow)]">
+        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
           The monsoon essentials
         </p>
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2 className="u-rise max-w-[16ch] text-4xl font-semibold tracking-tighter text-[var(--u-bone)] md:text-6xl">
+          <h2 className="u-rise max-w-[16ch] text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-6xl">
             Find your umbrella
           </h2>
-          <FindYourSize href={`${SHOP}/collections/all`} />
+          <FindYourSize href={`${SHOP}/collections/all`} className="on-light" />
         </div>
 
         <div className="mt-16 grid gap-6 md:grid-cols-6">
@@ -157,7 +181,7 @@ export function CollectionsSection() {
               key={c.name}
               href={c.href}
               className={[
-                "u-card group relative flex flex-col overflow-hidden border border-[var(--u-slate)]/70 bg-[var(--u-well)] transition-colors hover:border-[var(--u-yellow)]",
+                "u-card group relative flex flex-col overflow-hidden rounded-xl border border-[var(--u-navy)]/12 bg-white shadow-[0_1px_2px_rgba(16,27,51,0.06)] transition-colors hover:border-[var(--u-navy)]/40",
                 // Asymmetric: first card is a tall feature, rest fill the grid.
                 index === 0 ? "md:col-span-3 md:row-span-2" : "md:col-span-3",
               ].join(" ")}
@@ -169,21 +193,20 @@ export function CollectionsSection() {
                   loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--u-navy)] via-transparent to-transparent opacity-80" />
               </div>
               <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-2xl font-semibold tracking-tight text-[var(--u-bone)]">
+                  <h3 className="text-2xl font-semibold tracking-tight text-[var(--u-navy)]">
                     {c.name}
                   </h3>
-                  <span className="u-mono text-[11px] uppercase tracking-[0.16em] text-[var(--u-yellow)]">
+                  <span className="u-mono text-[11px] uppercase tracking-[0.16em] text-[var(--u-navy)]/50">
                     {c.sub}
                   </span>
                 </div>
-                <p className="mt-3 max-w-[44ch] text-sm leading-relaxed text-[var(--u-muted)]">
+                <p className="mt-3 max-w-[44ch] text-sm leading-relaxed text-[var(--u-navy)]/65">
                   {c.blurb}
                 </p>
-                <span className="u-mono mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-bone)]">
+                <span className="u-mono mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
                   Shop {c.name}
                   <span
                     aria-hidden="true"
@@ -276,18 +299,18 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="bg-[var(--u-navy)] px-5 pt-20 pb-10 md:px-8"
+      className="border-t border-[var(--u-navy)]/10 bg-white px-5 pt-20 pb-10 md:px-8"
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-10 md:grid-cols-4">
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Shop
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
               {COLLECTIONS.map((c) => (
                 <li key={c.name}>
-                  <a className="hover:text-[var(--u-yellow)]" href={c.href}>
+                  <a className="hover:text-[var(--u-navy)]" href={c.href}>
                     {c.name}
                   </a>
                 </li>
@@ -295,60 +318,60 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Company
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
               <li>
-                <a className="hover:text-[var(--u-yellow)]" href={`${SHOP}/pages/about-us`}>
+                <a className="hover:text-[var(--u-navy)]" href={`${SHOP}/pages/about-us`}>
                   Our heritage
                 </a>
               </li>
               <li>
                 <a
-                  className="hover:text-[var(--u-yellow)]"
+                  className="hover:text-[var(--u-navy)]"
                   href={`${SHOP}/collections/promotional-umbrella`}
                 >
                   Corporate &amp; branding
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-yellow)]" href={`${SHOP}/pages/contact`}>
+                <a className="hover:text-[var(--u-navy)]" href={`${SHOP}/pages/contact`}>
                   Store locations
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Contact
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
               <li>
                 <a
-                  className="hover:text-[var(--u-yellow)]"
+                  className="hover:text-[var(--u-navy)]"
                   href="mailto:info@sunumbrellas.in"
                 >
                   info@sunumbrellas.in
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-yellow)]" href="tel:+918212514578">
+                <a className="hover:text-[var(--u-navy)]" href="tel:+918212514578">
                   +91 821 2514578
                 </a>
               </li>
-              <li className="text-[var(--u-muted)]">Mysuru · Mumbai · Calicut</li>
+              <li className="text-[var(--u-navy)]/50">Mysuru · Mumbai · Calicut</li>
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Our retail circle
             </h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {RETAIL.map((r) => (
                 <span
                   key={r.name}
-                  className="inline-flex h-9 items-center rounded-md bg-[var(--u-bone)] px-2.5"
+                  className="inline-flex h-9 items-center rounded-md border border-[var(--u-navy)]/12 bg-white px-2.5"
                 >
                   <img
                     src={r.image}
@@ -363,11 +386,11 @@ export function SiteFooter() {
         </div>
         <p
           aria-hidden="true"
-          className="u-wordmark mt-20 w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-yellow)]"
+          className="u-wordmark mt-20 w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-navy)]/[0.07]"
         >
           Sun Umbrella
         </p>
-        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
           Sun Umbrella · Est. 1889 · Mysuru, India. All rights reserved.
         </p>
       </div>

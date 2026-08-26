@@ -79,6 +79,17 @@
   border-color: var(--u-yellow);
 }
 
+/* On a light (white) header: navy ink + border, keeps the yellow-flood hover. */
+.u-cta-slab.on-light {
+  border-color: var(--u-navy);
+  color: var(--u-navy);
+}
+.u-cta-slab.on-light:hover,
+.u-cta-slab.on-light:focus-visible {
+  color: var(--u-navy);
+  border-color: var(--u-navy);
+}
+
 /* CTA 2: chapter link, underline draws across, arrow slides */
 .u-cta-draw {
   color: var(--u-bone);
@@ -125,6 +136,17 @@
 .u-cta-frame:hover .u-cta-frame-tick,
 .u-cta-frame:focus-visible .u-cta-frame-tick {
   transform: rotate(90deg);
+}
+
+/* On a light (white) section: navy border + ink. */
+.u-cta-frame.on-light {
+  border-color: rgb(16 27 51 / 0.25);
+  color: var(--u-navy);
+}
+.u-cta-frame.on-light:hover,
+.u-cta-frame.on-light:focus-visible {
+  border-color: var(--u-navy);
+  background-color: rgb(16 27 51 / 0.04);
 }
 
 /* CTA 4: closing monolith, presses down when held */

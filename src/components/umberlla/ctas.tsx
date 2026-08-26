@@ -32,11 +32,17 @@ export function OpenTheStory() {
 }
 
 /** Collection block: framed, the corner tick rotates a quarter turn. */
-export function FindYourSize({ href = "#bestsellers" }: { href?: string }) {
+export function FindYourSize({
+  href = "#bestsellers",
+  className = "",
+}: {
+  href?: string;
+  className?: string;
+}) {
   return (
     <a
       href={href}
-      className="u-cta-frame u-mono inline-flex items-center gap-3 px-5 py-3 text-xs uppercase tracking-[0.18em]"
+      className={`u-cta-frame u-mono inline-flex items-center gap-3 px-5 py-3 text-xs uppercase tracking-[0.18em] ${className}`}
     >
       Find your size
       <span aria-hidden="true" className="u-cta-frame-tick text-[var(--u-yellow)]">

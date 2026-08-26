@@ -23,6 +23,8 @@ function Index() {
       <SiteNav />
       <main>
         <ScrollScrub scenes={journeyScenes} theme={scrollScrubTheme} />
+        {/* Marks the end of the hero film; the nav flips to its white state here. */}
+        <div id="hero-end" aria-hidden="true" />
         <VideoReelSection />
         <CollectionsSection />
       </main>
