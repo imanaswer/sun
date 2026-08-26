@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
+import { Reveal } from "@/lib/reveal";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
 
@@ -177,13 +178,13 @@ export function CollectionsSection() {
           <FindYourSize href={`${SHOP}/collections/all`} className="on-light" />
         </div>
 
-        <div className="mt-16 grid gap-6 md:grid-cols-6">
+        <Reveal className="mt-16 grid gap-6 md:grid-cols-6" stagger>
           {COLLECTIONS.map((c, index) => (
             <a
               key={c.name}
               href={c.href}
               className={[
-                "u-card group relative flex flex-col overflow-hidden rounded-xl border border-[var(--u-navy)]/12 bg-white shadow-[0_1px_2px_rgba(16,27,51,0.06)] transition-colors hover:border-[var(--u-navy)]/40",
+                "u-card u-lift group relative flex flex-col overflow-hidden rounded-xl border border-[var(--u-navy)]/12 bg-white shadow-[0_1px_2px_rgba(16,27,51,0.06)] hover:border-[var(--u-navy)]/40",
                 // Asymmetric: first card is a tall feature, rest fill the grid.
                 index === 0 ? "md:col-span-3 md:row-span-2" : "md:col-span-3",
               ].join(" ")}
@@ -220,7 +221,7 @@ export function CollectionsSection() {
               </div>
             </a>
           ))}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

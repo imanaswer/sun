@@ -18,6 +18,8 @@ import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 // Editing it via the app settings UI rewrites this file and redeploys the app.
 import appMetaJson from "../app-meta.json";
 import { BRAND_THEME_COLOR } from "../umberlla-tokens";
+import { SmoothScroll } from "../lib/smooth-scroll";
+import { WaveTransition } from "../lib/wave-transition";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
@@ -223,6 +225,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SmoothScroll />
+      <WaveTransition />
+      <div className="u-grain" aria-hidden="true" />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>
