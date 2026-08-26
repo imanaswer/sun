@@ -405,7 +405,7 @@ interface Props {
     water?: Group
 }
 
-function __OriginkitBase_ElementalWater(props: Props) {
+function OriginkitBase_ElementalWater(props: Props) {
     const {
         style,
         background = "#02080E",
@@ -426,25 +426,24 @@ function __OriginkitBase_ElementalWater(props: Props) {
 
     const canvasRef = useRef<HTMLCanvasElement>(null)
     const sizeRef = useRef({ w: 0, h: 0 })
-    sizeRef.current = { w: num(width, 0), h: num(height, 0) }
-
     const ptrRef = useRef({ x: 0.5, y: 0.5, on: 0, lastX: 0.5, lastY: 0.5, wind: 0, t: 0 })
-
-    // Every live input is read from a ref inside the loop. Putting any of them in
-    // the effect deps would rebuild the GL context on every colour tweak.
     const vRef = useRef<Record<string, number | string>>({})
-    vRef.current = {
-        bg: background,
-        base: baseColor,
-        accent: "#8CEBFF",
-        density: Math.round(clampN(num(density, 160), 0, 2000)),
-        speed: clampN(num(speed, 50), 0, 100) / 50,
-        hover: clampN(num(hover, 100), 0, 200) / 100,
-        zoom: clampN(num(zoom, 106), 40, 300) / 100,
-        ripple: clampN(num(g_.ripple, 100), 0, 300) / 100,
-        refraction: clampN(num(g_.refraction, 100), 0, 400) / 100,
-        glint: clampN(num(g_.glint, 100), 0, 300) / 100,
-    }
+
+    useEffect(() => {
+        sizeRef.current = { w: num(width, 0), h: num(height, 0) }
+        vRef.current = {
+            bg: background,
+            base: baseColor,
+            accent: "#8CEBFF",
+            density: Math.round(clampN(num(density, 160), 0, 2000)),
+            speed: clampN(num(speed, 50), 0, 100) / 50,
+            hover: clampN(num(hover, 100), 0, 200) / 100,
+            zoom: clampN(num(zoom, 106), 40, 300) / 100,
+            ripple: clampN(num(g_.ripple, 100), 0, 300) / 100,
+            refraction: clampN(num(g_.refraction, 100), 0, 400) / 100,
+            glint: clampN(num(g_.glint, 100), 0, 300) / 100,
+        }
+    })
 
     useEffect(() => {
         const canvas = canvasRef.current
@@ -758,5 +757,5 @@ const __originkitPresetProps = {
 };
 
 export default function ElementalWater(props: Record<string, unknown>) {
-  return <__OriginkitBase_ElementalWater {...(__originkitPresetProps as Record<string, unknown>)} {...props} />;
+  return <OriginkitBase_ElementalWater {...(__originkitPresetProps as Record<string, unknown>)} {...props} />;
 }

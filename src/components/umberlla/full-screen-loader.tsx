@@ -12,20 +12,46 @@ export function FullScreenLoader() {
   const imgRef = useRef<HTMLImageElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [isRemoved, setIsRemoved] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     // 1. Lock body scrolling
     document.body.style.overflow = "hidden";
 
-    // 2. Preload frames
+    // 2. Preload frames (Staggered to prevent startup lag)
     const images: string[] = [];
     for (let i = 0; i < TOTAL_FRAMES; i++) {
-      const src = `/assets/sun/sun-model/ezgif-frame-${(i + START_FRAME).toString().padStart(3, "0")}.png`;
-      images.push(src);
-      // Preloading the image to ensure it's in the browser cache
-      const img = new Image();
-      img.src = src;
+      images.push(`/assets/sun/sun-model/ezgif-frame-${(i + START_FRAME).toString().padStart(3, "0")}.png`);
     }
+
+    // Preload first 10 frames immediately so the animation can start smoothly
+    for (let i = 0; i < Math.min(10, TOTAL_FRAMES); i++) {
+      const img = new Image();
+      img.src = images[i];
+    }
+    setProgress(Math.round((Math.min(10, TOTAL_FRAMES) / TOTAL_FRAMES) * 100));
+
+    // Preload the rest in chunks to avoid blocking the main thread and network
+    let currentPreloadIndex = 10;
+    const preloadRest = () => {
+      if (currentPreloadIndex >= TOTAL_FRAMES) {
+        setProgress(100);
+        return;
+      }
+      // Preload 10 frames at a time
+      const end = Math.min(currentPreloadIndex + 10, TOTAL_FRAMES);
+      for (let i = currentPreloadIndex; i < end; i++) {
+        const img = new Image();
+        img.src = images[i];
+      }
+      currentPreloadIndex = end;
+      setProgress(Math.round((currentPreloadIndex / TOTAL_FRAMES) * 100));
+      // Schedule the next chunk
+      setTimeout(preloadRest, 50);
+    };
+    
+    // Start background preloading after a short delay
+    setTimeout(preloadRest, 100);
 
     // 3. Playback loop
     let currentFrame = 0;
@@ -156,23 +182,71 @@ export function FullScreenLoader() {
           if (el) layersRef.current[0] = el;
         }}
         id="loader-wrapper"
-        className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#f3efe4]"
+        className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#f3efe4] overflow-hidden"
         style={{ transformOrigin: "top center" }}
       >
-        <img
-          ref={imgRef}
-          id="loader-sequence"
-          className="w-[280px] h-auto md:w-[450px] translate-y-8 md:translate-y-12 drop-shadow-[0_4px_12px_rgba(16,27,51,0.15)]"
-          alt=""
-          aria-hidden="true"
-          src={`/assets/sun/sun-model/ezgif-frame-${START_FRAME.toString().padStart(3, "0")}.png`}
-        />
-        <div
-          ref={textRef}
-          id="loader-text"
-          className="mt-12 font-bold uppercase tracking-[0.2em] text-[#3A2A21] text-sm md:text-lg translate-y-8 md:translate-y-12"
-        >
-          SUMMONING THE SUN...
+        {/* Giant Background Percentage */}
+        <div className="absolute inset-0 flex items-center justify-center select-none pointer-events-none z-0">
+          <span className="text-[35vw] font-bold text-[#3A2A21] opacity-5 tracking-tighter leading-none translate-y-12">
+            {progress.toString().padStart(2, "0")}
+          </span>
+        </div>
+
+        <div className="relative flex flex-col items-center justify-center z-10 w-full h-full">
+          {/* Unified Container for Mascot, Ring, and Text */}
+          <div className="relative flex flex-col items-center justify-center w-[340px] h-[340px] md:w-[540px] md:h-[540px] translate-y-4 md:translate-y-8">
+            {/* Circular Progress Ring (bounds exactly to container) */}
+            <svg
+              className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none z-0"
+              viewBox="0 0 540 540"
+            >
+              <circle
+                cx="270"
+                cy="270"
+                r="250"
+                fill="none"
+                stroke="#3A2A21"
+                strokeOpacity="0.05"
+                strokeWidth="2"
+              />
+              <circle
+                cx="270"
+                cy="270"
+                r="250"
+                fill="none"
+                stroke="#f2c230"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeDasharray={2 * Math.PI * 250}
+                strokeDashoffset={2 * Math.PI * 250 - (progress / 100) * (2 * Math.PI * 250)}
+                className="transition-all duration-300 ease-out"
+              />
+            </svg>
+
+            {/* Mascot Image (shrunk to fit) */}
+            <img
+              ref={imgRef}
+              id="loader-sequence"
+              className="w-[240px] md:w-[380px] h-auto drop-shadow-[0_4px_24px_rgba(16,27,51,0.15)] relative z-10"
+              alt=""
+              aria-hidden="true"
+              src={`/assets/sun/sun-model/ezgif-frame-${START_FRAME.toString().padStart(3, "0")}.png`}
+            />
+
+            {/* Inner Text (shrunk and nested below the mascot) */}
+            <div className="flex flex-col items-center mt-2 md:mt-4 relative z-10">
+              <div
+                ref={textRef}
+                id="loader-text"
+                className="font-bold uppercase tracking-[0.2em] text-[#3A2A21] text-[11px] md:text-base text-center"
+              >
+                SUMMONING THE SUN...
+              </div>
+              <div className="font-mono text-[10px] md:text-xs text-[#3A2A21]/60 tracking-widest mt-1 md:mt-2">
+                {progress}%
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>
