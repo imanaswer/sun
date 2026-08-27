@@ -726,7 +726,7 @@ export function ScrollScrub({
                   {scene.kicker ? (
                     <p className="u-sticker bg-[#f2c230] text-[#101b33] inline-block mb-6 shadow-[4px_4px_0_0_rgba(16,27,51,1)]">{scene.kicker}</p>
                   ) : null}
-                  <Heading className="u-fun-heading text-5xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
+                  <Heading className="u-fun-heading text-4xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
                     <TypeSequence text={scene.title} />
                   </Heading>
                   <ScrollHighlight
