@@ -73,7 +73,7 @@ export function WaveTransition() {
     let playing = false;
 
     const play = (dir: "down" | "up") => {
-      if (playing || reduced) return;
+      if (playing) return;
       playing = true;
       const lenis = getLenis();
       lenis?.stop();
