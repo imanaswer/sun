@@ -329,7 +329,7 @@ export function SiteNav() {
           &times;
         </button>
       </div>
-      <nav aria-label="Categories" className="flex-1 overflow-y-auto px-6 pb-24">
+      <nav aria-label="Categories" className="flex-1 min-h-0 overflow-y-auto px-6 pb-24">
         {NAV_LINKS.map((l, i) => (
           <div
             key={l.href}
