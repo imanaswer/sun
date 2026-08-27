@@ -127,7 +127,12 @@ export function FullScreenLoader() {
       // Unlock the body scroll right before we start scrolling so it actually works.
       setTimeout(() => {
         document.body.style.overflow = "";
-        
+
+        // Desktop only: nudge into the tall scrub so it visibly comes alive. On
+        // the phone hero (one viewport) this nudge lands on the wave-transition
+        // trigger and would fire it immediately — so skip it there.
+        if (window.matchMedia("(max-width: 767px)").matches) return;
+
         const scrollProxy = { y: window.scrollY };
         gsap.to(scrollProxy, {
           y: window.scrollY + window.innerHeight * 0.6,
@@ -138,18 +143,19 @@ export function FullScreenLoader() {
       }, 600);
     };
 
-    // Gate the reveal on the hero's scrub videos being downloaded, so the
-    // scroll/scrub is smooth the instant the loader lifts. Warm the HTTP cache
-    // by fetching the exact clips the ScrollScrub will use (mobile variants on
-    // small screens). Never hang longer than MAX_LOAD_TIME on a slow network.
+    // Gate the reveal on the hero being ready, so it's smooth the instant the
+    // loader lifts. Desktop scrubs video frame-by-frame, so warm the full clips.
+    // Phones get the lightweight static hero (poster + simple autoplay video),
+    // so gating on the small poster is enough and far faster. Never hang longer
+    // than MAX_LOAD_TIME on a slow network.
     const MAX_LOAD_TIME = 15000;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    const heroClips = scrollScrubScenes.map((s) =>
-      isMobile && s.mobileClip ? s.mobileClip : s.clip,
+    const heroAssets = scrollScrubScenes.map((s) =>
+      isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
     );
     let heroReady = false;
     Promise.allSettled(
-      heroClips.map((url) => fetch(url).then((r) => r.blob())),
+      heroAssets.map((url) => fetch(url).then((r) => r.blob())),
     ).then(() => {
       heroReady = true;
     });
