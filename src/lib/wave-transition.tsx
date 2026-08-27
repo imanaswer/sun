@@ -110,11 +110,15 @@ export function WaveTransition() {
       tl.call(
         () => {
           const l = getLenis();
-          if (!l) return;
           const heroEndAbs = sentinel.getBoundingClientRect().top + window.scrollY;
           const target =
             dir === "down" ? heroEndAbs : heroEndAbs - window.innerHeight;
-          l.scrollTo(Math.max(0, target), { immediate: true, force: true });
+          const targetScroll = Math.max(0, target);
+          if (l) {
+            l.scrollTo(targetScroll, { immediate: true, force: true });
+          } else {
+            window.scrollTo({ top: targetScroll, left: 0, behavior: "instant" });
+          }
         },
         [],
         0.9,

@@ -731,8 +731,6 @@ function OriginkitBase_ElementalWater(props: Props) {
                 position: "relative",
                 overflow: "hidden",
                 background,
-                minWidth: 1200,
-                minHeight: 800,
                 width: typeof width === "number" && width > 0 ? width : "100%",
                 height: typeof height === "number" && height > 0 ? height : "100%",
                 ...style,
