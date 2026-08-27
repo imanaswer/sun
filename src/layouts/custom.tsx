@@ -128,7 +128,7 @@ function NewItemModal({ onCreate }: { onCreate: (name: string) => void }) {
               label="Name"
               placeholder="Give it a clear name"
               value={name}
-              onChange={(event) => setName(event.target.value)}
+              onChange={(event: { target: { value: string } }) => setName(event.target.value)}
             />
           </form>
         </Modal.Body>
@@ -228,7 +228,7 @@ function SettingsFields({
     <Input
       label="Workspace name"
       value={workspaceName}
-      onChange={(event) => onWorkspaceNameChange(event.target.value)}
+      onChange={(event: { target: { value: string } }) => onWorkspaceNameChange(event.target.value)}
     />
   );
 }

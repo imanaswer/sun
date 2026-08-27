@@ -64,7 +64,7 @@ export function selectGenerationMedia(generation: Generation): GenerationMediaPr
 
   if (outputType === "video") {
     const posterUrl =
-      generation.results.thumbnailUrl ??
+      generation.results?.thumbnailUrl ??
       (previewUrl && getMediaType(previewUrl) === "image" ? previewUrl : undefined);
     return {
       kind: "video",

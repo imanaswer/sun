@@ -187,7 +187,7 @@ function AssetToolbar({
         <Tabs.Root
           variant="pill"
           value={scope}
-          onValueChange={(value) => onScopeChange(String(value))}
+          onValueChange={(value: string) => onScopeChange(String(value))}
         >
           <Tabs.List
             items={[
@@ -202,7 +202,7 @@ function AssetToolbar({
           aria-label="Search assets"
           placeholder="Search"
           value={query}
-          onChange={(event) => onQueryChange(event.target.value)}
+          onChange={(event: { target: { value: string } }) => onQueryChange(event.target.value)}
           start={<Icon as={IconMagnifyingGlassOutlined} size="sm" />}
         />
       </div>
@@ -554,7 +554,7 @@ export function AssetLibraryModal({
           <Tabs.Root
             variant="pill"
             value={activeTab}
-            onValueChange={(value) => setTab(String(value) as AssetLibraryTab)}
+            onValueChange={(value: string) => setTab(String(value) as AssetLibraryTab)}
             className="flex-1"
           >
             <Tabs.List items={headerTabs} />
@@ -589,12 +589,12 @@ export function AssetLibraryModal({
               overscan={2}
               height="100%"
               viewportClassName="p-2"
-              getKey={(entry, index) =>
+              getKey={(entry: any, index: number) =>
                 entry.type === "upload"
                   ? "upload"
                   : `${entry.item.ref?.id ?? entry.item.src}:${index}`
               }
-              renderItem={(entry) =>
+              renderItem={(entry: any) =>
                 entry.type === "upload" ? (
                   <UploadCard accept={accept} uploading={uploading} onFile={handleFile} />
                 ) : (
