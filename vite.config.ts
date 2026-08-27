@@ -32,6 +32,9 @@ export default defineConfig(({ command, mode }) => {
       tsconfigPaths: true,
       alias: [{ find: /^@higgsfield-ai\/icons(\/.*)?$/, replacement: QUANTA_ICONS_SHIM }],
     },
+    ssr: {
+      noExternal: true,
+    },
 
     plugins: [
       // Local SVG assets (e.g. the branded generate-button sparkle) import as
