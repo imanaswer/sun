@@ -19,10 +19,58 @@ import { Video } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
 
+// The real Sun Umbrella product categories + sub-categories (from
+// sunumbrellas.in), linked to their live category / fold-type pages.
+const SU = "https://www.sunumbrellas.in";
 const NAV_LINKS = [
-  { href: "#collections", label: "Collections" },
-  { href: "#next-gen", label: "Watch" },
-  { href: "#contact", label: "Contact" },
+  {
+    label: "Gents",
+    href: `${SU}/GENTS/1/products`,
+    items: [
+      { label: "2 Fold", href: `${SU}/GENTS/1/frames/9` },
+      { label: "3 Fold", href: `${SU}/GENTS/1/frames/10` },
+      { label: "Stick & Non-Foldable", href: `${SU}/GENTS/1/frames/12` },
+    ],
+  },
+  {
+    label: "Ladies",
+    href: `${SU}/LADIES/2/products`,
+    items: [
+      { label: "2 Fold", href: `${SU}/LADIES/2/frames/9` },
+      { label: "3 Fold", href: `${SU}/LADIES/2/frames/10` },
+      { label: "Stick & Non-Foldable", href: `${SU}/LADIES/2/frames/12` },
+    ],
+  },
+  {
+    label: "Kids",
+    href: `${SU}/KIDS/3/products`,
+    items: [{ label: "Stick & Non-Foldable", href: `${SU}/KIDS/3/frames/12` }],
+  },
+  {
+    label: "Promotional",
+    href: `${SU}/PROMOTIONAL/4/products`,
+    items: [
+      { label: "2 Fold", href: `${SU}/PROMOTIONAL/4/frames/9` },
+      { label: "3 Fold", href: `${SU}/PROMOTIONAL/4/frames/10` },
+      { label: "Stick & Non-Foldable", href: `${SU}/PROMOTIONAL/4/frames/12` },
+    ],
+  },
+  {
+    label: "Premium",
+    href: `${SU}/PREMIUM/5/products`,
+    items: [
+      { label: "3 Fold", href: `${SU}/PREMIUM/5/frames/10` },
+      { label: "Stick & Non-Foldable", href: `${SU}/PREMIUM/5/frames/12` },
+    ],
+  },
+  {
+    label: "Exclusive",
+    href: `${SU}/EXCLUSIVE/7/products`,
+    items: [
+      { label: "3 Fold", href: `${SU}/EXCLUSIVE/7/frames/10` },
+      { label: "Stick & Non-Foldable", href: `${SU}/EXCLUSIVE/7/frames/12` },
+    ],
+  },
 ];
 
 /** Rotated, white-bordered sticker badge (CRAV-style). */
@@ -57,6 +105,7 @@ export function SiteNav() {
   // scrolled past and the white storefront begins, the bar turns white and the
   // logo appears with dark links. Keyed to a #hero-end sentinel after the film.
   const [pastHero, setPastHero] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     const check = () => {
       const sentinel = document.getElementById("hero-end");
@@ -70,8 +119,23 @@ export function SiteNav() {
       window.removeEventListener("resize", check);
     };
   }, []);
+  // Lock the page + stop Lenis while the mobile menu is open.
+  useEffect(() => {
+    const lenis = (window as unknown as { __lenis?: { stop(): void; start(): void } }).__lenis;
+    if (menuOpen) {
+      lenis?.stop();
+      document.body.style.overflow = "hidden";
+    } else {
+      lenis?.start();
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
 
   return (
+    <>
     <header
       className={[
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
@@ -80,35 +144,149 @@ export function SiteNav() {
           : "bg-transparent",
       ].join(" ")}
     >
-      <div className="mx-auto flex h-24 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
-        <a href="#top" className="flex h-20 items-center md:h-24">
+      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
+        <a href="#top" className="flex h-12 items-center md:h-24">
           <img
             src="/assets/sun/logo.png"
             alt="Sun Umbrella — trusted over 100 years"
             className={[
-              "h-20 w-auto transition-opacity duration-300 md:h-24",
+              "h-12 w-auto transition-opacity duration-300 md:h-24",
               pastHero ? "opacity-100" : "opacity-0",
             ].join(" ")}
           />
         </a>
-        <nav aria-label="Sections" className="hidden items-center gap-8 md:flex">
+        <nav aria-label="Categories" className="hidden items-center gap-5 lg:gap-7 md:flex">
           {NAV_LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className={[
-                "u-mono text-xs uppercase tracking-[0.18em] transition-colors",
-                pastHero
-                  ? "text-[var(--u-navy)]/70 hover:text-[var(--u-navy)]"
-                  : "text-[var(--u-bone)]/80 hover:text-[var(--u-bone)]",
-              ].join(" ")}
-            >
-              {l.label}
-            </a>
+            <div key={l.href} className="group relative">
+              <a
+                href={l.href}
+                className={[
+                  "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors",
+                  pastHero
+                    ? "text-[var(--u-navy)]/70 hover:text-[var(--u-navy)]"
+                    : "text-[var(--u-bone)]/80 hover:text-[var(--u-bone)]",
+                ].join(" ")}
+              >
+                {l.label}
+                <span
+                  aria-hidden="true"
+                  className="text-[0.7em] opacity-70 transition-transform duration-200 group-hover:rotate-180"
+                >
+                  &#9662;
+                </span>
+              </a>
+              <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+                <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
+                  {l.items.map((s) => (
+                    <a
+                      key={s.href}
+                      href={s.href}
+                      className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
+                    >
+                      {s.label}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
           ))}
         </nav>
+
+        <button
+          type="button"
+          aria-label="Open menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(true)}
+          className="flex h-11 w-11 items-center justify-center md:hidden"
+        >
+          <span className="relative block h-4 w-6">
+            <span
+              className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+            />
+            <span
+              className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+            />
+            <span
+              className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+            />
+          </span>
+        </button>
       </div>
     </header>
+
+    {/* Full-screen mobile menu */}
+    <div
+      className={[
+        "fixed inset-0 z-[60] flex flex-col bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
+        menuOpen
+          ? "pointer-events-auto translate-y-0 opacity-100"
+          : "pointer-events-none translate-y-2 opacity-0",
+      ].join(" ")}
+    >
+      <div className="flex items-center justify-between px-6 pt-5 pb-3">
+        <img src="/assets/sun/logo.png" alt="Sun Umbrella" className="h-11 w-auto" />
+        <button
+          type="button"
+          aria-label="Close menu"
+          onClick={() => setMenuOpen(false)}
+          className="grid h-10 w-10 place-items-center rounded-full bg-[var(--u-navy)]/[0.06] text-2xl leading-none text-[var(--u-navy)] transition-colors active:bg-[var(--u-navy)]/10"
+        >
+          &times;
+        </button>
+      </div>
+      <nav aria-label="Categories" className="flex-1 overflow-y-auto px-6 pb-10">
+        {NAV_LINKS.map((l, i) => (
+          <div
+            key={l.href}
+            className="border-t border-[var(--u-navy)]/10 py-4 first:border-t-0"
+          >
+            <a
+              href={l.href}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-baseline justify-between gap-3"
+            >
+              <span className="u-fun-head text-[2rem] leading-none text-[var(--u-navy)]">
+                {l.label}
+              </span>
+              <span className="u-mono text-[11px] tracking-[0.1em] text-[var(--u-navy)]/35">
+                {`0${i + 1}`}
+              </span>
+            </a>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {l.items.map((s) => (
+                <a
+                  key={s.href}
+                  href={s.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="u-mono rounded-full bg-[var(--u-navy)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-navy)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-navy)]"
+                >
+                  {s.label}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+
+        <div className="mt-8 border-t border-[var(--u-navy)]/10 pt-7">
+          <GetOne
+            href={`${SU}/GENTS/1/products`}
+            className="w-full justify-center"
+          >
+            Shop all umbrellas
+          </GetOne>
+          <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-navy)]/60">
+            <a href="mailto:info@sunumbrellas.in" className="block">
+              info@sunumbrellas.in
+            </a>
+            <a href="tel:+918212514578" className="block">
+              +91 821 2514578
+            </a>
+            <p className="text-[var(--u-navy)]/40">Mysuru · Mumbai · Calicut</p>
+          </div>
+        </div>
+      </nav>
+    </div>
+    </>
   );
 }
 
@@ -419,7 +597,7 @@ export function SiteFooter() {
       className="border-t border-[var(--u-navy)]/10 bg-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
     >
       <div className="mx-auto max-w-[1400px]">
-        <div className="grid gap-10 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-4 md:gap-10">
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Shop
@@ -484,17 +662,17 @@ export function SiteFooter() {
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
               Our retail circle
             </h2>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 grid grid-cols-2 gap-2">
               {RETAIL.map((r) => (
-                <div key={r.name} className="relative h-9 w-[90px] rounded-md overflow-hidden bg-white/5 border border-[var(--u-navy)]/12 flex items-center justify-center">
-                  {/* Make the component fill the container */}
-                  <StickerPeeling 
-                    image={r.image} 
-                    imageWidth={90} 
-                    imageHeight={36} 
-                    shadowEnabled={false} 
-                    backColor="#ffffff"
-                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+                <div
+                  key={r.name}
+                  className="relative flex h-9 items-center justify-center overflow-hidden rounded-lg border border-[var(--u-navy)]/12 bg-white"
+                >
+                  <img
+                    src={r.image}
+                    alt={r.name}
+                    loading="lazy"
+                    className="h-4 w-auto max-w-[80%] object-contain"
                   />
                 </div>
               ))}
