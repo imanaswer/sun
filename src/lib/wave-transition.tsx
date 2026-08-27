@@ -117,7 +117,9 @@ export function WaveTransition() {
           if (l) {
             l.scrollTo(targetScroll, { immediate: true, force: true });
           } else {
-            window.scrollTo({ top: targetScroll, left: 0, behavior: "instant" });
+            // iOS Safari throws a TypeError for behavior: "instant". 
+            // window.scrollTo(x, y) is natively instant across all browsers.
+            window.scrollTo(0, targetScroll);
           }
         },
         [],
