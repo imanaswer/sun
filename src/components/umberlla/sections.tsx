@@ -365,7 +365,6 @@ export function SiteNav() {
         <div className="mt-8 border-t border-[var(--u-navy)]/10 pt-7">
           <TactileButton
             link={`${SU}/GENTS/1/products`}
-            style={{ width: "100%", justifyContent: "center" }}
             label="Shop all umbrellas"
           />
           <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-navy)]/60">
