@@ -201,6 +201,8 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+import { FullScreenLoader } from "../components/umberlla/full-screen-loader";
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
@@ -225,6 +227,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <FullScreenLoader />
       <SmoothScroll />
       <WaveTransition />
       <div className="u-grain" aria-hidden="true" />

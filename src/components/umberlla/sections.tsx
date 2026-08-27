@@ -9,8 +9,13 @@ import { motion } from "motion/react";
 
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { Reveal } from "@/lib/reveal";
+import StickerPeeling from "@/components/sticker-peeling";
+import ElementalWater from "./../elemental-water";
+import FluidField from "@/components/fluid-field";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
+import TactileButton from "@/components/tactile-button";
 import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
+import { Video } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -71,7 +76,7 @@ export function SiteNav() {
       className={[
         "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
         pastHero
-          ? "bg-white shadow-[0_1px_0_rgba(16,27,51,0.08)]"
+          ? "bg-[var(--u-bone)] shadow-[0_1px_0_rgba(16,27,51,0.08)]"
           : "bg-transparent",
       ].join(" ")}
     >
@@ -112,7 +117,7 @@ export function SiteNav() {
  * scrolls into view (preload="none" + IntersectionObserver), then it autoplays
  * muted/looping and pauses again when it leaves the viewport.
  */
-function ReelVideo({ src, poster, label, caption, href }: (typeof REEL)[number]) {
+function ReelVideo({ src, poster, label, caption, href, index }: (typeof REEL)[number] & { index: number }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
@@ -135,7 +140,10 @@ function ReelVideo({ src, poster, label, caption, href }: (typeof REEL)[number])
   return (
     <a
       href={href}
-      className="group relative block w-[76vw] max-w-[300px] shrink-0 snap-center overflow-hidden rounded-xl border border-[var(--u-slate)]/70 bg-black transition-colors hover:border-[var(--u-yellow)] sm:w-auto"
+      className={[
+        "u-tilt-card u-wobble group relative block w-[76vw] max-w-[300px] shrink-0 snap-center bg-black sm:w-auto",
+        index % 2 === 0 ? "u-tilt-left" : "u-tilt-right",
+      ].join(" ")}
     >
       <video
         ref={ref}
@@ -165,22 +173,29 @@ export function VideoReelSection() {
   return (
     <section
       id="next-gen"
-      className="bg-white px-5 py-24 md:px-8 md:py-32"
+      className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
     >
-      <div className="mx-auto max-w-[1400px]">
-        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
-          Next-gen premium umbrellas
-        </p>
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2 className="u-rise max-w-[18ch] text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-6xl">
+      <div className="absolute inset-0 z-0">
+        <ElementalWater />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1400px]">
+        <Sticker tone="yellow" rotate={-5} className="mb-6">
+          ☂ Next-Gen
+        </Sticker>
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <h2 className="u-fun-heading max-w-[16ch] shrink-0 text-5xl md:text-7xl !text-[#F3EFE4]">
             Designed for style. Built for all weather.
           </h2>
-          <GetOne href={`${SHOP}/collections/all`}>Shop all umbrellas</GetOne>
+
+          <div className="shrink-0">
+            <TactileButton link={`${SHOP}/collections/all`} />
+          </div>
         </div>
 
-        <div className="mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto pb-4 md:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {REEL.map((r) => (
-            <ReelVideo key={r.label} {...r} />
+        <div className="mt-14 flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {REEL.map((r, i) => (
+            <ReelVideo key={r.label} {...r} index={i} />
           ))}
         </div>
       </div>
@@ -188,69 +203,94 @@ export function VideoReelSection() {
   );
 }
 
+/** Tilted marquee strip — scrolling monsoon feature callouts. */
+function MonsoonMarquee() {
+  const items = "☂ MONSOON READY \u00A0\u00A0 AUTO OPEN & CLOSE \u00A0\u00A0 UV PROTECTIVE \u00A0\u00A0 WINDPROOF \u00A0\u00A0 EST. 1889 \u00A0\u00A0 ";
+  return (
+    <div className="u-marquee-banner" aria-hidden="true">
+      <div className="u-marquee">
+        <span>{items}</span>
+        <span>{items}</span>
+        <span>{items}</span>
+        <span>{items}</span>
+      </div>
+    </div>
+  );
+}
+
 export function CollectionsSection() {
   return (
-    <section
-      id="collections"
-      className="bg-white px-5 py-24 md:px-8 md:py-32"
-    >
-      <div className="mx-auto max-w-[1400px]">
-        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
-          The monsoon essentials
-        </p>
-        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <h2 className="u-rise max-w-[16ch] text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-6xl">
-            Find your umbrella
-          </h2>
-          <FindYourSize href={`${SHOP}/collections/all`} className="on-light" />
-        </div>
+    <>
+      {/* Tilted marquee divider */}
+      <MonsoonMarquee />
 
-        <Reveal className="mt-16 grid gap-6 md:grid-cols-6" stagger>
-          {COLLECTIONS.map((c, index) => (
-            <a
-              key={c.name}
-              href={c.href}
-              className={[
-                "u-card u-lift group relative flex flex-col overflow-hidden rounded-xl border border-[var(--u-navy)]/12 bg-white shadow-[0_1px_2px_rgba(16,27,51,0.06)] hover:border-[var(--u-navy)]/40",
-                // Asymmetric: first card is a tall feature, rest fill the grid.
-                index === 0 ? "md:col-span-3 md:row-span-2" : "md:col-span-3",
-              ].join(" ")}
-            >
-              <div className="relative aspect-[4/3] w-full overflow-hidden">
-                <img
-                  src={c.image}
-                  alt={`${c.name} umbrellas by Sun Umbrella`}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                />
-              </div>
-              <div className="flex flex-1 flex-col p-6">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-2xl font-semibold tracking-tight text-[var(--u-navy)]">
+      <section
+        id="collections"
+        className="u-section-warm px-5 py-24 md:px-8 md:py-32"
+      >
+        {/* Diagonal stripe overlay */}
+        <div className="u-stripes" aria-hidden="true" />
+
+        {/* Floating rain-splash illustration */}
+
+        <div className="relative z-10 mx-auto max-w-[1400px]">
+          <Sticker tone="navy" rotate={-4} className="mb-6">
+            ☂ Monsoon Essentials
+          </Sticker>
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <h2 className="u-fun-heading max-w-[14ch] text-5xl md:text-7xl">
+              Find your umbrella
+            </h2>
+            <FindYourSize href={`${SHOP}/collections/all`} className="on-light" />
+          </div>
+
+          <Reveal className="mt-16 grid gap-8 md:grid-cols-6" stagger>
+            {COLLECTIONS.map((c, index) => (
+              <a
+                key={c.name}
+                href={c.href}
+                className="u-card-on-yellow group relative flex flex-col md:col-span-3"
+                style={{ transform: `rotate(${index % 2 === 0 ? -1.5 : 1.5}deg)` }}
+              >
+                <div className="relative aspect-[4/3] w-full overflow-hidden">
+                  <img
+                    src={c.image}
+                    alt={`${c.name} umbrellas by Sun Umbrella`}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                  />
+                  {/* Sticker badge on top-right of image */}
+                  <Sticker
+                    tone="yellow"
+                    rotate={6}
+                    className="absolute top-3 right-3 text-[11px]"
+                  >
+                    {c.sub}
+                  </Sticker>
+                </div>
+                <div className="flex flex-1 flex-col bg-white p-6">
+                  <h3 className="text-2xl font-bold tracking-tight text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
                     {c.name}
                   </h3>
-                  <span className="u-mono text-[11px] uppercase tracking-[0.16em] text-[var(--u-navy)]/50">
-                    {c.sub}
+                  <p className="mt-2 max-w-[44ch] text-sm leading-relaxed text-[var(--u-navy)]/65">
+                    {c.blurb}
+                  </p>
+                  <span className="u-mono mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
+                    Shop {c.name}
+                    <span
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1.5"
+                    >
+                      &rarr;
+                    </span>
                   </span>
                 </div>
-                <p className="mt-3 max-w-[44ch] text-sm leading-relaxed text-[var(--u-navy)]/65">
-                  {c.blurb}
-                </p>
-                <span className="u-mono mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
-                  Shop {c.name}
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1.5"
-                  >
-                    &rarr;
-                  </span>
-                </span>
-              </div>
-            </a>
-          ))}
-        </Reveal>
-      </div>
-    </section>
+              </a>
+            ))}
+          </Reveal>
+        </div>
+      </section>
+    </>
   );
 }
 
@@ -318,7 +358,7 @@ export function BestsellersSection() {
               Auto open &amp; close · UV protective · windproof
             </p>
           </div>
-          <GetOne href={`${SHOP}/collections/all`}>Shop all umbrellas</GetOne>
+          <TactileButton link={`${SHOP}/collections/all`} />
         </div>
       </div>
     </section>
@@ -331,8 +371,11 @@ const reviewCol3 = TESTIMONIALS.slice(6, 9);
 
 export function TestimonialsSection() {
   return (
-    <section id="reviews" className="bg-white px-5 py-24 md:px-8 md:py-32">
-      <div className="mx-auto max-w-[1400px]">
+    <section id="reviews" className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32">
+      <div className="absolute inset-0 z-0">
+        <FluidField />
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1400px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -340,13 +383,13 @@ export function TestimonialsSection() {
           viewport={{ once: true }}
           className="mx-auto flex max-w-[560px] flex-col items-center text-center"
         >
-          <p className="u-mono text-xs uppercase tracking-[0.28em] text-[var(--u-navy)]/55">
-            Loved across India
-          </p>
-          <h2 className="mt-4 text-4xl font-semibold tracking-tighter text-[var(--u-navy)] md:text-5xl">
+          <Sticker tone="yellow" rotate={6} className="mb-5">
+            ❤️ Loved
+          </Sticker>
+          <h2 className="u-fun-heading mt-2 text-4xl md:text-6xl !text-[#F3EFE4]">
             What our customers say
           </h2>
-          <p className="mt-4 text-[var(--u-navy)]/65">
+          <p className="mt-4 text-[#F3EFE4]">
             135 years of keeping India dry — here&rsquo;s what people carry, and why.
           </p>
         </motion.div>
@@ -373,7 +416,7 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="border-t border-[var(--u-navy)]/10 bg-white px-5 pt-20 pb-10 md:px-8"
+      className="border-t border-[var(--u-navy)]/10 bg-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="grid gap-10 md:grid-cols-4">
@@ -443,27 +486,36 @@ export function SiteFooter() {
             </h2>
             <div className="mt-4 flex flex-wrap gap-2">
               {RETAIL.map((r) => (
-                <span
-                  key={r.name}
-                  className="inline-flex h-9 items-center rounded-md border border-[var(--u-navy)]/12 bg-white px-2.5"
-                >
-                  <img
-                    src={r.image}
-                    alt={r.name}
-                    loading="lazy"
-                    className="h-4 w-auto object-contain"
+                <div key={r.name} className="relative h-9 w-[90px] rounded-md overflow-hidden bg-white/5 border border-[var(--u-navy)]/12 flex items-center justify-center">
+                  {/* Make the component fill the container */}
+                  <StickerPeeling 
+                    image={r.image} 
+                    imageWidth={90} 
+                    imageHeight={36} 
+                    shadowEnabled={false} 
+                    backColor="#ffffff"
+                    style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
                   />
-                </span>
+                </div>
               ))}
             </div>
           </div>
         </div>
-        <p
-          aria-hidden="true"
-          className="u-wordmark mt-20 w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-navy)]/[0.07]"
-        >
-          Sun Umbrella
-        </p>
+        <div className="relative mt-20 inline-block w-full">
+          <p
+            aria-hidden="true"
+            className="u-wordmark w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-navy)]/[0.07]"
+          >
+            Sun Umbrella
+          </p>
+          <Sticker
+            tone="yellow"
+            rotate={-8}
+            className="absolute bottom-4 right-[10%] text-sm"
+          >
+            Est. 1889
+          </Sticker>
+        </div>
         <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
           Sun Umbrella · Est. 1889 · Mysuru, India. All rights reserved.
         </p>

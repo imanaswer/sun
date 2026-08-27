@@ -65,6 +65,14 @@ export const COLLECTIONS: Collection[] = [
     image: "/assets/sun/prod-pidilite.png",
     href: `${SHOP}/collections/promotional-umbrella`,
   },
+  {
+    name: "Outdoor & Golf",
+    sub: "Maximum Shade",
+    blurb:
+      "Extra-large canopies built for shade. Perfect for the beach, the golf course, and long summer days.",
+    image: "/assets/sun/prod-reporter-silver.png",
+    href: `${SHOP}/collections/outdoor`,
+  },
 ];
 
 export const BESTSELLERS: Product[] = [
@@ -124,6 +132,13 @@ export const REEL: Reel[] = [
     poster: "",
     label: "Designed for style",
     caption: "UV protective · windproof",
+    href: `${SHOP}/collections/all`,
+  },
+  {
+    src: "/assets/sun/videos/reel-walkingstick.mp4",
+    poster: "",
+    label: "Unmatched durability",
+    caption: "Tested in heavy storms",
     href: `${SHOP}/collections/all`,
   },
 ];

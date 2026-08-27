@@ -670,21 +670,23 @@ export function ScrollScrub({
               <div className="scroll-scrub__chapter-pin">
                 <div className="scroll-scrub__copy">
                   {scene.kicker ? (
-                    <p className="scroll-scrub__kicker">{scene.kicker}</p>
+                    <p className="u-sticker bg-[#f2c230] text-[#101b33] inline-block mb-6 shadow-[4px_4px_0_0_rgba(16,27,51,1)]">{scene.kicker}</p>
                   ) : null}
-                  <Heading className="scroll-scrub__title">
+                  <Heading className="u-fun-heading text-5xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
                     {scene.title}
                   </Heading>
-                  <p className="scroll-scrub__body">{scene.body}</p>
+                  <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90 font-medium max-w-[36ch]">{scene.body}</p>
                   {scene.tags?.length ? (
-                    <ul className="scroll-scrub__tags">
+                    <ul className="flex gap-3 mb-8 flex-wrap">
                       {scene.tags.map((tag) => (
-                        <li key={tag}>{tag}</li>
+                        <li key={tag} className="u-sticker text-sm bg-white text-[#101b33] shadow-[3px_3px_0_0_rgba(242,194,48,1)]">
+                          {tag}
+                        </li>
                       ))}
                     </ul>
                   ) : null}
                   {scene.actions ? (
-                    <div className="scroll-scrub__actions">{scene.actions}</div>
+                    <div className="scroll-scrub__actions mt-8">{scene.actions}</div>
                   ) : null}
                 </div>
               </div>

@@ -19,14 +19,11 @@ export function ShopTheRange({ className = "" }: { className?: string }) {
 /** Chapter link: the yellow rule draws across, the arrow slides. */
 export function OpenTheStory() {
   return (
-    <a href="#collections" className="u-cta-draw group inline-block">
-      <span className="flex items-baseline gap-2 text-base font-medium">
-        Open the story
-        <span aria-hidden="true" className="u-cta-draw-arrow">
-          &rarr;
-        </span>
+    <a href="#collections" className="u-btn-primary inline-flex items-center gap-2 group">
+      Open the story
+      <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">
+        &rarr;
       </span>
-      <span aria-hidden="true" className="u-cta-draw-line mt-2 w-full" />
     </a>
   );
 }
