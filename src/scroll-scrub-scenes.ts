@@ -32,7 +32,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     poster: "/assets/world/scene-01-poster.png",
     scroll: 1.6,
     tags: ["Est. 1889", "135 years of shelter"],
-    title: "Monsoon never looked this good",
+    title: "Monsoon never\nlooked this good",
   },
   {
     body: "One touch lifts the ribs in a single push. Auto open-and-close, UV-protective, windproof — it opens with your thumb while your other hand keeps the bag, the phone, the child.",
@@ -44,7 +44,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     poster: "/assets/world/scene-02-poster.png",
     scroll: 1.6,
     tags: ["Auto open & close", "One-hand release"],
-    title: "One hand, one second",
+    title: "One hand,\none second",
   },
   {
     body: "Rain leaves the canopy instead of soaking in, the frame springs back after a gust, and the sun never gets through. You arrive looking like the weather stayed outside.",

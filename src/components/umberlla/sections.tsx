@@ -5,7 +5,11 @@
  * the live Shopify store via src/sun-data.ts.
  */
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
+import LiquidGrid from "../liquid-grid";
+import DottedBg2 from "../dotted-bg-2";
+import { TypeSequence } from "@/components/umberlla/type-sequence";
 
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { Reveal } from "@/lib/reveal";
@@ -104,12 +108,53 @@ export function SiteNav() {
   // Transparent over the dark hero (no logo, light links). Once the hero is
   // scrolled past and the white storefront begins, the bar turns white and the
   // logo appears with dark links. Keyed to a #hero-end sentinel after the film.
-  const [pastHero, setPastHero] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [navTheme, setNavTheme] = useState<"light" | "dark">("light");
+  const [navVisible, setNavVisible] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   useEffect(() => {
     const check = () => {
       const sentinel = document.getElementById("hero-end");
-      if (sentinel) setPastHero(sentinel.getBoundingClientRect().top < 90);
+      setIsScrolled(window.scrollY > 20);
+
+      let currentTheme: "light" | "dark" = "light";
+      
+      // Determine theme based on the section currently under the header (approx 45px down)
+      const sections = Array.from(document.querySelectorAll("section"));
+      for (const sec of sections) {
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= 90 && rect.bottom >= 90) {
+          if (sec.id === "next-gen" || sec.id === "bestsellers") {
+            currentTheme = "light";
+          } else {
+            currentTheme = "dark";
+          }
+          break;
+        }
+      }
+
+      // Handle footer
+      const footer = document.querySelector("footer");
+      if (footer) {
+        const rect = footer.getBoundingClientRect();
+        if (rect.top <= 90) currentTheme = "dark";
+      }
+
+      // If we are above hero-end, we are in the hero (light text)
+      if (sentinel && sentinel.getBoundingClientRect().top >= 90) {
+        currentTheme = "light";
+      }
+
+      setNavTheme(currentTheme);
+
+      // Hide nav if scrolled past the Collections section
+      const collections = document.getElementById("collections");
+      if (collections) {
+        setNavVisible(collections.getBoundingClientRect().bottom >= 50);
+      } else {
+        setNavVisible(true);
+      }
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
@@ -136,35 +181,85 @@ export function SiteNav() {
 
   return (
     <>
-    <header
-      className={[
-        "fixed inset-x-0 top-0 z-50 transition-colors duration-300",
-        pastHero
-          ? "bg-[var(--u-bone)] shadow-[0_1px_0_rgba(16,27,51,0.08)]"
-          : "bg-transparent",
-      ].join(" ")}
-    >
+    <header className={[
+      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300",
+      navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
+    ].join(" ")}>
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
         <a href="#top" className="flex h-12 items-center md:h-24">
-          <img
-            src="/assets/sun/logo.png"
-            alt="Sun Umbrella — trusted over 100 years"
-            className={[
-              "h-12 w-auto transition-opacity duration-300 md:h-24",
-              pastHero ? "opacity-100" : "opacity-0",
-            ].join(" ")}
-          />
+          <div className={[
+            "flex flex-col items-center transition-opacity duration-300",
+            isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+          ].join(" ")}>
+            <img
+              src="/assets/sun/logo-icon-transparent.png"
+              alt="Sun Umbrella"
+              className="h-8 w-auto md:h-16"
+            />
+            <div className="flex flex-col items-center mt-1 font-sans">
+              <span className="text-[10px] md:text-sm font-black tracking-wider text-white leading-none">
+                Umbrellas
+              </span>
+              <span className="text-[6px] md:text-[8px] font-medium tracking-tight text-white/80 mt-0.5 whitespace-nowrap">
+                Trusted over 100 years
+              </span>
+            </div>
+          </div>
         </a>
-        <nav aria-label="Categories" className="hidden items-center gap-5 lg:gap-7 md:flex">
+        <svg width="0" height="0" className="absolute pointer-events-none">
+          <filter id="glass-displacement" colorInterpolationFilters="linearRGB" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse">
+            <feDisplacementMap in="SourceGraphic" in2="SourceGraphic" scale="5" xChannelSelector="A" yChannelSelector="A" x="5" y="-5" width="100%" height="100%" result="displacementMap"/>
+          </filter>
+        </svg>
+
+        <nav 
+          aria-label="Categories" 
+          className={[
+            "hidden items-center md:flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
+            navTheme === "dark" ? "bg-[var(--u-navy)]/[0.02] border border-[var(--u-navy)]/5" : "bg-white/5 border border-white/10"
+          ].join(" ")}
+          onMouseLeave={() => setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))}
+        >
+          {/* Glassmorphism Sliding Indicator with SVG Displacement */}
+          <div
+            className="absolute top-1 bottom-1 z-0 rounded-full transition-all duration-500 overflow-hidden"
+            style={{
+              ...indicatorStyle,
+              backdropFilter: "url(#glass-displacement) blur(4px)",
+              border: "1px solid rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              transitionTimingFunction: "linear(0, 0.0018, 0.0069 1.15%, 0.026 2.3%, 0.0637, 0.1135 5.18%, 0.2229 7.78%, 0.5977 15.84%, 0.7014, 0.7904, 0.8641, 0.9228, 0.9676 28.8%, 1.0032 31.68%, 1.0225, 1.0352 36.29%, 1.0431 38.88%, 1.046 42.05%, 1.0448 44.35%, 1.0407 47.23%, 1.0118 61.63%, 1.0025 69.41%, 0.9981 80.35%, 0.9992 99.94%)"
+            }}
+          >
+            <div 
+              className="absolute inset-0 rounded-full pointer-events-none"
+              style={{
+                // Frosted white fill with glossy edges so the black text is perfectly readable!
+                background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
+                boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(255, 255, 255, 0.2)"
+              }}
+            />
+          </div>
+
           {NAV_LINKS.map((l) => (
-            <div key={l.href} className="group relative">
+            <div 
+              key={l.href} 
+              className="group relative z-10 px-4 py-2 lg:px-6"
+              onMouseEnter={(e) => {
+                setIndicatorStyle({
+                  left: e.currentTarget.offsetLeft,
+                  width: e.currentTarget.offsetWidth,
+                  opacity: 1,
+                });
+              }}
+            >
               <a
                 href={l.href}
                 className={[
-                  "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors",
-                  pastHero
-                    ? "text-[var(--u-navy)]/70 hover:text-[var(--u-navy)]"
-                    : "text-[var(--u-bone)]/80 hover:text-[var(--u-bone)]",
+                  "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors relative z-10",
+                  navTheme === "dark"
+                    ? "text-[var(--u-navy)]/70 group-hover:text-[var(--u-navy)]"
+                    : "text-[var(--u-bone)]/80 group-hover:text-[var(--u-navy)]",
                 ].join(" ")}
               >
                 {l.label}
@@ -201,13 +296,13 @@ export function SiteNav() {
         >
           <span className="relative block h-4 w-6">
             <span
-              className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
             />
             <span
-              className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
             />
             <span
-              className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${pastHero ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
             />
           </span>
         </button>
@@ -268,12 +363,11 @@ export function SiteNav() {
         ))}
 
         <div className="mt-8 border-t border-[var(--u-navy)]/10 pt-7">
-          <GetOne
-            href={`${SU}/GENTS/1/products`}
-            className="w-full justify-center"
-          >
-            Shop all umbrellas
-          </GetOne>
+          <TactileButton
+            link={`${SU}/GENTS/1/products`}
+            style={{ width: "100%", justifyContent: "center" }}
+            label="Shop all umbrellas"
+          />
           <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-navy)]/60">
             <a href="mailto:info@sunumbrellas.in" className="block">
               info@sunumbrellas.in
@@ -363,7 +457,7 @@ export function VideoReelSection() {
         </Sticker>
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <h2 className="u-fun-heading max-w-[16ch] shrink-0 text-5xl md:text-7xl !text-[#F3EFE4]">
-            Designed for style. Built for all weather.
+            <TypeSequence text={"Designed for style.\nBuilt for all weather."} />
           </h2>
 
           <div className="shrink-0">
@@ -404,11 +498,11 @@ export function CollectionsSection() {
 
       <section
         id="collections"
-        className="u-section-warm px-5 py-24 md:px-8 md:py-32"
+        className="relative u-section-warm px-5 py-24 md:px-8 md:py-32 overflow-hidden"
       >
-        {/* Diagonal stripe overlay */}
-        <div className="u-stripes" aria-hidden="true" />
-
+        <div className="absolute inset-0 z-0">
+          <DottedBg2 bgColor="var(--u-yellow)" />
+        </div>
         {/* Floating rain-splash illustration */}
 
         <div className="relative z-10 mx-auto max-w-[1400px]">
@@ -416,10 +510,13 @@ export function CollectionsSection() {
             ☂ Monsoon Essentials
           </Sticker>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <h2 className="u-fun-heading max-w-[14ch] text-5xl md:text-7xl">
-              Find your umbrella
+            <h2 className="u-fun-heading whitespace-nowrap text-5xl md:text-7xl">
+              <TypeSequence text="Find your umbrella" />
             </h2>
-            <FindYourSize href={`${SHOP}/collections/all`} className="on-light" />
+            <TactileButton 
+              link={`${SHOP}/collections/all`} 
+              label="Find your size" 
+            />
           </div>
 
           <Reveal className="mt-16 grid gap-8 md:grid-cols-6" stagger>
@@ -543,13 +640,29 @@ export function BestsellersSection() {
   );
 }
 
+function TestimonialMarquee() {
+  const items = "★ 5-STAR REVIEWS \u00A0\u00A0 TRUSTED QUALITY \u00A0\u00A0 LOVED BY MILLIONS \u00A0\u00A0 SINCE 1889 \u00A0\u00A0 ";
+  return (
+    <div className="u-marquee-banner" aria-hidden="true">
+      <div className="u-marquee">
+        <span>{items}</span>
+        <span>{items}</span>
+        <span>{items}</span>
+        <span>{items}</span>
+      </div>
+    </div>
+  );
+}
+
 const reviewCol1 = TESTIMONIALS.slice(0, 3);
 const reviewCol2 = TESTIMONIALS.slice(3, 6);
 const reviewCol3 = TESTIMONIALS.slice(6, 9);
 
 export function TestimonialsSection() {
   return (
-    <section id="reviews" className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32">
+    <>
+      <TestimonialMarquee />
+      <section id="reviews" className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32">
       <div className="absolute inset-0 z-0">
         <FluidField />
       </div>
@@ -565,7 +678,7 @@ export function TestimonialsSection() {
             ❤️ Loved
           </Sticker>
           <h2 className="u-fun-heading mt-2 text-4xl md:text-6xl !text-[#F3EFE4]">
-            What our customers say
+            <TypeSequence text="What our customers say" />
           </h2>
           <p className="mt-4 text-[#F3EFE4]">
             135 years of keeping India dry — here&rsquo;s what people carry, and why.
@@ -587,6 +700,7 @@ export function TestimonialsSection() {
         </div>
       </div>
     </section>
+    </>
   );
 }
 
@@ -594,15 +708,18 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="border-t border-[var(--u-navy)]/10 bg-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      className="relative overflow-hidden border-t border-[var(--u-navy)]/10 bg-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <div className="absolute inset-0 z-0 opacity-40">
+        <LiquidGrid mode="dots" lineColor="rgba(11, 19, 36, 0.05)" glowColor="rgba(11, 19, 36, 0.15)" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1400px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-4 md:gap-10">
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Shop
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
               {COLLECTIONS.map((c) => (
                 <li key={c.name}>
                   <a className="hover:text-[var(--u-navy)]" href={c.href}>
@@ -613,10 +730,10 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Company
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
               <li>
                 <a className="hover:text-[var(--u-navy)]" href={`${SHOP}/pages/about-us`}>
                   Our heritage
@@ -638,10 +755,10 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Contact
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/80">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
               <li>
                 <a
                   className="hover:text-[var(--u-navy)]"
@@ -655,11 +772,11 @@ export function SiteFooter() {
                   +91 821 2514578
                 </a>
               </li>
-              <li className="text-[var(--u-navy)]/50">Mysuru · Mumbai · Calicut</li>
+              <li className="text-[var(--u-navy)]/70">Mysuru · Mumbai · Calicut</li>
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Our retail circle
             </h2>
             <div className="mt-4 grid grid-cols-2 gap-2">
@@ -694,7 +811,7 @@ export function SiteFooter() {
             Est. 1889
           </Sticker>
         </div>
-        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/50">
+        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
           Sun Umbrella · Est. 1889 · Mysuru, India. All rights reserved.
         </p>
       </div>

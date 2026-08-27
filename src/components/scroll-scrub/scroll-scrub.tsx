@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import ScrollHighlight from "@/components/umberlla/fluid-text";
+import { TypeSequence } from "@/components/umberlla/type-sequence";
 
 import "./scroll-scrub.css";
 
@@ -673,9 +675,14 @@ export function ScrollScrub({
                     <p className="u-sticker bg-[#f2c230] text-[#101b33] inline-block mb-6 shadow-[4px_4px_0_0_rgba(16,27,51,1)]">{scene.kicker}</p>
                   ) : null}
                   <Heading className="u-fun-heading text-5xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
-                    {scene.title}
+                    <TypeSequence text={scene.title} />
                   </Heading>
-                  <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90 font-medium max-w-[36ch]">{scene.body}</p>
+                  <ScrollHighlight
+                    text={scene.body}
+                    className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90 font-medium max-w-[36ch]"
+                    dimColor="rgba(255, 255, 255, 0.2)"
+                    highlightColor="rgba(255, 255, 255, 0.9)"
+                  />
                   {scene.tags?.length ? (
                     <ul className="flex gap-3 mb-8 flex-wrap">
                       {scene.tags.map((tag) => (
