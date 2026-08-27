@@ -679,7 +679,7 @@ export function TestimonialsSection() {
             ❤️ Loved
           </Sticker>
           <h2 className="u-fun-heading mt-2 text-4xl md:text-6xl !text-[#F3EFE4]">
-            <TypeSequence text="What our customers say" />
+            <TypeSequence text={"What our customers\nsay"} />
           </h2>
           <p className="mt-4 text-[#F3EFE4]">
             135 years of keeping India dry — here&rsquo;s what people carry, and why.
