@@ -182,7 +182,7 @@ export function SiteNav() {
   return (
     <>
     <header className={[
-      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300 pt-4 md:pt-0",
+      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300 pt-4 md:pt-4",
       navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
     ].join(" ")}>
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
