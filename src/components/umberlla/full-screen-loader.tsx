@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { scrollScrubScenes } from "@/scroll-scrub-scenes";
 
 const START_FRAME = 24;
 // The loader only displays ~2.5s (~60 frames at 24fps) before sweeping away, so
@@ -137,24 +138,34 @@ export function FullScreenLoader() {
       }, 600);
     };
 
+    // Gate the reveal on the hero's scrub videos being downloaded, so the
+    // scroll/scrub is smooth the instant the loader lifts. Warm the HTTP cache
+    // by fetching the exact clips the ScrollScrub will use (mobile variants on
+    // small screens). Never hang longer than MAX_LOAD_TIME on a slow network.
+    const MAX_LOAD_TIME = 15000;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const heroClips = scrollScrubScenes.map((s) =>
+      isMobile && s.mobileClip ? s.mobileClip : s.clip,
+    );
+    let heroReady = false;
+    Promise.allSettled(
+      heroClips.map((url) => fetch(url).then((r) => r.blob())),
+    ).then(() => {
+      heroReady = true;
+    });
+
     const attemptExit = () => {
       const elapsed = Date.now() - startTime;
-      if (elapsed >= MIN_LOAD_TIME) {
+      if ((elapsed >= MIN_LOAD_TIME && heroReady) || elapsed >= MAX_LOAD_TIME) {
         exitLoader();
       } else {
-        setTimeout(exitLoader, MIN_LOAD_TIME - elapsed);
+        setTimeout(attemptExit, 150);
       }
     };
-
-    if (document.readyState === "complete") {
-      attemptExit();
-    } else {
-      window.addEventListener("load", attemptExit);
-    }
+    attemptExit();
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("load", attemptExit);
       document.body.style.overflow = "";
     };
   }, []);
