@@ -312,24 +312,24 @@ export function SiteNav() {
     {/* Full-screen mobile menu */}
     <div
       className={[
-        "fixed inset-0 z-[60] flex flex-col bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
+        "fixed inset-x-0 top-0 z-[60] flex h-[100dvh] w-full flex-col bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
         menuOpen
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0",
       ].join(" ")}
     >
-      <div className="flex items-center justify-between px-6 pt-5 pb-3">
+      <div className="flex items-start justify-between px-6 pt-8 pb-3">
         <img src="/assets/sun/logo.png" alt="Sun Umbrella" className="h-11 w-auto" />
         <button
           type="button"
           aria-label="Close menu"
           onClick={() => setMenuOpen(false)}
-          className="grid h-10 w-10 place-items-center rounded-full bg-[var(--u-navy)]/[0.06] text-2xl leading-none text-[var(--u-navy)] transition-colors active:bg-[var(--u-navy)]/10"
+          className="mt-1 grid h-10 w-10 place-items-center rounded-full bg-[var(--u-navy)]/[0.06] text-2xl leading-none text-[var(--u-navy)] transition-colors active:bg-[var(--u-navy)]/10"
         >
           &times;
         </button>
       </div>
-      <nav aria-label="Categories" className="flex-1 overflow-y-auto px-6 pb-10">
+      <nav aria-label="Categories" className="flex-1 overflow-y-auto px-6 pb-24">
         {NAV_LINKS.map((l, i) => (
           <div
             key={l.href}
