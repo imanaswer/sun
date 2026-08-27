@@ -29,6 +29,7 @@ export function FullScreenLoader() {
       const img = new Image();
       img.src = images[i];
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProgress(Math.round((Math.min(10, TOTAL_FRAMES) / TOTAL_FRAMES) * 100));
 
     // Preload the rest in chunks to avoid blocking the main thread and network
