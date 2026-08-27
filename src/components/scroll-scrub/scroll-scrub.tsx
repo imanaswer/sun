@@ -17,6 +17,7 @@ export interface ScrollScrubScene {
   clip: string;
   mobileClip?: string;
   mobileFrameCount?: number;
+  mobileFrameOffset?: number;
   mobileFramePrefix?: string;
   mobileFrameSuffix?: string;
   title: string;
@@ -82,6 +83,7 @@ interface RuntimeSegment extends Segment {
   
   isImageSequence: boolean;
   frameCount: number;
+  frameOffset: number;
   framePrefix: string;
   frameSuffix: string;
   images: HTMLImageElement[];
@@ -252,6 +254,7 @@ export function ScrollScrub({
         source: isMobile() ? (segment.mobileClip || segment.clip) : segment.clip,
         isImageSequence: isImgSeq,
         frameCount: scene?.mobileFrameCount || 0,
+        frameOffset: scene?.mobileFrameOffset || 0,
         framePrefix: scene?.mobileFramePrefix || "",
         frameSuffix: scene?.mobileFrameSuffix || "",
         images: []
@@ -356,7 +359,8 @@ export function ScrollScrub({
           const loadFrame = (i: number): Promise<HTMLImageElement> => {
             return new Promise((resolve, reject) => {
               const img = new Image();
-              img.src = `${segment.framePrefix}${(i).toString().padStart(3, "0")}${segment.frameSuffix}`;
+              const frameNumber = i + segment.frameOffset;
+              img.src = `${segment.framePrefix}${(frameNumber).toString().padStart(3, "0")}${segment.frameSuffix}`;
               img.onload = () => resolve(img);
               img.onerror = () => reject();
             });
