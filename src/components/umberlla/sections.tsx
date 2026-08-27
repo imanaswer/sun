@@ -20,6 +20,7 @@ import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
 import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
 import { Video } from "@phosphor-icons/react/dist/ssr";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -329,7 +330,8 @@ export function SiteNav() {
           &times;
         </button>
       </div>
-      <nav aria-label="Categories" className="flex-1 min-h-0 overflow-y-auto px-6 pb-24">
+      <ScrollArea className="flex-1 min-h-0">
+        <nav aria-label="Categories" className="px-6 pb-24">
         {NAV_LINKS.map((l, i) => (
           <div
             key={l.href}
@@ -377,7 +379,8 @@ export function SiteNav() {
             <p className="text-[var(--u-navy)]/40">Mysuru · Mumbai · Calicut</p>
           </div>
         </div>
-      </nav>
+        </nav>
+      </ScrollArea>
     </div>
     </>
   );
