@@ -182,7 +182,7 @@ export function SiteNav() {
   return (
     <>
     <header className={[
-      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300",
+      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300 pt-4 md:pt-0",
       navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
     ].join(" ")}>
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
@@ -292,7 +292,7 @@ export function SiteNav() {
           aria-label="Open menu"
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(true)}
-          className="flex h-11 w-11 items-center justify-center md:hidden"
+          className="flex h-11 w-11 items-center justify-center md:hidden mt-1.5"
         >
           <span className="relative block h-4 w-6">
             <span
