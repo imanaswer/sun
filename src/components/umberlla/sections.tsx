@@ -75,8 +75,9 @@ const NAV_LINKS = [
 /**
  * Renders its (heavy, e.g. WebGL) children only while the wrapper is near the
  * viewport, and unmounts them when scrolled well away — so continuous canvas
- * effects don't burn the GPU across the whole page. Keeps the fixed positioning
- * wrapper mounted so layout is stable.
+ * effects don't burn the GPU across the whole page. On phones the effects are
+ * skipped entirely (mobile GPUs can't run the fluid sims smoothly); the
+ * section keeps its own cream background, so nothing looks broken.
  */
 function LazyInView({
   children,
@@ -90,6 +91,7 @@ function LazyInView({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return; // phones: skip
     const io = new IntersectionObserver(
       ([entry]) => setShow(entry.isIntersecting),
       { rootMargin: "250px 0px" },
