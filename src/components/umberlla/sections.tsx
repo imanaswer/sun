@@ -20,7 +20,6 @@ import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
 import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
 import { Video } from "@phosphor-icons/react/dist/ssr";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -313,13 +312,13 @@ export function SiteNav() {
     {/* Full-screen mobile menu */}
     <div
       className={[
-        "fixed inset-x-0 top-0 z-[60] flex h-[100dvh] w-full flex-col bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
+        "fixed inset-x-0 top-0 z-[60] h-[100dvh] w-full bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
         menuOpen
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0",
       ].join(" ")}
     >
-      <div className="flex items-start justify-between px-6 pt-8 pb-3">
+      <div className="absolute top-0 inset-x-0 z-10 flex items-start justify-between bg-[var(--u-bone)] px-6 pb-3 pt-8">
         <img src="/assets/sun/logo.png" alt="Sun Umbrella" className="h-11 w-auto" />
         <button
           type="button"
@@ -330,8 +329,11 @@ export function SiteNav() {
           &times;
         </button>
       </div>
-      <ScrollArea type="scroll" className="flex-1 min-h-0">
-        <nav aria-label="Categories" className="px-6 pb-24">
+      <nav 
+        aria-label="Categories" 
+        className="menu-scrollbar absolute bottom-0 inset-x-0 top-[90px] overflow-y-auto overscroll-contain px-6 pb-24"
+        style={{ WebkitOverflowScrolling: "touch" }}
+      >
         {NAV_LINKS.map((l, i) => (
           <div
             key={l.href}
@@ -379,8 +381,7 @@ export function SiteNav() {
             <p className="text-[var(--u-navy)]/40">Mysuru · Mumbai · Calicut</p>
           </div>
         </div>
-        </nav>
-      </ScrollArea>
+      </nav>
     </div>
     </>
   );
