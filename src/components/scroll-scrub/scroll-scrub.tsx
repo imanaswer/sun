@@ -86,9 +86,8 @@ interface RuntimeSegment extends Segment {
   frameOffset: number;
   framePrefix: string;
   frameSuffix: string;
-  images: HTMLImageElement[];
-  canvas?: HTMLCanvasElement;
-  ctx?: CanvasRenderingContext2D;
+  imageUrls: string[];
+  imgElement?: HTMLImageElement;
 
   video?: HTMLVideoElement;
   objectUrl?: string;
@@ -257,7 +256,7 @@ export function ScrollScrub({
         frameOffset: scene?.mobileFrameOffset || 0,
         framePrefix: scene?.mobileFramePrefix || "",
         frameSuffix: scene?.mobileFrameSuffix || "",
-        images: []
+        imageUrls: []
       };
     });
 
@@ -274,14 +273,13 @@ export function ScrollScrub({
     const unloadClip = (segment: RuntimeSegment) => {
       segment.abort?.abort();
       segment.video?.remove();
-      segment.canvas?.remove();
+      segment.imgElement?.remove();
       if (segment.objectUrl) {
         URL.revokeObjectURL(segment.objectUrl);
       }
       delete segment.abort;
       delete segment.video;
-      delete segment.canvas;
-      delete segment.ctx;
+      delete segment.imgElement;
       delete segment.objectUrl;
       delete segment.loadedSource;
       segment.loading = false;
@@ -345,36 +343,38 @@ export function ScrollScrub({
 
       try {
         if (segment.isImageSequence) {
-          const canvas = document.createElement("canvas");
-          canvas.className = "scroll-scrub__video";
-          const ctx = canvas.getContext("2d", { alpha: false });
+          const img = document.createElement("img");
+          img.className = "scroll-scrub__video"; // Reuse CSS rules
+          img.alt = "";
+          // Generate all URLs
+          const urls: string[] = [];
+          for (let i = 1; i <= segment.frameCount; i++) {
+            const frameNumber = i + segment.frameOffset;
+            urls[i] = `${segment.framePrefix}${(frameNumber).toString().padStart(3, "0")}${segment.frameSuffix}`;
+          }
+          segment.imageUrls = urls;
           
-          if (!ctx) throw new Error("No 2D context");
-          
-          segment.canvas = canvas;
-          segment.ctx = ctx;
-          segment.layer.append(canvas);
+          segment.imgElement = img;
+          segment.layer.append(img);
 
-          const batch1 = 5;
-          const loadFrame = (i: number): Promise<HTMLImageElement> => {
+          // Preload first batch to start quickly
+          const batch1 = 10;
+          const loadFrame = (i: number): Promise<void> => {
             return new Promise((resolve, reject) => {
-              const img = new Image();
-              const frameNumber = i + segment.frameOffset;
-              img.src = `${segment.framePrefix}${(frameNumber).toString().padStart(3, "0")}${segment.frameSuffix}`;
-              img.onload = () => resolve(img);
-              img.onerror = () => reject();
+              const preloadImg = new Image();
+              preloadImg.src = urls[i];
+              preloadImg.onload = () => resolve();
+              preloadImg.onerror = () => reject();
             });
           };
 
           for (let i = 1; i <= Math.min(batch1, segment.frameCount); i++) {
             if (request.signal.aborted) return;
-            segment.images[i] = await loadFrame(i);
+            await loadFrame(i).catch(() => {});
           }
           
-          if (segment.images[1]) {
-            canvas.width = segment.images[1].width;
-            canvas.height = segment.images[1].height;
-            ctx.drawImage(segment.images[1], 0, 0, canvas.width, canvas.height);
+          if (urls[1]) {
+            img.src = urls[1];
             segment.layer.dataset.videoPainted = "true";
           }
 
@@ -386,7 +386,8 @@ export function ScrollScrub({
             for (let i = batch1 + 1; i <= segment.frameCount; i++) {
               if (request.signal.aborted || destroyed) break;
               try {
-                segment.images[i] = await loadFrame(i);
+                const preloadImg = new Image();
+                preloadImg.src = urls[i];
               } catch {}
               if (i % 5 === 0) await new Promise((r) => setTimeout(r, 10));
             }
@@ -526,11 +527,11 @@ export function ScrollScrub({
         }
         segment.current += (segment.target - segment.current) * 0.2;
         
-        if (segment.isImageSequence && segment.canvas && segment.ctx) {
+        if (segment.isImageSequence && segment.imgElement) {
           const targetFrame = Math.floor(clamp(segment.current, 0, 0.999) * segment.frameCount) + 1;
-          const img = segment.images[targetFrame];
-          if (img && img.complete && img.naturalHeight !== 0) {
-            segment.ctx.drawImage(img, 0, 0, segment.canvas.width, segment.canvas.height);
+          const targetUrl = segment.imageUrls[targetFrame];
+          if (targetUrl && segment.imgElement.src !== targetUrl && !segment.imgElement.src.endsWith(targetUrl)) {
+            segment.imgElement.src = targetUrl;
           }
         } else {
           const video = segment.video;
