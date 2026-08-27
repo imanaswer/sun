@@ -457,7 +457,7 @@ export function VideoReelSection() {
           ☂ Next-Gen
         </Sticker>
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <h2 className="u-fun-heading max-w-[16ch] shrink-0 text-5xl md:text-7xl !text-[#F3EFE4]">
+          <h2 className="u-fun-heading max-w-[16ch] shrink-0 text-4xl md:text-7xl !text-[#F3EFE4]">
             <TypeSequence text={"Designed for style.\nBuilt for all weather."} />
           </h2>
 
@@ -511,7 +511,7 @@ export function CollectionsSection() {
             ☂ Monsoon Essentials
           </Sticker>
           <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <h2 className="u-fun-heading whitespace-nowrap text-5xl md:text-7xl">
+            <h2 className="u-fun-heading text-4xl md:text-7xl">
               <TypeSequence text="Find your umbrella" />
             </h2>
             <TactileButton 
