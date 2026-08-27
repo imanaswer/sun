@@ -164,14 +164,11 @@ export function SiteNav() {
       window.removeEventListener("resize", check);
     };
   }, []);
-  // Lock the page + stop Lenis while the mobile menu is open.
+  // Lock the page while the mobile menu is open.
   useEffect(() => {
-    const lenis = (window as unknown as { __lenis?: { stop(): void; start(): void } }).__lenis;
     if (menuOpen) {
-      lenis?.stop();
       document.body.style.overflow = "hidden";
     } else {
-      lenis?.start();
       document.body.style.overflow = "";
     }
     return () => {
@@ -333,6 +330,7 @@ export function SiteNav() {
         aria-label="Categories" 
         className="menu-scrollbar absolute bottom-0 inset-x-0 top-[90px] overflow-y-auto overscroll-contain px-6 pb-24"
         style={{ WebkitOverflowScrolling: "touch" }}
+        data-lenis-prevent="true"
       >
         {NAV_LINKS.map((l, i) => (
           <div
