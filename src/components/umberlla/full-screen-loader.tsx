@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 
 const START_FRAME = 24;
-const END_FRAME = 255;
+// The loader only displays ~2.5s (~60 frames at 24fps) before sweeping away, so
+// only load that many frames instead of all 232 (~66MB → ~18MB). The rest of
+// the sequence is never shown.
+const END_FRAME = 113;
 const TOTAL_FRAMES = END_FRAME - START_FRAME + 1;
 const FPS = 24;
 const FRAME_DURATION = 1000 / FPS;
