@@ -930,10 +930,9 @@ export function StoreLocationsSection() {
                   ))}
                 </div>
               </div>
-              <div className="relative h-64 w-full bg-[#e5e5e5] border-t border-[var(--u-slate)]/10 overflow-hidden">
+              <div className="h-64 sm:h-72 w-full relative overflow-hidden bg-gray-200">
                 <iframe
-                  width="100%"
-                  height="100%"
+                  className="absolute top-0 left-0 w-full h-[calc(100%+48px)]"
                   frameBorder="0"
                   scrolling="no"
                   marginHeight={0}
