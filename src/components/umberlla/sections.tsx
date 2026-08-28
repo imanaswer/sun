@@ -25,8 +25,9 @@ import {
   REEL,
   RETAIL,
   TESTIMONIALS,
+  STORES,
 } from "@/sun-data";
-import { Video } from "@phosphor-icons/react/dist/ssr";
+import { Video, Phone, MapPin, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -874,6 +875,81 @@ export function RetailSection() {
                 loading="lazy"
                 className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
               />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function StoreLocationsSection() {
+  return (
+    <section
+      id="stores"
+      className="relative overflow-hidden bg-white px-5 py-24 md:px-8 md:py-32"
+    >
+      <div className="absolute inset-0 z-0 opacity-10">
+        <LiquidGrid mode="dots" lineColor="rgba(45, 212, 191, 1)" glowColor="rgba(45, 212, 191, 1)" />
+      </div>
+      
+      <div className="relative z-10 mx-auto max-w-[1400px]">
+        <div className="text-center mb-14">
+          <h2 className="u-fun-heading text-4xl md:text-5xl text-[var(--u-navy)]">
+            Visit Us In Store
+          </h2>
+          <p className="mt-4 text-xl font-medium tracking-tight text-[#2dd4bf]">
+            Find us at a store near you
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {STORES.map((store) => (
+            <div
+              key={store.city}
+              className="bg-white rounded-2xl overflow-hidden shadow-md shadow-gray-200/50 border border-[var(--u-slate)]/10 flex flex-col hover:border-[#2dd4bf]/40 transition-colors"
+            >
+              <div className="p-6 md:p-8 flex-1 flex flex-col">
+                <h3 className="flex items-center gap-2 text-xl font-semibold text-[var(--u-navy)] mb-4">
+                  <MapPin size={24} weight="regular" className="text-[#2dd4bf]" />
+                  {store.city}
+                </h3>
+                <p className="text-sm text-[var(--u-slate)] leading-relaxed mb-6 flex-1">
+                  {store.address}
+                </p>
+                <div className="space-y-2 mt-auto">
+                  {store.phones.map((phone) => (
+                    <a
+                      key={phone}
+                      href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
+                      className="flex items-center gap-2 text-sm font-medium text-[var(--u-navy)] hover:text-[#2dd4bf] transition-colors"
+                    >
+                      <Phone size={18} weight="fill" className="text-[#2dd4bf]" />
+                      {phone}
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <div className="relative h-48 w-full bg-gray-100 border-t border-[var(--u-slate)]/10">
+                <a
+                  href={store.mapLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute top-4 left-4 z-10 flex items-center gap-2 bg-white px-3 py-1.5 rounded-md text-sm font-medium text-[#0066cc] shadow-md hover:bg-gray-50 transition-colors"
+                >
+                  Open in Maps <ArrowSquareOut size={16} />
+                </a>
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(store.mapQuery)}&output=embed`}
+                  allowFullScreen
+                  loading="lazy"
+                  title={`${store.city} Store Map`}
+                ></iframe>
+              </div>
             </div>
           ))}
         </div>

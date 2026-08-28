@@ -264,3 +264,27 @@ export const RETAIL = [
   { name: "Swiggy", image: "/assets/sun/retail-swiggy.png" },
   { name: "DMart", image: "/assets/sun/retail-dmart.png" },
 ];
+
+export const STORES = [
+  {
+    city: "Mumbai",
+    address: "94/96, Princess Street, Kalbadevi, Near Marine Lines Station, Municipal Colony, Mumbai - 400002, Maharashtra",
+    phones: ["+91 83181 89499"],
+    mapQuery: "Sun Umbrellas, Princess Street, Kalbadevi, Mumbai",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrellas,+Princess+Street,+Kalbadevi,+Mumbai",
+  },
+  {
+    city: "Calicut",
+    address: "13/1011, Nagjees, Trikovil Lane, Big Bazaar, Near Railway Station, 4th Platform Entrance, Calicut - 673001, Kerala",
+    phones: ["+91 (0495) 4015431", "+91 81290 80090"],
+    mapQuery: "Sun Umbrella Private Limited, Calicut",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Calicut",
+  },
+  {
+    city: "Mysuru",
+    address: "#211, Ground Floor, JCK Industrial Park, Phase-2, Belagola Industrial Area, Mysuru - 570016, Karnataka",
+    phones: ["+91 0821 - 2514578"],
+    mapQuery: "Sun Umbrella Private Limited, Mysuru",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Mysuru",
+  },
+];

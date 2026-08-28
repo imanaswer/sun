@@ -11,6 +11,7 @@ import {
   BestsellersSection,
   SunBrandSection,
   RetailSection,
+  StoreLocationsSection,
 } from "@/components/umberlla/sections";
 import { scrollScrubTheme } from "@/scroll-scrub-scenes";
 
@@ -42,6 +43,7 @@ function Index() {
         <SunBrandSection />
         <TestimonialsSection />
         <RetailSection />
+        <StoreLocationsSection />
       </main>
       <SiteFooter />
     </div>
