@@ -564,17 +564,21 @@ export function BestsellersSection() {
   return (
     <section
       id="bestsellers"
-      className="bg-[var(--u-well)] px-5 py-24 md:px-8 md:py-32"
+      className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
     >
-      <div className="mx-auto max-w-[1400px]">
-        <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-yellow)]">
-          Trending now
-        </p>
-        <h2 className="max-w-[20ch] text-4xl font-semibold tracking-tighter text-[var(--u-bone)] md:text-5xl">
+      <div className="absolute inset-0 z-0">
+        <ElementalWater />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1400px]">
+        <Sticker tone="yellow" rotate={-4} className="mb-6">
+          ☂ Trending now
+        </Sticker>
+        <h2 className="u-fun-heading mb-14 max-w-[20ch] text-4xl md:text-7xl !text-[#F3EFE4]">
           Best sellers
         </h2>
 
-        <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {BESTSELLERS.map((p) => (
             <a
               key={p.name}
