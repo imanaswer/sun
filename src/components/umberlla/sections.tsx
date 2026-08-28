@@ -15,6 +15,7 @@ import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { Reveal } from "@/lib/reveal";
 import StickerPeeling from "@/components/sticker-peeling";
 import ElementalWater from "./../elemental-water";
+import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import FluidField from "@/components/fluid-field";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
@@ -824,22 +825,22 @@ export function SunBrandSection() {
           </p>
         </div>
 
-        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-12 pt-8 px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {BRANDS.map((brand) => (
-            <a
-              key={brand.name}
-              href={brand.href}
-              className="shrink-0 snap-center w-[80vw] sm:w-[320px] lg:w-[380px] overflow-hidden rounded-2xl group border border-[var(--u-slate)]/20 hover:border-[var(--u-yellow)] transition-colors"
-            >
-              <div className="aspect-[3/4] w-full bg-[var(--u-navy)]">
-                <img
-                  src={brand.image}
-                  alt={brand.name}
-                  loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                />
-              </div>
-            </a>
+            <CardContainer key={brand.name} className="shrink-0 snap-center">
+              <CardBody className="bg-[var(--u-navy)] relative group/card hover:shadow-2xl hover:shadow-[var(--u-navy)]/30 border border-[var(--u-slate)]/20 hover:border-[var(--u-yellow)] w-[80vw] sm:w-[320px] lg:w-[380px] h-auto rounded-2xl p-0 transition-all">
+                <CardItem translateZ="50" as="a" href={brand.href} className="w-full h-full block rounded-2xl overflow-hidden">
+                  <div className="aspect-[3/4] w-full">
+                    <img
+                      src={brand.image}
+                      alt={brand.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
+                    />
+                  </div>
+                </CardItem>
+              </CardBody>
+            </CardContainer>
           ))}
         </div>
       </div>
