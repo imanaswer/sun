@@ -944,7 +944,7 @@ export function StoreLocationsSection() {
                   height="100%"
                   frameBorder="0"
                   style={{ border: 0 }}
-                  src={`https://maps.google.com/maps?q=${encodeURIComponent(store.mapQuery)}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                  src={`https://maps.google.com/maps?width=100%25&height=600&hl=en&q=${encodeURIComponent(store.mapQuery)}&t=&z=14&ie=UTF8&iwloc=B&output=embed`}
                   allowFullScreen
                   loading="lazy"
                   title={`${store.city} Store Map`}
