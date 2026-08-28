@@ -244,26 +244,30 @@ export function SiteNav() {
                 ].join(" ")}
               >
                 {l.label}
-                <span
-                  aria-hidden="true"
-                  className="text-[0.7em] opacity-70 transition-transform duration-200 group-hover:rotate-180"
-                >
-                  &#9662;
-                </span>
+                {l.items && (
+                  <span
+                    aria-hidden="true"
+                    className="text-[0.7em] opacity-70 transition-transform duration-200 group-hover:rotate-180"
+                  >
+                    &#9662;
+                  </span>
+                )}
               </a>
-              <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
-                <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
-                  {l.items.map((s) => (
-                    <a
-                      key={s.href}
-                      href={s.href}
-                      className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
-                    >
-                      {s.label}
-                    </a>
-                  ))}
+              {l.items && (
+                <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+                  <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
+                    {l.items.map((s) => (
+                      <a
+                        key={s.href}
+                        href={s.href}
+                        className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
+                      >
+                        {s.label}
+                      </a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           ))}
         </nav>
@@ -333,18 +337,20 @@ export function SiteNav() {
                 {`0${i + 1}`}
               </span>
             </a>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {l.items.map((s) => (
-                <a
-                  key={s.href}
-                  href={s.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="u-mono rounded-full bg-[var(--u-navy)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-navy)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-navy)]"
-                >
-                  {s.label}
-                </a>
-              ))}
-            </div>
+            {l.items && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {l.items.map((s) => (
+                  <a
+                    key={s.href}
+                    href={s.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="u-mono rounded-full bg-[var(--u-navy)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-navy)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-navy)]"
+                  >
+                    {s.label}
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
