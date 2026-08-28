@@ -865,3 +865,39 @@ export function SunBrandSection() {
     </section>
   );
 }
+
+export function RetailSection() {
+  return (
+    <section
+      id="retail"
+      className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+    >
+      <div className="mx-auto max-w-[1400px]">
+        <div className="text-center mb-14">
+          <Sticker tone="navy" rotate={2} className="mb-6 mx-auto">
+            ☂ Available everywhere
+          </Sticker>
+          <h2 className="u-fun-heading text-4xl md:text-6xl text-[var(--u-navy)]">
+            Our Retail Circle
+          </h2>
+        </div>
+
+        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-8 justify-start md:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden px-4 md:px-0">
+          {RETAIL.map((retail) => (
+            <div
+              key={retail.name}
+              className="shrink-0 snap-center w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 hover:border-[var(--u-navy)]/30 transition-all shadow-sm hover:shadow-md hover:-translate-y-1"
+            >
+              <img
+                src={retail.image}
+                alt={retail.name}
+                loading="lazy"
+                className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
