@@ -818,9 +818,11 @@ export function SunBrandSection() {
     >
       <Particles
         className="absolute inset-0 z-0 pointer-events-none"
-        quantity={100}
+        quantity={200}
+        size={2.5}
+        staticity={40}
         ease={80}
-        color="#2c3a56"
+        color="#101b33"
         refresh
       />
       <div className="mx-auto max-w-[1400px] relative z-10">
