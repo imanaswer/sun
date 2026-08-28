@@ -16,6 +16,7 @@ import { Reveal } from "@/lib/reveal";
 import StickerPeeling from "@/components/sticker-peeling";
 import ElementalWater from "./../elemental-water";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
+import { Particles } from "@/components/ui/particles";
 import FluidField from "@/components/fluid-field";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
@@ -813,9 +814,16 @@ export function SunBrandSection() {
   return (
     <section
       id="sun-brand"
-      className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+      className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden relative"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <Particles
+        className="absolute inset-0 z-0 pointer-events-none"
+        quantity={100}
+        ease={80}
+        color="#2c3a56"
+        refresh
+      />
+      <div className="mx-auto max-w-[1400px] relative z-10">
         <div className="text-center mb-14">
           <h2 className="u-fun-heading text-4xl md:text-6xl text-[var(--u-navy)]">
             Sun <span className="text-[var(--u-yellow)]">X</span> Your Brand
