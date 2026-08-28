@@ -272,6 +272,8 @@ export const STORES = [
     phones: ["+91 83181 89499"],
     mapQuery: "Sun Umbrellas, Princess Street, Kalbadevi, Mumbai",
     mapLink: "https://maps.google.com/?q=Sun+Umbrellas,+Princess+Street,+Kalbadevi,+Mumbai",
+    marker: "18.9495,72.8264",
+    bbox: "72.8214,18.9445,72.8314,18.9545",
   },
   {
     city: "Calicut",
@@ -279,6 +281,8 @@ export const STORES = [
     phones: ["+91 (0495) 4015431", "+91 81290 80090"],
     mapQuery: "Sun Umbrella Private Limited, Calicut",
     mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Calicut",
+    marker: "11.2588,75.7804",
+    bbox: "75.7754,11.2538,75.7854,11.2638",
   },
   {
     city: "Mysuru",
@@ -286,5 +290,7 @@ export const STORES = [
     phones: ["+91 0821 - 2514578"],
     mapQuery: "Sun Umbrella Private Limited, Mysuru",
     mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Mysuru",
+    marker: "12.355,76.621",
+    bbox: "76.616,12.350,76.626,12.360",
   },
 ];

@@ -930,32 +930,20 @@ export function StoreLocationsSection() {
                   ))}
                 </div>
               </div>
-              <div className="relative h-48 w-full bg-gray-100 border-t border-[var(--u-slate)]/10 overflow-hidden group/map">
-                <a
-                  href={store.mapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute inset-0 z-10 flex flex-col items-center justify-center bg-[var(--u-navy)]/20 opacity-0 group-hover/map:opacity-100 transition-opacity duration-300"
-                >
-                  <div className="bg-white px-4 py-2 rounded-full text-sm font-semibold text-[var(--u-navy)] flex items-center gap-2 shadow-lg translate-y-4 group-hover/map:translate-y-0 transition-transform duration-300">
-                    Open in Maps <ArrowSquareOut size={16} />
-                  </div>
-                </a>
-                <img
-                  src="/assets/sunnxt/map_placeholder.jpg"
-                  alt={`Map of ${store.city}`}
-                  className="w-full h-full object-cover opacity-80 group-hover/map:scale-105 transition-all duration-500 pointer-events-none"
-                  loading="lazy"
-                />
+              <div className="relative h-64 w-full bg-[#e5e5e5] border-t border-[var(--u-slate)]/10 overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  frameBorder="0"
+                  style={{ border: 0 }}
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(store.bbox)}&layer=mapnik&marker=${encodeURIComponent(store.marker)}`}
+                  title={`Map to Sun Umbrellas, ${store.city}`}
+                ></iframe>
                 
-                <a
-                  href={store.mapLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-white px-3 py-1.5 rounded-md text-sm font-medium text-[#0066cc] shadow-md hover:bg-gray-50 transition-colors lg:hidden"
-                >
-                  Open in Maps <ArrowSquareOut size={16} />
-                </a>
+                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2 bg-white px-3 py-2 rounded-md shadow-md border border-gray-100 pointer-events-none">
+                  <MapPin size={18} weight="fill" className="text-[#2dd4bf]" />
+                  <span className="text-sm font-semibold text-[var(--u-navy)]">{store.city}</span>
+                </div>
               </div>
             </div>
           ))}
