@@ -17,6 +17,7 @@ import StickerPeeling from "@/components/sticker-peeling";
 import ElementalWater from "./../elemental-water";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { Particles } from "@/components/ui/particles";
+import { ProductFocusCarousel } from "@/components/ui/product-focus-carousel";
 import FluidField from "@/components/fluid-field";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
@@ -835,23 +836,20 @@ export function SunBrandSection() {
           </p>
         </div>
 
-        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-12 pt-8 px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {BRANDS.map((brand) => (
-            <CardContainer key={brand.name} className="shrink-0 snap-center">
-              <CardBody className="bg-[var(--u-navy)] relative group/card hover:shadow-2xl hover:shadow-[var(--u-navy)]/30 border border-[var(--u-slate)]/20 hover:border-[var(--u-yellow)] w-[80vw] sm:w-[320px] lg:w-[380px] h-auto rounded-2xl p-0 transition-all">
-                <CardItem translateZ="50" as="a" href={brand.href} className="w-full h-full block rounded-2xl overflow-hidden">
-                  <div className="aspect-[3/4] w-full">
-                    <img
-                      src={brand.image}
-                      alt={brand.name}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-[1.03]"
-                    />
-                  </div>
-                </CardItem>
-              </CardBody>
-            </CardContainer>
-          ))}
+        <div className="w-full h-[550px] relative mt-12 -mx-5 md:-mx-8 lg:mx-0 lg:w-auto">
+          <ProductFocusCarousel 
+            products={BRANDS.map((brand, i) => ({
+              id: i,
+              title: brand.name,
+              subtitle: "Sun Umbrella",
+              buttonLabel: "View Collection",
+              link: brand.href,
+              image: { src: brand.image, alt: brand.name }
+            }))} 
+            backgroundColor="transparent"
+            autoplay={true}
+            autoplaySpeed={3500}
+          />
         </div>
       </div>
     </section>
