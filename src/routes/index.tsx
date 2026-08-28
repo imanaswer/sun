@@ -8,6 +8,7 @@ import {
   SiteNav,
   TestimonialsSection,
   VideoReelSection,
+  BestsellersSection,
 } from "@/components/umberlla/sections";
 import { scrollScrubTheme } from "@/scroll-scrub-scenes";
 
@@ -27,6 +28,7 @@ function Index() {
         {/* Marks the end of the hero film; the nav flips to its white state here. */}
         <div id="hero-end" aria-hidden="true" />
         <VideoReelSection />
+        <BestsellersSection />
         <CollectionsSection />
         <TestimonialsSection />
       </main>

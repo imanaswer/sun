@@ -568,10 +568,10 @@ export function BestsellersSection() {
     >
       <div className="mx-auto max-w-[1400px]">
         <p className="u-mono mb-5 text-xs uppercase tracking-[0.28em] text-[var(--u-yellow)]">
-          Bestsellers you&rsquo;ll love
+          Trending now
         </p>
         <h2 className="max-w-[20ch] text-4xl font-semibold tracking-tighter text-[var(--u-bone)] md:text-5xl">
-          Carried across India
+          Best sellers
         </h2>
 
         <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -581,7 +581,7 @@ export function BestsellersSection() {
               href={p.href}
               className="group flex flex-col overflow-hidden border border-[var(--u-slate)]/70 bg-[var(--u-navy)] transition-colors hover:border-[var(--u-yellow)]"
             >
-              <div className="aspect-square w-full overflow-hidden">
+              <div className="aspect-square w-full overflow-hidden bg-white">
                 <img
                   src={p.image}
                   alt={p.name}
@@ -596,19 +596,33 @@ export function BestsellersSection() {
                 <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-bone)]">
                   {p.name}
                 </h3>
-                <div className="mt-4 flex items-baseline justify-between">
-                  <span className="u-mono text-sm text-[var(--u-yellow)]">
-                    {p.price}
-                  </span>
-                  <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
-                    View
-                    <span
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    >
-                      &rarr;
+                <div className="mt-4 flex items-end justify-between">
+                  <div className="flex flex-col">
+                    <span className="u-mono text-sm text-[var(--u-yellow)]">
+                      {p.price}
                     </span>
-                  </span>
+                    {p.originalPrice && (
+                      <span className="u-mono text-[10px] text-[var(--u-muted)] line-through mt-0.5">
+                        {p.originalPrice}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end">
+                    {p.discount && (
+                      <span className="u-mono text-[10px] font-bold text-[#ff4d4f] mb-1">
+                        {p.discount}
+                      </span>
+                    )}
+                    <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
+                      View
+                      <span
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1"
+                      >
+                        &rarr;
+                      </span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </a>

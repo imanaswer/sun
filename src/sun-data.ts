@@ -20,6 +20,8 @@ export interface Product {
   name: string;
   tag: string;
   price: string;
+  originalPrice?: string;
+  discount?: string;
   image: string;
   href: string;
 }
@@ -77,32 +79,40 @@ export const COLLECTIONS: Collection[] = [
 
 export const BESTSELLERS: Product[] = [
   {
-    name: "Walking Stick 2-in-1",
-    tag: "Non-Fold",
-    price: "₹1,555",
-    image: "/assets/sun/prod-walkingstick.png",
-    href: `${SHOP}/collections/non-fold-black-umbrellas`,
+    name: "Jet - Auto Open 3-Fold Umbrella, UV protective",
+    tag: "3-Fold · UV",
+    price: "Rs. 450.00",
+    originalPrice: "Rs. 950.00",
+    discount: "53% OFF",
+    image: "/assets/trending/jet.jpg",
+    href: `${SHOP}/products/jet-auto-open-3-fold-umbrella-uv-protective`,
   },
   {
-    name: "Reporter — Rose Wood, Windproof",
-    tag: "Non-Fold · UV",
-    price: "₹665",
-    image: "/assets/sun/prod-reporter-black.png",
-    href: `${SHOP}/collections/non-fold-black-umbrellas`,
+    name: "Edward - UV Protective 3 Fold Umbrella",
+    tag: "3-Fold · UV",
+    price: "Rs. 475.00",
+    originalPrice: "Rs. 699.00",
+    discount: "32% OFF",
+    image: "/assets/trending/edward.jpg",
+    href: `${SHOP}/products/edward-uv-protective-3-fold-umbrella`,
   },
   {
-    name: "Storm Breaker — Double Rib",
-    tag: "3-Fold · Auto",
-    price: "₹2,530",
-    image: "/assets/sun/blue-droplet.jpg",
-    href: `${SHOP}/collections/3-fold-black-umbrellas`,
+    name: "Nirali - UV Protective 3 Fold Umbrella",
+    tag: "3-Fold · UV",
+    price: "Rs. 435.00",
+    originalPrice: "Rs. 799.00",
+    discount: "46% OFF",
+    image: "/assets/trending/nirali.jpg",
+    href: `${SHOP}/products/nirali-uv-protective-3-fold-umbrella`,
   },
   {
-    name: "Topline 27 — Auto UV",
-    tag: "2-Fold · Auto",
-    price: "₹790",
-    image: "/assets/sun/prod-reporter-silver.png",
-    href: `${SHOP}/collections/2-fold-umbrella-black-catagory`,
+    name: "Madonna - Jumbo Size - 3 Fold - Auto Open",
+    tag: "3-Fold · Jumbo",
+    price: "Rs. 765.00",
+    originalPrice: "Rs. 1,299.00",
+    discount: "41% OFF",
+    image: "/assets/trending/madonna.jpg",
+    href: `${SHOP}/products/madonna-jumbo-size-3-fold-auto-open-uv-protective-umbrella`,
   },
 ];
 
