@@ -935,9 +935,13 @@ export function StoreLocationsSection() {
                   width="100%"
                   height="100%"
                   frameBorder="0"
+                  scrolling="no"
+                  marginHeight={0}
+                  marginWidth={0}
                   style={{ border: 0 }}
-                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${encodeURIComponent(store.bbox)}&layer=mapnik&marker=${encodeURIComponent(store.marker)}`}
+                  src={`https://www.openstreetmap.org/export/embed.html?bbox=${store.bbox.replace(/,/g, '%2C')}&layer=mapnik&marker=${store.marker.replace(/,/g, '%2C')}`}
                   title={`Map to Sun Umbrellas, ${store.city}`}
+                  referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
                 
                 <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2 bg-white px-3 py-2 rounded-md shadow-md border border-gray-100 pointer-events-none">
