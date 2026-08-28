@@ -875,32 +875,34 @@ export function RetailSection() {
         <div className="group relative flex overflow-hidden pb-8 pt-4 gap-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6">
             {RETAIL.map((retail) => (
-              <div
-                key={retail.name}
-                className="shrink-0 w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 hover:border-[var(--u-navy)]/30 transition-all shadow-sm hover:shadow-md hover:-translate-y-1"
-              >
-                <img
-                  src={retail.image}
-                  alt={retail.name}
-                  loading="lazy"
-                  className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
-                />
-              </div>
+              <CardContainer key={retail.name} className="inter-var shrink-0">
+                <CardBody className="w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 group-hover/card:border-[var(--u-navy)]/30 transition-all shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 relative group/card">
+                  <CardItem translateZ="20" className="w-full h-full flex items-center justify-center pointer-events-none">
+                    <img
+                      src={retail.image}
+                      alt={retail.name}
+                      loading="lazy"
+                      className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
+                    />
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
             ))}
           </div>
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6" aria-hidden="true">
             {RETAIL.map((retail) => (
-              <div
-                key={`${retail.name}-dup`}
-                className="shrink-0 w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 hover:border-[var(--u-navy)]/30 transition-all shadow-sm hover:shadow-md hover:-translate-y-1"
-              >
-                <img
-                  src={retail.image}
-                  alt={retail.name}
-                  loading="lazy"
-                  className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
-                />
-              </div>
+              <CardContainer key={`${retail.name}-dup`} className="inter-var shrink-0">
+                <CardBody className="w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 group-hover/card:border-[var(--u-navy)]/30 transition-all shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 relative group/card">
+                  <CardItem translateZ="20" className="w-full h-full flex items-center justify-center pointer-events-none">
+                    <img
+                      src={retail.image}
+                      alt={retail.name}
+                      loading="lazy"
+                      className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
+                    />
+                  </CardItem>
+                </CardBody>
+              </CardContainer>
             ))}
           </div>
         </div>
