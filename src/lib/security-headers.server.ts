@@ -16,7 +16,7 @@ export function applySecurityHeaders(response: Response): Response {
       // media-src must allow blob:.
       "img-src 'self' data: https:; media-src 'self' https: blob:; " +
       "connect-src 'self' https:; " +
-      "frame-src 'self' https://auth.higgsfield.app https://auth.higgsfield-dev.app; " +
+      "frame-src 'self' https://auth.higgsfield.app https://auth.higgsfield-dev.app https://www.openstreetmap.org; " +
       "base-uri 'self'; form-action 'self'",
   );
   headers.set("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload");
