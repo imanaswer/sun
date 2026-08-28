@@ -436,13 +436,9 @@ export function VideoReelSection() {
   return (
     <section
       id="next-gen"
-      className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
+      className="relative z-10 px-5 py-24 md:px-8 md:py-32"
     >
-      <div className="absolute inset-0 z-0">
-        <ElementalWater />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-[1400px]">
+      <div className="mx-auto max-w-[1400px]">
         <Sticker tone="yellow" rotate={-5} className="mb-6">
           ☂ Next-Gen
         </Sticker>
@@ -564,13 +560,9 @@ export function BestsellersSection() {
   return (
     <section
       id="bestsellers"
-      className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
+      className="relative z-10 px-5 pt-0 pb-24 md:px-8 md:pb-32 md:pt-12"
     >
-      <div className="absolute inset-0 z-0">
-        <ElementalWater />
-      </div>
-
-      <div className="relative z-10 mx-auto max-w-[1400px]">
+      <div className="mx-auto max-w-[1400px]">
         <Sticker tone="yellow" rotate={-4} className="mb-6">
           ☂ Trending now
         </Sticker>

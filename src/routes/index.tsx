@@ -12,6 +12,8 @@ import {
 } from "@/components/umberlla/sections";
 import { scrollScrubTheme } from "@/scroll-scrub-scenes";
 
+import ElementalWater from "@/components/elemental-water";
+
 export const Route = createFileRoute("/")({
   component: Index,
 });
@@ -27,8 +29,13 @@ function Index() {
         <ScrollScrub scenes={journeyScenes} theme={scrollScrubTheme} />
         {/* Marks the end of the hero film; the nav flips to its white state here. */}
         <div id="hero-end" aria-hidden="true" />
-        <VideoReelSection />
-        <BestsellersSection />
+        <div className="u-section-cream relative overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <ElementalWater />
+          </div>
+          <VideoReelSection />
+          <BestsellersSection />
+        </div>
         <CollectionsSection />
         <TestimonialsSection />
       </main>
