@@ -28,52 +28,36 @@ const SHOP = "https://sunumbrella.in";
 const SU = "https://www.sunumbrellas.in";
 const NAV_LINKS = [
   {
-    label: "Gents",
-    href: `${SU}/GENTS/1/products`,
+    label: "Non-Fold",
+    href: "#",
     items: [
-      { label: "2 Fold", href: `${SU}/GENTS/1/frames/9` },
-      { label: "3 Fold", href: `${SU}/GENTS/1/frames/10` },
-      { label: "Stick & Non-Foldable", href: `${SU}/GENTS/1/frames/12` },
+      { label: "Black", href: "https://sunumbrella.in/collections/non-fold-black-umbrellas" },
+      { label: "Colors", href: "https://sunumbrella.in/collections/non-fold-color-umbrellas" },
     ],
   },
   {
-    label: "Ladies",
-    href: `${SU}/LADIES/2/products`,
+    label: "2 Fold",
+    href: "#",
     items: [
-      { label: "2 Fold", href: `${SU}/LADIES/2/frames/9` },
-      { label: "3 Fold", href: `${SU}/LADIES/2/frames/10` },
-      { label: "Stick & Non-Foldable", href: `${SU}/LADIES/2/frames/12` },
+      { label: "Black", href: "https://sunumbrella.in/collections/2-fold-umbrella-black-catagory" },
+      { label: "Colors", href: "https://sunumbrella.in/collections/2-fold-colors-umbrella" },
+    ],
+  },
+  {
+    label: "3 Fold",
+    href: "#",
+    items: [
+      { label: "Black", href: "https://sunumbrella.in/collections/2-fold-colors-umbrella" },
+      { label: "Colors", href: "https://sunumbrella.in/collections/3-fols-colour-umbrelllas" },
     ],
   },
   {
     label: "Kids",
-    href: `${SU}/KIDS/3/products`,
-    items: [{ label: "Stick & Non-Foldable", href: `${SU}/KIDS/3/frames/12` }],
+    href: "https://sunumbrella.in/collections/kids-umbrellas-tuesday",
   },
   {
     label: "Promotional",
-    href: `${SU}/PROMOTIONAL/4/products`,
-    items: [
-      { label: "2 Fold", href: `${SU}/PROMOTIONAL/4/frames/9` },
-      { label: "3 Fold", href: `${SU}/PROMOTIONAL/4/frames/10` },
-      { label: "Stick & Non-Foldable", href: `${SU}/PROMOTIONAL/4/frames/12` },
-    ],
-  },
-  {
-    label: "Premium",
-    href: `${SU}/PREMIUM/5/products`,
-    items: [
-      { label: "3 Fold", href: `${SU}/PREMIUM/5/frames/10` },
-      { label: "Stick & Non-Foldable", href: `${SU}/PREMIUM/5/frames/12` },
-    ],
-  },
-  {
-    label: "Exclusive",
-    href: `${SU}/EXCLUSIVE/7/products`,
-    items: [
-      { label: "3 Fold", href: `${SU}/EXCLUSIVE/7/frames/10` },
-      { label: "Stick & Non-Foldable", href: `${SU}/EXCLUSIVE/7/frames/12` },
-    ],
+    href: "https://sunumbrella.in/collections/promotional-umbrella",
   },
 ];
 
