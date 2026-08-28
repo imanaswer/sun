@@ -18,7 +18,14 @@ import ElementalWater from "./../elemental-water";
 import FluidField from "@/components/fluid-field";
 import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
-import { BESTSELLERS, COLLECTIONS, REEL, RETAIL, TESTIMONIALS } from "@/sun-data";
+import {
+  BESTSELLERS,
+  BRANDS,
+  COLLECTIONS,
+  REEL,
+  RETAIL,
+  TESTIMONIALS,
+} from "@/sun-data";
 import { Video } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
@@ -817,5 +824,44 @@ export function SiteFooter() {
         </p>
       </div>
     </footer>
+  );
+}
+
+export function SunBrandSection() {
+  return (
+    <section
+      id="sun-brand"
+      className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+    >
+      <div className="mx-auto max-w-[1400px]">
+        <div className="text-center mb-14">
+          <h2 className="u-fun-heading text-4xl md:text-6xl text-[var(--u-navy)]">
+            Sun <span className="text-[var(--u-yellow)]">X</span> Your Brand
+          </h2>
+          <p className="mt-4 text-xl font-medium tracking-tight text-[var(--u-slate)]">
+            Perfect for Branding That Stands Out
+          </p>
+        </div>
+
+        <div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {BRANDS.map((brand) => (
+            <a
+              key={brand.name}
+              href={brand.href}
+              className="shrink-0 snap-center w-[80vw] sm:w-[320px] lg:w-[380px] overflow-hidden rounded-2xl group border border-[var(--u-slate)]/20 hover:border-[var(--u-yellow)] transition-colors"
+            >
+              <div className="aspect-[3/4] w-full bg-[var(--u-navy)]">
+                <img
+                  src={brand.image}
+                  alt={brand.name}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                />
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }

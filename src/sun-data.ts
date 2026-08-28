@@ -116,6 +116,44 @@ export const BESTSELLERS: Product[] = [
   },
 ];
 
+export const BRANDS = [
+  {
+    name: "Bosch",
+    image: "/assets/sunnxt/bosh.webp",
+    href: "https://sunumbrella.in/products/bosch",
+  },
+  {
+    name: "Antara",
+    image: "/assets/sunnxt/antara.webp",
+    href: "https://sunumbrella.in/products/antara",
+  },
+  {
+    name: "Mercedes Benz",
+    image: "/assets/sunnxt/benz.webp",
+    href: "https://sunumbrella.in/products/mercedes-benz",
+  },
+  {
+    name: "Shell",
+    image: "/assets/sunnxt/Shell.webp",
+    href: "https://sunumbrella.in/products/shell-umbrella",
+  },
+  {
+    name: "Crocs",
+    image: "/assets/sunnxt/crocs.webp",
+    href: "https://sunumbrella.in/products/crocs-umbrella",
+  },
+  {
+    name: "Sula",
+    image: "/assets/sunnxt/sula.webp",
+    href: "https://sunumbrella.in/products/sula-wines-outdoor-umbrella",
+  },
+  {
+    name: "Tata",
+    image: "/assets/sunnxt/Tata.webp",
+    href: "https://sunumbrella.in/products/tata-capital",
+  },
+];
+
 export interface Reel {
   src: string;
   poster: string;
