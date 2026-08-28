@@ -722,7 +722,7 @@ export function SiteFooter() {
         <LiquidGrid mode="dots" lineColor="rgba(11, 19, 36, 0.05)" glowColor="rgba(11, 19, 36, 0.15)" />
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-4 md:gap-10">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 md:gap-10">
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Shop
@@ -782,26 +782,6 @@ export function SiteFooter() {
               </li>
               <li className="text-[var(--u-navy)]/70">Mysuru · Mumbai · Calicut</li>
             </ul>
-          </div>
-          <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
-              Our retail circle
-            </h2>
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {RETAIL.map((r) => (
-                <div
-                  key={r.name}
-                  className="relative flex h-9 items-center justify-center overflow-hidden rounded-lg border border-[var(--u-navy)]/12 bg-white"
-                >
-                  <img
-                    src={r.image}
-                    alt={r.name}
-                    loading="lazy"
-                    className="h-4 w-auto max-w-[80%] object-contain"
-                  />
-                </div>
-              ))}
-            </div>
           </div>
         </div>
         <div className="relative mt-20 inline-block w-full">
