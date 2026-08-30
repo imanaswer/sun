@@ -20,6 +20,8 @@ export interface Product {
   name: string;
   tag: string;
   price: string;
+  originalPrice?: string;
+  discount?: string;
   image: string;
   href: string;
 }
@@ -77,32 +79,78 @@ export const COLLECTIONS: Collection[] = [
 
 export const BESTSELLERS: Product[] = [
   {
-    name: "Walking Stick 2-in-1",
-    tag: "Non-Fold",
-    price: "₹1,555",
-    image: "/assets/sun/prod-walkingstick.png",
-    href: `${SHOP}/collections/non-fold-black-umbrellas`,
+    name: "Jet - Auto Open 3-Fold Umbrella, UV protective",
+    tag: "3-Fold · UV",
+    price: "Rs. 450.00",
+    originalPrice: "Rs. 950.00",
+    discount: "53% OFF",
+    image: "/assets/trending/jet.jpg",
+    href: `${SHOP}/products/jet-auto-open-3-fold-umbrella-uv-protective`,
   },
   {
-    name: "Reporter — Rose Wood, Windproof",
-    tag: "Non-Fold · UV",
-    price: "₹665",
-    image: "/assets/sun/prod-reporter-black.png",
-    href: `${SHOP}/collections/non-fold-black-umbrellas`,
+    name: "Edward - UV Protective 3 Fold Umbrella",
+    tag: "3-Fold · UV",
+    price: "Rs. 475.00",
+    originalPrice: "Rs. 699.00",
+    discount: "32% OFF",
+    image: "/assets/trending/edward.jpg",
+    href: `${SHOP}/products/edward-uv-protective-3-fold-umbrella`,
   },
   {
-    name: "Storm Breaker — Double Rib",
-    tag: "3-Fold · Auto",
-    price: "₹2,530",
-    image: "/assets/sun/blue-droplet.jpg",
-    href: `${SHOP}/collections/3-fold-black-umbrellas`,
+    name: "Nirali - UV Protective 3 Fold Umbrella",
+    tag: "3-Fold · UV",
+    price: "Rs. 435.00",
+    originalPrice: "Rs. 799.00",
+    discount: "46% OFF",
+    image: "/assets/trending/nirali.jpg",
+    href: `${SHOP}/products/nirali-uv-protective-3-fold-umbrella`,
   },
   {
-    name: "Topline 27 — Auto UV",
-    tag: "2-Fold · Auto",
-    price: "₹790",
-    image: "/assets/sun/prod-reporter-silver.png",
-    href: `${SHOP}/collections/2-fold-umbrella-black-catagory`,
+    name: "Madonna - Jumbo Size - 3 Fold - Auto Open",
+    tag: "3-Fold · Jumbo",
+    price: "Rs. 765.00",
+    originalPrice: "Rs. 1,299.00",
+    discount: "41% OFF",
+    image: "/assets/trending/madonna.jpg",
+    href: `${SHOP}/products/madonna-jumbo-size-3-fold-auto-open-uv-protective-umbrella`,
+  },
+];
+
+export const BRANDS = [
+  {
+    name: "Bosch",
+    image: "/assets/sunnxt/bosh.webp",
+    href: "https://sunumbrella.in/products/bosch",
+  },
+  {
+    name: "Antara",
+    image: "/assets/sunnxt/antara.webp",
+    href: "https://sunumbrella.in/products/antara",
+  },
+  {
+    name: "Mercedes Benz",
+    image: "/assets/sunnxt/benz.webp",
+    href: "https://sunumbrella.in/products/mercedes-benz",
+  },
+  {
+    name: "Shell",
+    image: "/assets/sunnxt/Shell.webp",
+    href: "https://sunumbrella.in/products/shell-umbrella",
+  },
+  {
+    name: "Crocs",
+    image: "/assets/sunnxt/crocs.webp",
+    href: "https://sunumbrella.in/products/crocs-umbrella",
+  },
+  {
+    name: "Sula",
+    image: "/assets/sunnxt/sula.webp",
+    href: "https://sunumbrella.in/products/sula-wines-outdoor-umbrella",
+  },
+  {
+    name: "Tata",
+    image: "/assets/sunnxt/Tata.webp",
+    href: "https://sunumbrella.in/products/tata-capital",
   },
 ];
 
@@ -215,4 +263,34 @@ export const RETAIL = [
   { name: "Blinkit", image: "/assets/sun/retail-blinkit.png" },
   { name: "Swiggy", image: "/assets/sun/retail-swiggy.png" },
   { name: "DMart", image: "/assets/sun/retail-dmart.png" },
+];
+
+export const STORES = [
+  {
+    city: "Mumbai",
+    address: "94/96, Princess Street, Kalbadevi, Near Marine Lines Station, Municipal Colony, Mumbai - 400002, Maharashtra",
+    phones: ["+91 83181 89499"],
+    mapQuery: "Sun Umbrellas, Princess Street, Kalbadevi, Mumbai",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrellas,+Princess+Street,+Kalbadevi,+Mumbai",
+    marker: "18.9495,72.8264",
+    bbox: "72.8214,18.9445,72.8314,18.9545",
+  },
+  {
+    city: "Calicut",
+    address: "13/1011, Nagjees, Trikovil Lane, Big Bazaar, Near Railway Station, 4th Platform Entrance, Calicut - 673001, Kerala",
+    phones: ["+91 (0495) 4015431", "+91 81290 80090"],
+    mapQuery: "Sun Umbrella Private Limited, Calicut",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Calicut",
+    marker: "11.2588,75.7804",
+    bbox: "75.7754,11.2538,75.7854,11.2638",
+  },
+  {
+    city: "Mysuru",
+    address: "#211, Ground Floor, JCK Industrial Park, Phase-2, Belagola Industrial Area, Mysuru - 570016, Karnataka",
+    phones: ["+91 0821 - 2514578"],
+    mapQuery: "Sun Umbrella Private Limited, Mysuru",
+    mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Mysuru",
+    marker: "12.355,76.621",
+    bbox: "76.616,12.350,76.626,12.360",
+  },
 ];

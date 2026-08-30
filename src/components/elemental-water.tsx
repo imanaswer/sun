@@ -686,6 +686,11 @@ function OriginkitBase_ElementalWater(props: Props) {
         const track = (e: PointerEvent) => {
             const r = canvas.getBoundingClientRect()
             if (r.width <= 0 || r.height <= 0) return
+            // Only process ripples if the pointer is actually over the canvas area
+            if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+                ptrRef.current.on = 0
+                return
+            }
             const ptr = ptrRef.current
             const x = clampN((e.clientX - r.left) / r.width, 0, 1)
             const y = clampN(1 - (e.clientY - r.top) / r.height, 0, 1)
@@ -697,8 +702,10 @@ function OriginkitBase_ElementalWater(props: Props) {
             // field saturates into white noise.
             const sped = Math.hypot(dx, dy) / Math.max(1 / 240, (performance.now() - ptr.t) / 1000)
             ptr.t = performance.now()
-            if (sped > 0.05 && drops.length < 6) {
-                drops.push({ x, y, s: Math.min(sped * 0.14, 0.55) * (vRef.current.hover as number) })
+            // Support click/drag drops by checking e.buttons or just rely on speed
+            const isClickOrDrag = e.type === "pointerdown" || (e.type === "pointermove" && e.buttons > 0);
+            if ((sped > 0.05 || isClickOrDrag) && drops.length < 6) {
+                drops.push({ x, y, s: Math.min(sped * 0.14 + (isClickOrDrag ? 0.2 : 0), 0.55) * (vRef.current.hover as number) })
             }
             ptr.lastX = x
             ptr.lastY = y
@@ -710,18 +717,20 @@ function OriginkitBase_ElementalWater(props: Props) {
             ptrRef.current.on = 0
         }
 
-        canvas.addEventListener("pointermove", track)
-        canvas.addEventListener("pointerenter", track)
-        canvas.addEventListener("pointerleave", onLeave)
+        window.addEventListener("pointermove", track)
+        window.addEventListener("pointerdown", track)
+        window.addEventListener("pointerup", onLeave)
+        window.addEventListener("pointercancel", onLeave)
         raf = requestAnimationFrame(render)
 
         // Never loseContext(): getContext returns the same context per canvas, so
         // StrictMode's mount -> cleanup -> mount would reuse a force-lost one.
         return () => {
             cancelAnimationFrame(raf)
-            canvas.removeEventListener("pointermove", track)
-            canvas.removeEventListener("pointerenter", track)
-            canvas.removeEventListener("pointerleave", onLeave)
+            window.removeEventListener("pointermove", track)
+            window.removeEventListener("pointerdown", track)
+            window.removeEventListener("pointerup", onLeave)
+            window.removeEventListener("pointercancel", onLeave)
         }
     }, [])
 
@@ -731,8 +740,6 @@ function OriginkitBase_ElementalWater(props: Props) {
                 position: "relative",
                 overflow: "hidden",
                 background,
-                minWidth: 1200,
-                minHeight: 800,
                 width: typeof width === "number" && width > 0 ? width : "100%",
                 height: typeof height === "number" && height > 0 ? height : "100%",
                 ...style,

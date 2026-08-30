@@ -93,7 +93,7 @@ export function WaveTransition() {
     let playing = false;
 
     const play = (dir: "down" | "up") => {
-      if (playing || reduced) return;
+      if (playing) return;
       playing = true;
       const lenis = getLenis();
       lenis?.stop();
@@ -130,11 +130,17 @@ export function WaveTransition() {
       tl.call(
         () => {
           const l = getLenis();
-          if (!l) return;
           const heroEndAbs = sentinel.getBoundingClientRect().top + window.scrollY;
           const target =
             dir === "down" ? heroEndAbs : heroEndAbs - window.innerHeight;
-          l.scrollTo(Math.max(0, target), { immediate: true, force: true });
+          const targetScroll = Math.max(0, target);
+          if (l) {
+            l.scrollTo(targetScroll, { immediate: true, force: true });
+          } else {
+            // iOS Safari throws a TypeError for behavior: "instant". 
+            // window.scrollTo(x, y) is natively instant across all browsers.
+            window.scrollTo(0, targetScroll);
+          }
         },
         [],
         0.9,

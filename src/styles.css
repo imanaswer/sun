@@ -185,3 +185,14 @@
     border-color: var(--hf-color-border-default);
   }
 }
+
+.menu-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.menu-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.menu-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 27, 51, 0.2);
+  border-radius: 4px;
+}

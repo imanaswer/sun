@@ -485,3 +485,16 @@
     transform: none !important;
   }
 }
+
+@keyframes u-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - 1.5rem)); }
+}
+
+.animate-u-marquee {
+  animation: u-marquee 35s linear infinite;
+}
+
+.group:hover .animate-u-marquee {
+  animation-play-state: paused;
+}

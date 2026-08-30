@@ -230,8 +230,8 @@ export function SettingsRail({
 }: SettingsRailProps) {
   return (
     <aside
-      className={card(
-        { surface: "solid", elevation: "raised" },
+      className={cn(
+        card({ surface: "solid" }),
         "m-2.5 hidden h-[calc(100%_-_20px)] w-85.5 shrink-0 flex-col gap-4 overflow-y-auto border-q-thin border-q-border-subtle p-3 lg:flex [&>*]:shrink-0",
         className,
       )}

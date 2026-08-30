@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
+import ScrollHighlight from "@/components/umberlla/fluid-text";
+import { TypeSequence } from "@/components/umberlla/type-sequence";
 
 import "./scroll-scrub.css";
 
@@ -14,6 +16,10 @@ export interface ScrollScrubScene {
   mobilePoster?: string;
   clip: string;
   mobileClip?: string;
+  mobileFrameCount?: number;
+  mobileFrameOffset?: number;
+  mobileFramePrefix?: string;
+  mobileFrameSuffix?: string;
   title: string;
   body: string;
   kicker?: string;
@@ -71,20 +77,32 @@ interface Segment {
 }
 
 interface RuntimeSegment extends Segment {
-  band: HTMLElement;
-  layer: HTMLElement;
-  start: number;
-  end: number;
-  current: number;
-  target: number;
-  visible: boolean;
-  loading: boolean;
-  ready: boolean;
-  failed: boolean;
-  loadedSource?: string;
+  id: string;
+  source: string;
+  posterSource: string;
+  
+  isImageSequence: boolean;
+  frameCount: number;
+  frameOffset: number;
+  framePrefix: string;
+  frameSuffix: string;
+  imageUrls: string[];
+  imgElement?: HTMLImageElement;
+
   video?: HTMLVideoElement;
   objectUrl?: string;
+  layer: HTMLElement;
+  band: HTMLElement;
   abort?: AbortController;
+  start: number;
+  end: number;
+  target: number;
+  current: number;
+  visible: boolean;
+  ready: boolean;
+  loading: boolean;
+  failed: boolean;
+  loadedSource?: string;
 }
 
 interface Controller {
@@ -182,9 +200,6 @@ export function ScrollScrub({
     [connectors, scenes]
   );
 
-  // Keep the latest callback reachable from the scroll loop without making it a
-  // dependency of the controller effect. Synced in an effect, never during
-  // render — a render-phase ref write breaks under React Compiler.
   useEffect(() => {
     onActiveRef.current = onActiveSectionChange;
   }, [onActiveSectionChange]);
@@ -216,21 +231,34 @@ export function ScrollScrub({
     ).matches;
     const smallViewport = window.matchMedia("(max-width: 860px)");
     const isMobile = () => coarsePointer || smallViewport.matches;
-    const sourceFor = (segment: RuntimeSegment) =>
-      isMobile() && segment.mobileClip ? segment.mobileClip : segment.clip;
-    const runtime: RuntimeSegment[] = segments.map((segment, index) => ({
-      ...segment,
-      band: bandNodes[index],
-      current: 0,
-      end: 0,
-      failed: false,
-      layer: layerNodes[index],
-      loading: false,
-      ready: false,
-      start: 0,
-      target: 0,
-      visible: index === 0,
-    }));
+    
+    const runtime: RuntimeSegment[] = segments.map((segment, index) => {
+      const scene = segment.scene;
+      const isImgSeq = !!(scene && isMobile() && scene.mobileFrameCount && scene.mobileFramePrefix && scene.mobileFrameSuffix);
+      
+      return {
+        ...segment,
+        id: scene?.id ?? "",
+        layer: layerNodes[index],
+        band: bandNodes[index],
+        current: 0,
+        end: 0,
+        failed: false,
+        loading: false,
+        ready: false,
+        start: 0,
+        target: 0,
+        visible: index === 0,
+        posterSource: isMobile() ? (segment.mobilePoster || segment.poster) : segment.poster,
+        source: isMobile() ? (segment.mobileClip || segment.clip) : segment.clip,
+        isImageSequence: isImgSeq,
+        frameCount: scene?.mobileFrameCount || 0,
+        frameOffset: scene?.mobileFrameOffset || 0,
+        framePrefix: scene?.mobileFramePrefix || "",
+        frameSuffix: scene?.mobileFrameSuffix || "",
+        imageUrls: []
+      };
+    });
 
     let active = -1;
     let destroyed = false;
@@ -245,11 +273,13 @@ export function ScrollScrub({
     const unloadClip = (segment: RuntimeSegment) => {
       segment.abort?.abort();
       segment.video?.remove();
+      segment.imgElement?.remove();
       if (segment.objectUrl) {
         URL.revokeObjectURL(segment.objectUrl);
       }
       delete segment.abort;
       delete segment.video;
+      delete segment.imgElement;
       delete segment.objectUrl;
       delete segment.loadedSource;
       segment.loading = false;
@@ -267,9 +297,10 @@ export function ScrollScrub({
       layoutWidth = window.innerWidth;
 
       for (const segment of runtime) {
+        const currentSource = segment.isImageSequence ? segment.framePrefix : segment.source;
         if (
           segment.loadedSource &&
-          segment.loadedSource !== sourceFor(segment)
+          segment.loadedSource !== currentSource
         ) {
           unloadClip(segment);
         }
@@ -289,19 +320,18 @@ export function ScrollScrub({
         await video.play();
         video.pause();
       } catch {
-        // Keep the poster; a later user gesture/seek can retry naturally.
       }
     };
 
     const loadClip = async (segment: RuntimeSegment) => {
-      const source = sourceFor(segment);
+      const source = segment.isImageSequence ? segment.framePrefix : segment.source;
       if (
         reduceMotion ||
         destroyed ||
         segment.loading ||
         segment.ready ||
         segment.failed ||
-        !source
+        (!source && !segment.isImageSequence)
       ) {
         return;
       }
@@ -312,62 +342,96 @@ export function ScrollScrub({
       const request = segment.abort;
 
       try {
-        const response = await fetch(source, {
-          signal: request.signal,
-        });
-        if (!response.ok) {
-          throw new Error(`Clip failed: ${response.status}`);
-        }
-        const blob = await response.blob();
-        if (
-          destroyed ||
-          request.signal.aborted ||
-          segment.loadedSource !== source
-        ) {
-          return;
-        }
+        if (segment.isImageSequence) {
+          const img = document.createElement("img");
+          img.className = "scroll-scrub__video"; // Reuse CSS rules
+          img.alt = "";
+          // Generate all URLs
+          const urls: string[] = [];
+          for (let i = 1; i <= segment.frameCount; i++) {
+            const frameNumber = i + segment.frameOffset;
+            urls[i] = `${segment.framePrefix}${(frameNumber).toString().padStart(3, "0")}${segment.frameSuffix}`;
+          }
+          segment.imageUrls = urls;
+          
+          segment.imgElement = img;
+          segment.layer.append(img);
 
-        const objectUrl = URL.createObjectURL(blob);
-        const video = document.createElement("video");
-        video.className = "scroll-scrub__video";
-        video.muted = true;
-        video.playsInline = true;
-        video.preload = "auto";
-        video.setAttribute("muted", "");
-        video.setAttribute("playsinline", "");
-        video.src = objectUrl;
+          // Preload first batch to start quickly
+          const batch1 = 10;
+          const loadFrame = (i: number): Promise<void> => {
+            return new Promise((resolve, reject) => {
+              const preloadImg = new Image();
+              preloadImg.src = urls[i];
+              preloadImg.onload = () => resolve();
+              preloadImg.onerror = () => reject();
+            });
+          };
 
-        video.addEventListener(
-          "loadedmetadata",
-          () => {
-            if (segment.video !== video || segment.loadedSource !== source) {
-              return;
+          for (let i = 1; i <= Math.min(batch1, segment.frameCount); i++) {
+            if (request.signal.aborted) return;
+            await loadFrame(i).catch(() => {});
+          }
+          
+          if (urls[1]) {
+            img.src = urls[1];
+            segment.layer.dataset.videoPainted = "true";
+          }
+
+          segment.ready = true;
+          segment.loading = false;
+          dirty = true;
+
+          const loadRest = async () => {
+            for (let i = batch1 + 1; i <= segment.frameCount; i++) {
+              if (request.signal.aborted || destroyed) break;
+              try {
+                const preloadImg = new Image();
+                preloadImg.src = urls[i];
+              } catch {}
+              if (i % 5 === 0) await new Promise((r) => setTimeout(r, 10));
             }
+          };
+          void loadRest();
+        } else {
+          const response = await fetch(source, {
+            signal: request.signal,
+          });
+          if (!response.ok) {
+            throw new Error(`Clip failed: ${response.status}`);
+          }
+          const blob = await response.blob();
+          if (
+            destroyed ||
+            request.signal.aborted ||
+            segment.loadedSource !== source
+          ) {
+            return;
+          }
+
+          const objectUrl = URL.createObjectURL(blob);
+          const video = document.createElement("video");
+          video.className = "scroll-scrub__video";
+          video.muted = true;
+          video.playsInline = true;
+          video.preload = "auto";
+          video.setAttribute("muted", "");
+          video.setAttribute("playsinline", "");
+          video.src = objectUrl;
+
+          video.addEventListener("loadedmetadata", () => {
+            if (segment.video !== video || segment.loadedSource !== source) return;
             segment.ready = true;
             segment.loading = false;
             dirty = true;
-          },
-          { once: true }
-        );
-        video.addEventListener(
-          "loadeddata",
-          () => {
-            if (
-              userReady &&
-              segment.video === video &&
-              segment.loadedSource === source
-            ) {
+          }, { once: true });
+          video.addEventListener("loadeddata", () => {
+            if (userReady && segment.video === video && segment.loadedSource === source) {
               void primeVideo(video);
             }
-          },
-          { once: true }
-        );
-        video.addEventListener(
-          "error",
-          () => {
-            if (segment.video !== video) {
-              return;
-            }
+          }, { once: true });
+          video.addEventListener("error", () => {
+            if (segment.video !== video) return;
             video.remove();
             URL.revokeObjectURL(objectUrl);
             delete segment.video;
@@ -377,22 +441,17 @@ export function ScrollScrub({
             segment.ready = false;
             delete segment.layer.dataset.videoPainted;
             segment.layer.dataset.videoFailed = "true";
-          },
-          { once: true }
-        );
-        video.addEventListener(
-          "seeked",
-          () => {
+          }, { once: true });
+          video.addEventListener("seeked", () => {
             if (segment.video === video && segment.loadedSource === source) {
               segment.layer.dataset.videoPainted = "true";
             }
-          },
-          { once: true }
-        );
+          }, { once: true });
 
-        segment.layer.append(video);
-        segment.objectUrl = objectUrl;
-        segment.video = video;
+          segment.layer.append(video);
+          segment.objectUrl = objectUrl;
+          segment.video = video;
+        }
       } catch (error) {
         if (
           request.signal.aborted ||
@@ -425,16 +484,11 @@ export function ScrollScrub({
           : local;
 
         let outside = 0;
-        if (y < segment.start) {
-          outside = segment.start - y;
-        }
-        if (y > segment.end) {
-          outside = y - segment.end;
-        }
+        if (y < segment.start) outside = segment.start - y;
+        if (y > segment.end) outside = y - segment.end;
+        
         let opacity = smoothstep(1 - outside / Math.max(crossfade, 1));
-        if (reduceMotion) {
-          opacity = outside === 0 ? 1 : 0;
-        }
+        if (reduceMotion) opacity = outside === 0 ? 1 : 0;
 
         segment.visible = opacity > 0.001;
         segment.layer.style.opacity = String(opacity);
@@ -468,26 +522,26 @@ export function ScrollScrub({
 
     const updateVideos = () => {
       for (const segment of runtime) {
-        const { video } = segment;
-        if (!video || !segment.ready || video.seeking) {
+        if (!segment.ready || !segment.visible || reduceMotion) {
           continue;
         }
-        if (
-          !segment.visible &&
-          Math.abs(segment.current - segment.target) < 0.002
-        ) {
-          continue;
-        }
-
         segment.current += (segment.target - segment.current) * 0.2;
-        const targetTime =
-          clamp(segment.current, 0, 0.999) * (video.duration || 1);
-        const epsilon = isMobile() ? 0.02 : 0.008;
-        if (Math.abs(video.currentTime - targetTime) > epsilon) {
-          try {
-            video.currentTime = targetTime;
-          } catch {
-            // Keep the last painted frame while the browser catches up.
+        
+        if (segment.isImageSequence && segment.imgElement) {
+          const targetFrame = Math.floor(clamp(segment.current, 0, 0.999) * segment.frameCount) + 1;
+          const targetUrl = segment.imageUrls[targetFrame];
+          if (targetUrl && segment.imgElement.src !== targetUrl && !segment.imgElement.src.endsWith(targetUrl)) {
+            segment.imgElement.src = targetUrl;
+          }
+        } else {
+          const video = segment.video;
+          if (!video) continue;
+          const targetTime = clamp(segment.current, 0, 0.999) * (video.duration || 1);
+          const epsilon = isMobile() ? 0.02 : 0.008;
+          if (Math.abs(video.currentTime - targetTime) > epsilon) {
+            try {
+              video.currentTime = targetTime;
+            } catch {}
           }
         }
       }
@@ -672,10 +726,15 @@ export function ScrollScrub({
                   {scene.kicker ? (
                     <p className="u-sticker bg-[#f2c230] text-[#101b33] inline-block mb-6 shadow-[4px_4px_0_0_rgba(16,27,51,1)]">{scene.kicker}</p>
                   ) : null}
-                  <Heading className="u-fun-heading text-5xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
-                    {scene.title}
+                  <Heading className="u-fun-heading text-4xl md:text-7xl mb-6 !text-[#f2c230] drop-shadow-md">
+                    <TypeSequence text={scene.title} />
                   </Heading>
-                  <p className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90 font-medium max-w-[36ch]">{scene.body}</p>
+                  <ScrollHighlight
+                    text={scene.body}
+                    className="text-xl md:text-2xl leading-relaxed mb-8 text-white/90 font-medium max-w-[36ch]"
+                    dimColor="rgba(255, 255, 255, 0.2)"
+                    highlightColor="rgba(255, 255, 255, 0.9)"
+                  />
                   {scene.tags?.length ? (
                     <ul className="flex gap-3 mb-8 flex-wrap">
                       {scene.tags.map((tag) => (

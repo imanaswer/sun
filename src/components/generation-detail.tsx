@@ -17,6 +17,7 @@ import { Icon, type IconGlyph } from "@higgsfield/quanta/icon";
 import { Media } from "@higgsfield/quanta/media";
 import { Typography } from "@higgsfield/quanta/typography";
 import { downloadMedia } from "@/lib/download-media";
+import { cn } from "@/lib/utils";
 
 /**
  * GenerationDetailModal — the full-screen "Viewer / Image" lightbox that opens
@@ -453,9 +454,9 @@ export function GenerationDetailModal({
           {/* Layer 3 — info panel */}
           <div className="relative flex w-[366px] shrink-0 p-2">
             <div
-              className={glass(
-                { blur: "md", rounded: "500" },
-                "flex min-h-0 flex-1 flex-col overflow-y-auto",
+              className={cn(
+                glass(),
+                "backdrop-blur-md rounded-[32px] flex min-h-0 flex-1 flex-col overflow-y-auto",
               )}
             >
               <InfoPanel

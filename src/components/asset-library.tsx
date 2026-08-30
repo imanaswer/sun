@@ -187,7 +187,7 @@ function AssetToolbar({
         <Tabs.Root
           variant="pill"
           value={scope}
-          onValueChange={(value: string) => onScopeChange(String(value))}
+onValueChange={(value: string) => onScopeChange(String(value))}
         >
           <Tabs.List
             items={[
@@ -202,7 +202,7 @@ function AssetToolbar({
           aria-label="Search assets"
           placeholder="Search"
           value={query}
-          onChange={(event: { target: { value: string } }) => onQueryChange(event.target.value)}
+onChange={(event: ChangeEvent<HTMLInputElement>) => onQueryChange(event.target.value)}
           start={<Icon as={IconMagnifyingGlassOutlined} size="sm" />}
         />
       </div>
@@ -554,7 +554,7 @@ export function AssetLibraryModal({
           <Tabs.Root
             variant="pill"
             value={activeTab}
-            onValueChange={(value: string) => setTab(String(value) as AssetLibraryTab)}
+onValueChange={(value: string) => setTab(String(value) as AssetLibraryTab)}
             className="flex-1"
           >
             <Tabs.List items={headerTabs} />
