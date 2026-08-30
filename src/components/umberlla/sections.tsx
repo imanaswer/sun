@@ -861,9 +861,17 @@ export function RetailSection() {
   return (
     <section
       id="retail"
-      className="u-section-warm px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+      className="u-section-warm relative px-5 py-24 md:px-8 md:py-32 overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <Particles
+        className="absolute inset-0 z-0 opacity-50"
+        quantity={100}
+        ease={80}
+        color="#101b33"
+        refresh
+        size={2}
+      />
+      <div className="mx-auto max-w-[1400px] relative z-10">
         <div className="text-center mb-14">
           <Sticker tone="navy" rotate={2} className="mb-6 mx-auto">
             ☂ Available everywhere
