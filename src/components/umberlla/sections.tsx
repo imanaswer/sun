@@ -720,7 +720,8 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 bg-[#101b33] text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      style={{ backgroundColor: "#101b33" }}
     >
       <div className="absolute inset-0 z-0 opacity-40">
         <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" />
