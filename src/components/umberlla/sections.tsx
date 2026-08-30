@@ -29,6 +29,7 @@ import {
   TESTIMONIALS,
   STORES,
 } from "@/sun-data";
+import { getShopifyProducts } from "@/lib/shopify";
 import { Video, Phone, MapPin, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
@@ -605,6 +606,30 @@ export function CollectionsSection() {
 }
 
 export function BestsellersSection() {
+  const [items, setItems] = useState(BESTSELLERS);
+
+  useEffect(() => {
+    getShopifyProducts({ first: 8 })
+      .then((liveProducts) => {
+        if (liveProducts && liveProducts.length > 0) {
+          setItems(
+            liveProducts.map((p) => ({
+              name: p.title,
+              tag: p.discount ? "Special Offer" : "Bestseller",
+              price: p.price,
+              originalPrice: p.originalPrice,
+              discount: p.discount,
+              image: p.image,
+              href: p.href,
+            })),
+          );
+        }
+      })
+      .catch((err) => {
+        console.warn("Shopify live products fetch skipped, using fallback:", err);
+      });
+  }, []);
+
   return (
     <section
       id="bestsellers"
@@ -619,7 +644,7 @@ export function BestsellersSection() {
         </h2>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {BESTSELLERS.map((p) => (
+          {items.map((p) => (
             <a
               key={p.name}
               href={p.href}
