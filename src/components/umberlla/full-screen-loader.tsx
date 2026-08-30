@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { scrollScrubScenes } from "@/scroll-scrub-scenes";
 
 const START_FRAME = 24;
-const END_FRAME = 255;
+// The loader only displays ~2.5s (~60 frames at 24fps) before sweeping away, so
+// only load that many frames instead of all 232 (~66MB → ~18MB). The rest of
+// the sequence is never shown.
+const END_FRAME = 113;
 const TOTAL_FRAMES = END_FRAME - START_FRAME + 1;
 const FPS = 24;
 const FRAME_DURATION = 1000 / FPS;
@@ -124,7 +128,12 @@ export function FullScreenLoader() {
       // Unlock the body scroll right before we start scrolling so it actually works.
       setTimeout(() => {
         document.body.style.overflow = "";
-        
+
+        // Desktop only: nudge into the tall scrub so it visibly comes alive. On
+        // the phone hero (one viewport) this nudge lands on the wave-transition
+        // trigger and would fire it immediately — so skip it there.
+        if (window.matchMedia("(max-width: 767px)").matches) return;
+
         const scrollProxy = { y: window.scrollY };
         gsap.to(scrollProxy, {
           y: window.scrollY + window.innerHeight * 0.6,
@@ -135,24 +144,35 @@ export function FullScreenLoader() {
       }, 600);
     };
 
+    // Gate the reveal on the hero being ready, so it's smooth the instant the
+    // loader lifts. Desktop scrubs video frame-by-frame, so warm the full clips.
+    // Phones get the lightweight static hero (poster + simple autoplay video),
+    // so gating on the small poster is enough and far faster. Never hang longer
+    // than MAX_LOAD_TIME on a slow network.
+    const MAX_LOAD_TIME = 15000;
+    const isMobile = window.matchMedia("(max-width: 767px)").matches;
+    const heroAssets = scrollScrubScenes.map((s) =>
+      isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
+    );
+    let heroReady = false;
+    Promise.allSettled(
+      heroAssets.map((url) => fetch(url).then((r) => r.blob())),
+    ).then(() => {
+      heroReady = true;
+    });
+
     const attemptExit = () => {
       const elapsed = Date.now() - startTime;
-      if (elapsed >= MIN_LOAD_TIME) {
+      if ((elapsed >= MIN_LOAD_TIME && heroReady) || elapsed >= MAX_LOAD_TIME) {
         exitLoader();
       } else {
-        setTimeout(exitLoader, MIN_LOAD_TIME - elapsed);
+        setTimeout(attemptExit, 150);
       }
     };
-
-    if (document.readyState === "complete") {
-      attemptExit();
-    } else {
-      window.addEventListener("load", attemptExit);
-    }
+    attemptExit();
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener("load", attemptExit);
       document.body.style.overflow = "";
     };
   }, []);
