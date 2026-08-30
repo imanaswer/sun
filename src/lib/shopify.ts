@@ -180,7 +180,7 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
       image: firstImage?.url || "/assets/sun/prod-walkingstick.png",
       imageAlt: firstImage?.altText || node.title,
       variantId: firstVariant?.id,
-      href: `https://sunumbrella.in/products/${node.handle}`,
+      href: `/products/${node.handle}`,
     };
   });
 }
@@ -327,4 +327,151 @@ export async function createCartCheckoutUrl(lines: CartLineItem[]): Promise<stri
 
   return checkoutUrl;
 }
+
+export interface ShopifyProductDetail {
+  id: string;
+  title: string;
+  handle: string;
+  description: string;
+  descriptionHtml: string;
+  availableForSale: boolean;
+  price: string;
+  originalPrice?: string;
+  discount?: string;
+  priceNumeric: number;
+  images: Array<{ url: string; altText: string }>;
+  variants: Array<{
+    id: string;
+    title: string;
+    availableForSale: boolean;
+    price: string;
+    priceNumeric: number;
+  }>;
+}
+
+const PRODUCT_BY_HANDLE_QUERY = `
+  query GetProductByHandle($handle: String!) {
+    product(handle: $handle) {
+      id
+      title
+      handle
+      description
+      descriptionHtml
+      availableForSale
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      compareAtPriceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 10) {
+        edges {
+          node {
+            url
+            altText
+          }
+        }
+      }
+      variants(first: 20) {
+        edges {
+          node {
+            id
+            title
+            availableForSale
+            price {
+              amount
+              currencyCode
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+/**
+ * Fetch a single product's detail from Shopify by its URL handle.
+ */
+export async function getShopifyProductByHandle(handle: string): Promise<ShopifyProductDetail | null> {
+  const data = await shopifyFetch<{
+    product: {
+      id: string;
+      title: string;
+      handle: string;
+      description: string;
+      descriptionHtml: string;
+      availableForSale: boolean;
+      priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
+      compareAtPriceRange?: { minVariantPrice: { amount: string; currencyCode: string } };
+      images: { edges: Array<{ node: { url: string; altText: string | null } }> };
+      variants: {
+        edges: Array<{
+          node: {
+            id: string;
+            title: string;
+            availableForSale: boolean;
+            price: { amount: string; currencyCode: string };
+          };
+        }>;
+      };
+    } | null;
+  }>({
+    query: PRODUCT_BY_HANDLE_QUERY,
+    variables: { handle },
+  });
+
+  const node = data.product;
+  if (!node) return null;
+
+  const minPrice = parseFloat(node.priceRange.minVariantPrice.amount);
+  const comparePrice = node.compareAtPriceRange?.minVariantPrice?.amount
+    ? parseFloat(node.compareAtPriceRange.minVariantPrice.amount)
+    : null;
+
+  let discount: string | undefined;
+  if (comparePrice && comparePrice > minPrice) {
+    const discountPct = Math.round(((comparePrice - minPrice) / comparePrice) * 100);
+    if (discountPct > 0) discount = `${discountPct}% OFF`;
+  }
+
+  const images = node.images.edges.map(({ node: img }) => ({
+    url: img.url,
+    altText: img.altText || node.title,
+  }));
+
+  const variants = node.variants.edges.map(({ node: v }) => {
+    const variantPrice = parseFloat(v.price.amount);
+    return {
+      id: v.id,
+      title: v.title,
+      availableForSale: v.availableForSale,
+      price: formatPrice(variantPrice, v.price.currencyCode),
+      priceNumeric: variantPrice,
+    };
+  });
+
+  return {
+    id: node.id,
+    title: node.title,
+    handle: node.handle,
+    description: node.description,
+    descriptionHtml: node.descriptionHtml,
+    availableForSale: node.availableForSale,
+    price: formatPrice(minPrice, node.priceRange.minVariantPrice.currencyCode),
+    originalPrice: comparePrice && comparePrice > minPrice
+      ? formatPrice(comparePrice, node.compareAtPriceRange?.minVariantPrice.currencyCode)
+      : undefined,
+    discount,
+    priceNumeric: minPrice,
+    images,
+    variants,
+  };
+}
+
 
