@@ -13,7 +13,6 @@ import { TypeSequence } from "@/components/umberlla/type-sequence";
 
 import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
 import { Reveal } from "@/lib/reveal";
-import StickerPeeling from "@/components/sticker-peeling";
 import ElementalWater from "./../elemental-water";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { Particles } from "@/components/ui/particles";
@@ -71,6 +70,40 @@ const NAV_LINKS = [
     href: "https://sunumbrella.in/collections/promotional-umbrella",
   },
 ];
+
+/**
+ * Renders its (heavy, e.g. WebGL) children only while the wrapper is near the
+ * viewport, and unmounts them when scrolled well away — so continuous canvas
+ * effects don't burn the GPU across the whole page. On phones the effects are
+ * skipped entirely (mobile GPUs can't run the fluid sims smoothly); the
+ * section keeps its own cream background, so nothing looks broken.
+ */
+function LazyInView({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(max-width: 767px)").matches) return; // phones: skip
+    const io = new IntersectionObserver(
+      ([entry]) => setShow(entry.isIntersecting),
+      { rootMargin: "250px 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return (
+    <div ref={ref} className={className} aria-hidden="true">
+      {show ? children : null}
+    </div>
+  );
+}
 
 /** Rotated, white-bordered sticker badge (CRAV-style). */
 function Sticker({
@@ -449,7 +482,11 @@ export function VideoReelSection() {
       id="next-gen"
       className="relative z-10 px-5 py-24 md:px-8 md:py-32"
     >
-      <div className="mx-auto max-w-[1400px]">
+<LazyInView className="absolute inset-0 z-0">
+  <ElementalWater />
+</LazyInView>
+
+<div className="relative z-10 mx-auto max-w-[1400px]">
         <Sticker tone="yellow" rotate={-5} className="mb-6">
           ☂ Next-Gen
         </Sticker>
@@ -672,12 +709,16 @@ const reviewCol3 = TESTIMONIALS.slice(6, 9);
 
 export function TestimonialsSection() {
   return (
-    <>
-      <TestimonialMarquee />
-      <section id="reviews" className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32">
-      <div className="absolute inset-0 z-0">
-        <FluidField />
-      </div>
+<>
+  <TestimonialMarquee />
+
+  <section
+    id="reviews"
+    className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
+  >
+    <LazyInView className="absolute inset-0 z-0">
+      <FluidField />
+    </LazyInView>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

@@ -20,6 +20,11 @@ const QUANTA_ICONS_SHIM = fileURLToPath(
 
 export default defineConfig(({ command, mode }) => {
   const designInspectorEnabled = process.env.HF_DESIGN_INSPECTOR === "1" || mode === "design";
+  // Vercel can't serve the Cloudflare-Worker SSR bundle, so on Vercel we build a
+  // static SPA shell instead (index.html + client bundle). The Cloudflare /
+  // Higgsfield-platform build (the default) is untouched.
+  const isVercel = process.env.VERCEL === "1" || process.env.DEPLOY_TARGET === "vercel";
+  const workerBuild = command === "build" && !isVercel;
 
   return {
     // fsevents can miss edits under some setups (bun-launched dev, synced/virtual
@@ -32,9 +37,26 @@ export default defineConfig(({ command, mode }) => {
       tsconfigPaths: true,
       alias: [{ find: /^@higgsfield-ai\/icons(\/.*)?$/, replacement: QUANTA_ICONS_SHIM }],
     },
-    // ssr: {
-    //   noExternal: true,
-    // },
+    ssr: {
+      ...(workerBuild
+        ? {
+            target: "webworker" as const,
+            resolve: {
+              conditions: [
+                "workerd",
+                "worker",
+                "browser",
+                ...defaultServerConditions.filter((c) => c !== "node"),
+              ],
+            },
+          }
+        : {}),
+      noExternal: workerBuild ? true : undefined,
+      external: ["cloudflare:workers"],
+    },
+    build: {
+      rollupOptions: { external: [/^cloudflare:/] },
+    },
 
     plugins: [
       // Local SVG assets (e.g. the branded generate-button sparkle) import as
@@ -50,7 +72,10 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       }),
-      tanstackStart(),
+tanstackStart({
+  server: { entry: "server" },
+  ...(isVercel ? { spa: { enabled: true } } : {}),
+}),
       higgsfieldDesignInspectorVitePlugin(designInspectorEnabled),
       react({
         babel: {

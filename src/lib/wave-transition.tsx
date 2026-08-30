@@ -50,14 +50,34 @@ export function WaveTransition() {
   const upRef = useRef<SVGSVGElement[]>([]);
 
   useEffect(() => {
-    const overlay = overlayRef.current;
-    const downLayers = downRef.current.filter(Boolean);
-    const upLayers = upRef.current.filter(Boolean);
-    const sentinel = document.getElementById("hero-end");
-    if (!overlay || downLayers.length === 0 || upLayers.length === 0 || !sentinel) {
-      return;
-    }
+    let retryTimer: number | undefined;
+    let cleanup = () => {};
 
+    const init = () => {
+      const overlay = overlayRef.current;
+      const downLayers = downRef.current.filter(Boolean);
+      const upLayers = upRef.current.filter(Boolean);
+      // The home route is code-split, so #hero-end may not exist yet on the
+      // first mount — poll until it (and the hero) are in the DOM.
+      const sentinel = document.getElementById("hero-end");
+      if (
+        !overlay ||
+        downLayers.length === 0 ||
+        upLayers.length === 0 ||
+        !sentinel
+      ) {
+        retryTimer = window.setTimeout(init, 200);
+        return;
+      }
+      setup(overlay, downLayers, upLayers, sentinel);
+    };
+
+    const setup = (
+      overlay: HTMLDivElement,
+      downLayers: SVGSVGElement[],
+      upLayers: SVGSVGElement[],
+      sentinel: HTMLElement,
+    ) => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const hero = document.querySelector<HTMLElement>(".scroll-scrub");
     const white = document.getElementById("next-gen");
@@ -169,8 +189,15 @@ export function WaveTransition() {
         play("up");
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      cleanup = () => window.removeEventListener("scroll", onScroll);
+    };
+
+    init();
+    return () => {
+      if (retryTimer) window.clearTimeout(retryTimer);
+      cleanup();
+    };
   }, []);
 
   return (
