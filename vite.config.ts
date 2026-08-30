@@ -38,26 +38,24 @@ export default defineConfig(({ command, mode }) => {
       alias: [{ find: /^@higgsfield-ai\/icons(\/.*)?$/, replacement: QUANTA_ICONS_SHIM }],
     },
     ssr: {
-ssr: {
-  ...(workerBuild
-    ? {
-        target: "webworker" as const,
-        resolve: {
-          conditions: [
-            "workerd",
-            "worker",
-            "browser",
-            ...defaultServerConditions.filter((c) => c !== "node"),
-          ],
-        },
-      }
-    : {}),
-  noExternal: workerBuild ? true : undefined,
-  external: ["cloudflare:workers"],
-},
-build: {
-  rollupOptions: { external: [/^cloudflare:/] },
-},
+      ...(workerBuild
+        ? {
+            target: "webworker" as const,
+            resolve: {
+              conditions: [
+                "workerd",
+                "worker",
+                "browser",
+                ...defaultServerConditions.filter((c) => c !== "node"),
+              ],
+            },
+          }
+        : {}),
+      noExternal: workerBuild ? true : undefined,
+      external: ["cloudflare:workers"],
+    },
+    build: {
+      rollupOptions: { external: [/^cloudflare:/] },
     },
 
     plugins: [

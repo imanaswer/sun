@@ -719,8 +719,6 @@ export function TestimonialsSection() {
     <LazyInView className="absolute inset-0 z-0">
       <FluidField />
     </LazyInView>
-        <FluidField />
-      </LazyInView>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -763,10 +761,11 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 bg-[#101b33] text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      style={{ backgroundColor: "#101b33" }}
     >
       <div className="absolute inset-0 z-0 opacity-40">
-        <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" />
+        <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" background="transparent" />
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 md:gap-10">
@@ -903,9 +902,17 @@ export function RetailSection() {
   return (
     <section
       id="retail"
-      className="u-section-warm px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+      className="u-section-warm relative px-5 py-24 md:px-8 md:py-32 overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px]">
+      <Particles
+        className="absolute inset-0 z-0 opacity-50"
+        quantity={100}
+        ease={80}
+        color="#101b33"
+        refresh
+        size={2}
+      />
+      <div className="mx-auto max-w-[1400px] relative z-10">
         <div className="text-center mb-14">
           <Sticker tone="navy" rotate={2} className="mb-6 mx-auto">
             ☂ Available everywhere
