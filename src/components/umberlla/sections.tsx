@@ -724,7 +724,7 @@ export function SiteFooter() {
       style={{ backgroundColor: "#101b33" }}
     >
       <div className="absolute inset-0 z-0 opacity-40">
-        <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" />
+        <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" background="transparent" />
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 md:gap-10">
