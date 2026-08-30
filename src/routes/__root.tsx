@@ -17,9 +17,11 @@ import { reportHiggsfieldError } from "../lib/higgsfield-error-reporting";
 // repo by the marketplace meta API and read at BUILD time — no runtime fetch.
 // Editing it via the app settings UI rewrites this file and redeploys the app.
 import appMetaJson from "../app-meta.json";
-import { BRAND_THEME_COLOR } from "../umberlla-tokens";
 import { SmoothScroll } from "../lib/smooth-scroll";
 import { WaveTransition } from "../lib/wave-transition";
+import { CartProvider } from "../context/cart-context";
+import { CartDrawer } from "../components/umberlla/cart-drawer";
+import { BRAND_THEME_COLOR } from "../umberlla-tokens";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
@@ -227,12 +229,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <FullScreenLoader />
-      <SmoothScroll />
-      <WaveTransition />
-      <div className="u-grain" aria-hidden="true" />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <CartProvider>
+        <FullScreenLoader />
+        <SmoothScroll />
+        <WaveTransition />
+        <div className="u-grain" aria-hidden="true" />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <CartDrawer />
+      </CartProvider>
     </QueryClientProvider>
   );
 }

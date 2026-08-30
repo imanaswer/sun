@@ -276,3 +276,55 @@ export async function createCheckoutUrl(variantId: string, quantity: number = 1)
 
   return checkoutUrl;
 }
+
+const CREATE_MULTI_CART_MUTATION = `
+  mutation CreateMultiCart($lines: [CartLineInput!]!) {
+    cartCreate(input: { lines: $lines }) {
+      cart {
+        id
+        checkoutUrl
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export interface CartLineItem {
+  variantId: string;
+  quantity: number;
+}
+
+/**
+ * Create a live multi-item cart in Shopify and return the checkout redirect URL.
+ */
+export async function createCartCheckoutUrl(lines: CartLineItem[]): Promise<string> {
+  const formattedLines = lines.map((item) => ({
+    merchandiseId: item.variantId,
+    quantity: item.quantity,
+  }));
+
+  const data = await shopifyFetch<{
+    cartCreate: {
+      cart: { id: string; checkoutUrl: string } | null;
+      userErrors: Array<{ field: string[]; message: string }>;
+    };
+  }>({
+    query: CREATE_MULTI_CART_MUTATION,
+    variables: { lines: formattedLines },
+  });
+
+  if (data.cartCreate.userErrors?.length) {
+    throw new Error(data.cartCreate.userErrors[0].message);
+  }
+
+  const checkoutUrl = data.cartCreate.cart?.checkoutUrl;
+  if (!checkoutUrl) {
+    throw new Error("Unable to retrieve checkout URL from Shopify");
+  }
+
+  return checkoutUrl;
+}
+

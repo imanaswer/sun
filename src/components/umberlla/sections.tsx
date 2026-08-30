@@ -28,9 +28,11 @@ import {
   RETAIL,
   TESTIMONIALS,
   STORES,
+  type Product,
 } from "@/sun-data";
 import { getShopifyProducts } from "@/lib/shopify";
-import { Video, Phone, MapPin, ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
+import { useCart } from "@/context/cart-context";
+import { Video, Phone, MapPin, ArrowSquareOut, ShoppingBag } from "@phosphor-icons/react/dist/ssr";
 
 const SHOP = "https://sunumbrella.in";
 
@@ -134,6 +136,7 @@ function Sticker({
 }
 
 export function SiteNav() {
+  const { cartCount, openCart } = useCart();
   // Transparent over the dark hero (no logo, light links). Once the hero is
   // scrolled past and the white storefront begins, the bar turns white and the
   // logo appears with dark links. Keyed to a #hero-end sentinel after the film.
@@ -238,104 +241,127 @@ export function SiteNav() {
           </filter>
         </svg>
 
-        <nav 
-          aria-label="Categories" 
-          className={[
-            "hidden items-center md:flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
-            navTheme === "dark" ? "bg-[var(--u-navy)]/[0.02] border border-[var(--u-navy)]/5" : "bg-white/5 border border-white/10"
-          ].join(" ")}
-          onMouseLeave={() => setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))}
-        >
-          {/* Glassmorphism Sliding Indicator with SVG Displacement */}
-          <div
-            className="absolute top-1 bottom-1 z-0 rounded-full transition-all duration-500 overflow-hidden"
-            style={{
-              ...indicatorStyle,
-              backdropFilter: "url(#glass-displacement) blur(4px)",
-              border: "1px solid rgba(255, 255, 255, 0.8)",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              transitionTimingFunction: "linear(0, 0.0018, 0.0069 1.15%, 0.026 2.3%, 0.0637, 0.1135 5.18%, 0.2229 7.78%, 0.5977 15.84%, 0.7014, 0.7904, 0.8641, 0.9228, 0.9676 28.8%, 1.0032 31.68%, 1.0225, 1.0352 36.29%, 1.0431 38.88%, 1.046 42.05%, 1.0448 44.35%, 1.0407 47.23%, 1.0118 61.63%, 1.0025 69.41%, 0.9981 80.35%, 0.9992 99.94%)"
-            }}
+        <div className="flex items-center gap-3 md:gap-4">
+          <nav 
+            aria-label="Categories" 
+            className={[
+              "hidden items-center md:flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
+              navTheme === "dark" ? "bg-[var(--u-navy)]/[0.02] border border-[var(--u-navy)]/5" : "bg-white/5 border border-white/10"
+            ].join(" ")}
+            onMouseLeave={() => setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))}
           >
-            <div 
-              className="absolute inset-0 rounded-full pointer-events-none"
+            {/* Glassmorphism Sliding Indicator with SVG Displacement */}
+            <div
+              className="absolute top-1 bottom-1 z-0 rounded-full transition-all duration-500 overflow-hidden"
               style={{
-                // Frosted white fill with glossy edges so the black text is perfectly readable!
-                background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
-                boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(255, 255, 255, 0.2)"
-              }}
-            />
-          </div>
-
-          {NAV_LINKS.map((l) => (
-            <div 
-              key={l.label} 
-              className="group relative z-10 px-4 py-2 lg:px-6"
-              onMouseEnter={(e) => {
-                setIndicatorStyle({
-                  left: e.currentTarget.offsetLeft,
-                  width: e.currentTarget.offsetWidth,
-                  opacity: 1,
-                });
+                ...indicatorStyle,
+                backdropFilter: "url(#glass-displacement) blur(4px)",
+                border: "1px solid rgba(255, 255, 255, 0.8)",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                transitionTimingFunction: "linear(0, 0.0018, 0.0069 1.15%, 0.026 2.3%, 0.0637, 0.1135 5.18%, 0.2229 7.78%, 0.5977 15.84%, 0.7014, 0.7904, 0.8641, 0.9228, 0.9676 28.8%, 1.0032 31.68%, 1.0225, 1.0352 36.29%, 1.0431 38.88%, 1.046 42.05%, 1.0448 44.35%, 1.0407 47.23%, 1.0118 61.63%, 1.0025 69.41%, 0.9981 80.35%, 0.9992 99.94%)"
               }}
             >
-              <a
-                href={l.href}
-                className={[
-                  "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors relative z-10",
-                  navTheme === "dark"
-                    ? "text-[var(--u-navy)]/70 group-hover:text-[var(--u-navy)]"
-                    : "text-[var(--u-bone)]/80 group-hover:text-[var(--u-navy)]",
-                ].join(" ")}
-              >
-                {l.label}
-                {l.items && (
-                  <span
-                    aria-hidden="true"
-                    className="text-[0.7em] opacity-70 transition-transform duration-200 group-hover:rotate-180"
-                  >
-                    &#9662;
-                  </span>
-                )}
-              </a>
-              {l.items && (
-                <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
-                  <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
-                    {l.items.map((s) => (
-                      <a
-                        key={s.href}
-                        href={s.href}
-                        className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
-                      >
-                        {s.label}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <div 
+                className="absolute inset-0 rounded-full pointer-events-none"
+                style={{
+                  // Frosted white fill with glossy edges so the black text is perfectly readable!
+                  background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
+                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(255, 255, 255, 0.2)"
+                }}
+              />
             </div>
-          ))}
-        </nav>
 
-        <button
-          type="button"
-          aria-label="Open menu"
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(true)}
-          className="flex h-11 w-11 items-center justify-center md:hidden mt-1.5"
-        >
-          <span className="relative block h-4 w-6">
-            <span
-              className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-            />
-            <span
-              className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-            />
-            <span
-              className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-            />
-          </span>
-        </button>
+            {NAV_LINKS.map((l) => (
+              <div 
+                key={l.label} 
+                className="group relative z-10 px-4 py-2 lg:px-6"
+                onMouseEnter={(e) => {
+                  setIndicatorStyle({
+                    left: e.currentTarget.offsetLeft,
+                    width: e.currentTarget.offsetWidth,
+                    opacity: 1,
+                  });
+                }}
+              >
+                <a
+                  href={l.href}
+                  className={[
+                    "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors relative z-10",
+                    navTheme === "dark"
+                      ? "text-[var(--u-navy)]/70 group-hover:text-[var(--u-navy)]"
+                      : "text-[var(--u-bone)]/80 group-hover:text-[var(--u-navy)]",
+                  ].join(" ")}
+                >
+                  {l.label}
+                  {l.items && (
+                    <span
+                      aria-hidden="true"
+                      className="text-[0.7em] opacity-70 transition-transform duration-200 group-hover:rotate-180"
+                    >
+                      &#9662;
+                    </span>
+                  )}
+                </a>
+                {l.items && (
+                  <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
+                    <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
+                      {l.items.map((s) => (
+                        <a
+                          key={s.href}
+                          href={s.href}
+                          className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
+                        >
+                          {s.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </nav>
+
+          {/* Cart Icon Button */}
+          <button
+            type="button"
+            onClick={openCart}
+            className={[
+              "relative flex h-11 w-11 items-center justify-center rounded-full transition-colors cursor-pointer",
+              navTheme === "dark" 
+                ? "text-[var(--u-navy)] hover:bg-[var(--u-navy)]/10" 
+                : "text-[var(--u-bone)] hover:bg-white/10"
+            ].join(" ")}
+            aria-label="Shopping Cart"
+          >
+            <ShoppingBag size={22} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[10px] font-bold text-[var(--u-navy)]">
+                {cartCount}
+              </span>
+            )}
+          </button>
+
+          {/* Mobile Menu Button */}
+          <button
+            type="button"
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen(true)}
+            className="flex h-11 w-11 items-center justify-center md:hidden"
+          >
+            <span className="relative block h-4 w-6">
+              <span
+                className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              />
+              <span
+                className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              />
+              <span
+                className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
+              />
+            </span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -606,7 +632,8 @@ export function CollectionsSection() {
 }
 
 export function BestsellersSection() {
-  const [items, setItems] = useState(BESTSELLERS);
+  const { addToCart } = useCart();
+  const [items, setItems] = useState<Array<Product & { variantId?: string; priceNumeric?: number }>>(BESTSELLERS);
 
   useEffect(() => {
     getShopifyProducts({ first: 8 })
@@ -621,6 +648,8 @@ export function BestsellersSection() {
               discount: p.discount,
               image: p.image,
               href: p.href,
+              variantId: p.variantId,
+              priceNumeric: parseFloat(p.price.replace(/[^\d.]/g, "")) || 0,
             })),
           );
         }
@@ -682,15 +711,36 @@ export function BestsellersSection() {
                         {p.discount}
                       </span>
                     )}
-                    <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
-                      View
-                      <span
-                        aria-hidden="true"
-                        className="transition-transform duration-300 group-hover:translate-x-1"
+                    {p.variantId ? (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          addToCart({
+                            id: p.variantId!,
+                            title: p.name,
+                            handle: p.name.toLowerCase().replace(/ /g, "-"),
+                            price: p.price,
+                            priceNumeric: p.priceNumeric || 0,
+                            image: p.image,
+                          });
+                        }}
+                        className="u-mono rounded-full bg-[var(--u-yellow)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-[var(--u-navy)] hover:bg-[var(--u-yellow)]/95 active:scale-95 transition-all cursor-pointer"
                       >
-                        &rarr;
+                        Add to Cart
+                      </button>
+                    ) : (
+                      <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
+                        View
+                        <span
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1"
+                        >
+                          &rarr;
+                        </span>
                       </span>
-                    </span>
+                    )}
                   </div>
                 </div>
               </div>
