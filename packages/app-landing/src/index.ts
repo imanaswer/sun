@@ -10,3 +10,7 @@ export type LandingContent = Record<string, unknown>;
 export function parseLandingContent<T extends LandingContent>(content: T): T {
   return content;
 }
+
+export const landingContentSchema = {
+  parse: <T extends LandingContent>(content: T): T => content,
+};
