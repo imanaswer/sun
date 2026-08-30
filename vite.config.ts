@@ -20,11 +20,8 @@ const QUANTA_ICONS_SHIM = fileURLToPath(
 
 export default defineConfig(({ command, mode }) => {
   const designInspectorEnabled = process.env.HF_DESIGN_INSPECTOR === "1" || mode === "design";
-  // Vercel can't serve the Cloudflare-Worker SSR bundle, so on Vercel we build a
-  // static SPA shell instead (index.html + client bundle). The Cloudflare /
-  // Higgsfield-platform build (the default) is untouched.
-  const isVercel = process.env.VERCEL === "1" || process.env.DEPLOY_TARGET === "vercel";
-  const workerBuild = command === "build" && !isVercel;
+  const isCloudflare = process.env.DEPLOY_TARGET === "cloudflare";
+  const workerBuild = command === "build" && isCloudflare;
 
   return {
     // fsevents can miss edits under some setups (bun-launched dev, synced/virtual
@@ -51,7 +48,7 @@ export default defineConfig(({ command, mode }) => {
             },
           }
         : {}),
-      noExternal: workerBuild ? true : undefined,
+      noExternal: true,
       external: ["cloudflare:workers"],
     },
     build: {
@@ -72,10 +69,9 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       }),
-tanstackStart({
-  server: { entry: "server" },
-  ...(isVercel ? { spa: { enabled: true } } : {}),
-}),
+      tanstackStart({
+        server: { entry: "server" },
+      }),
       higgsfieldDesignInspectorVitePlugin(designInspectorEnabled),
       react({
         babel: {
