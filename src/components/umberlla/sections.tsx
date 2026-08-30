@@ -720,21 +720,21 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden border-t border-[var(--u-navy)]/10 bg-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 bg-[var(--u-navy)] text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
     >
       <div className="absolute inset-0 z-0 opacity-40">
-        <LiquidGrid mode="dots" lineColor="rgba(11, 19, 36, 0.05)" glowColor="rgba(11, 19, 36, 0.15)" />
+        <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" />
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 md:gap-10">
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
               Shop
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               {COLLECTIONS.map((c) => (
                 <li key={c.name}>
-                  <a className="hover:text-[var(--u-navy)]" href={c.href}>
+                  <a className="hover:text-[var(--u-yellow)] transition-colors" href={c.href}>
                     {c.name}
                   </a>
                 </li>
@@ -742,56 +742,56 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
               Company
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               <li>
-                <a className="hover:text-[var(--u-navy)]" href={`${SHOP}/pages/about-us`}>
+                <a className="hover:text-[var(--u-yellow)] transition-colors" href={`${SHOP}/pages/about-us`}>
                   Our heritage
                 </a>
               </li>
               <li>
                 <a
-                  className="hover:text-[var(--u-navy)]"
+                  className="hover:text-[var(--u-yellow)] transition-colors"
                   href={`${SHOP}/collections/promotional-umbrella`}
                 >
                   Corporate &amp; branding
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-navy)]" href={`${SHOP}/pages/contact`}>
+                <a className="hover:text-[var(--u-yellow)] transition-colors" href={`${SHOP}/pages/contact`}>
                   Store locations
                 </a>
               </li>
             </ul>
           </div>
           <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
               Contact
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-navy)]/90">
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               <li>
                 <a
-                  className="hover:text-[var(--u-navy)]"
+                  className="hover:text-[var(--u-yellow)] transition-colors"
                   href="mailto:info@sunumbrellas.in"
                 >
                   info@sunumbrellas.in
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-navy)]" href="tel:+918212514578">
+                <a className="hover:text-[var(--u-yellow)] transition-colors" href="tel:+918212514578">
                   +91 821 2514578
                 </a>
               </li>
-              <li className="text-[var(--u-navy)]/70">Mysuru · Mumbai · Calicut</li>
+              <li className="text-[var(--u-muted)]">Mysuru · Mumbai · Calicut</li>
             </ul>
           </div>
         </div>
         <div className="relative mt-20 inline-block w-full">
           <p
             aria-hidden="true"
-            className="u-wordmark w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-navy)]/[0.07]"
+            className="u-wordmark w-full text-[13vw] uppercase leading-[0.82] text-[var(--u-bone)]/[0.07]"
           >
             Sun Umbrella
           </p>
@@ -803,7 +803,7 @@ export function SiteFooter() {
             Est. 1889
           </Sticker>
         </div>
-        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
+        <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
           Sun Umbrella · Est. 1889 · Mysuru, India. All rights reserved.
         </p>
       </div>
@@ -860,7 +860,7 @@ export function RetailSection() {
   return (
     <section
       id="retail"
-      className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden"
+      className="u-section-warm px-5 py-24 md:px-8 md:py-32 overflow-hidden"
     >
       <div className="mx-auto max-w-[1400px]">
         <div className="text-center mb-14">
@@ -915,7 +915,7 @@ export function StoreLocationsSection() {
   return (
     <section
       id="stores"
-      className="relative overflow-hidden bg-white px-5 py-24 md:px-8 md:py-32"
+      className="u-section-cream px-5 py-24 md:px-8 md:py-32"
     >
       <div className="absolute inset-0 z-0 opacity-10">
         <LiquidGrid mode="dots" lineColor="rgba(16, 27, 51, 1)" glowColor="rgba(16, 27, 51, 1)" />
