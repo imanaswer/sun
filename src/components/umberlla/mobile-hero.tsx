@@ -5,13 +5,12 @@ import { scrollScrubScenes } from "@/scroll-scrub-scenes";
 
 /** True on phone-sized viewports (client-side; safe initial value on the SPA). */
 export function useIsMobile() {
-  const [mobile, setMobile] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 767px)").matches,
-  );
+  const [mobile, setMobile] = useState(false); // ALWAYS false during SSR and initial hydration
+
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
+    setMobile(mq.matches);
+    
     const on = () => setMobile(mq.matches);
     mq.addEventListener("change", on);
     return () => mq.removeEventListener("change", on);
