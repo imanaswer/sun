@@ -48,7 +48,7 @@ export default defineConfig(({ command, mode }) => {
             },
           }
         : {}),
-      noExternal: isCloudflare ? true : undefined,
+      noExternal: true,
       external: ["cloudflare:workers"],
     },
     build: {
