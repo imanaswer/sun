@@ -918,7 +918,7 @@ export function StoreLocationsSection() {
       className="relative overflow-hidden bg-white px-5 py-24 md:px-8 md:py-32"
     >
       <div className="absolute inset-0 z-0 opacity-10">
-        <LiquidGrid mode="dots" lineColor="rgba(45, 212, 191, 1)" glowColor="rgba(45, 212, 191, 1)" />
+        <LiquidGrid mode="dots" lineColor="rgba(16, 27, 51, 1)" glowColor="rgba(16, 27, 51, 1)" />
       </div>
       
       <div className="relative z-10 mx-auto max-w-[1400px]">
@@ -926,7 +926,7 @@ export function StoreLocationsSection() {
           <h2 className="u-fun-heading text-4xl md:text-5xl text-[var(--u-navy)]">
             Visit Us In Store
           </h2>
-          <p className="mt-4 text-xl font-medium tracking-tight text-[#2dd4bf]">
+          <p className="mt-4 text-xl font-medium tracking-tight text-[var(--u-slate)]">
             Find us at a store near you
           </p>
         </div>
@@ -935,11 +935,11 @@ export function StoreLocationsSection() {
           {STORES.map((store) => (
             <div
               key={store.city}
-              className="bg-white rounded-2xl overflow-hidden shadow-md shadow-gray-200/50 border border-[var(--u-slate)]/10 flex flex-col hover:border-[#2dd4bf]/40 transition-colors"
+              className="bg-white rounded-2xl overflow-hidden shadow-md shadow-gray-200/50 border border-[var(--u-slate)]/10 flex flex-col hover:border-[var(--u-navy)]/30 transition-colors"
             >
               <div className="p-6 md:p-8 flex-1 flex flex-col">
                 <h3 className="flex items-center gap-2 text-xl font-semibold text-[var(--u-navy)] mb-4">
-                  <MapPin size={24} weight="regular" className="text-[#2dd4bf]" />
+                  <MapPin size={24} weight="regular" className="text-[var(--u-navy)]/60" />
                   {store.city}
                 </h3>
                 <p className="text-sm text-[var(--u-slate)] leading-relaxed mb-6 flex-1">
@@ -950,9 +950,9 @@ export function StoreLocationsSection() {
                     <a
                       key={phone}
                       href={`tel:${phone.replace(/[^0-9+]/g, '')}`}
-                      className="flex items-center gap-2 text-sm font-medium text-[var(--u-navy)] hover:text-[#2dd4bf] transition-colors"
+                      className="flex items-center gap-2 text-sm font-medium text-[var(--u-navy)] hover:text-[var(--u-slate)] transition-colors"
                     >
-                      <Phone size={18} weight="fill" className="text-[#2dd4bf]" />
+                      <Phone size={18} weight="fill" className="text-[var(--u-navy)]/60" />
                       {phone}
                     </a>
                   ))}
@@ -972,7 +972,7 @@ export function StoreLocationsSection() {
                 ></iframe>
                 
                 <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2 bg-white px-3 py-2 rounded-md shadow-md border border-gray-100 pointer-events-none">
-                  <MapPin size={18} weight="fill" className="text-[#2dd4bf]" />
+                  <MapPin size={18} weight="fill" className="text-[var(--u-navy)]/80" />
                   <span className="text-sm font-semibold text-[var(--u-navy)]">{store.city}</span>
                 </div>
               </div>
