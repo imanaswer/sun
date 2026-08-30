@@ -720,7 +720,7 @@ export function SiteFooter() {
   return (
     <footer
       id="contact"
-      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 bg-[var(--u-navy)] text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
+      className="relative overflow-hidden border-t border-[var(--u-bone)]/10 bg-[#101b33] text-[var(--u-bone)] px-5 pt-20 pb-10 md:px-8"
     >
       <div className="absolute inset-0 z-0 opacity-40">
         <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" />
@@ -734,7 +734,7 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               {COLLECTIONS.map((c) => (
                 <li key={c.name}>
-                  <a className="hover:text-[var(--u-yellow)] transition-colors" href={c.href}>
+                  <a className="hover:text-white transition-colors" href={c.href}>
                     {c.name}
                   </a>
                 </li>
@@ -747,20 +747,20 @@ export function SiteFooter() {
             </h2>
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               <li>
-                <a className="hover:text-[var(--u-yellow)] transition-colors" href={`${SHOP}/pages/about-us`}>
+                <a className="hover:text-white transition-colors" href={`${SHOP}/pages/about-us`}>
                   Our heritage
                 </a>
               </li>
               <li>
                 <a
-                  className="hover:text-[var(--u-yellow)] transition-colors"
+                  className="hover:text-white transition-colors"
                   href={`${SHOP}/collections/promotional-umbrella`}
                 >
                   Corporate &amp; branding
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-yellow)] transition-colors" href={`${SHOP}/pages/contact`}>
+                <a className="hover:text-white transition-colors" href={`${SHOP}/pages/contact`}>
                   Store locations
                 </a>
               </li>
@@ -773,14 +773,14 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               <li>
                 <a
-                  className="hover:text-[var(--u-yellow)] transition-colors"
+                  className="hover:text-white transition-colors"
                   href="mailto:info@sunumbrellas.in"
                 >
                   info@sunumbrellas.in
                 </a>
               </li>
               <li>
-                <a className="hover:text-[var(--u-yellow)] transition-colors" href="tel:+918212514578">
+                <a className="hover:text-white transition-colors" href="tel:+918212514578">
                   +91 821 2514578
                 </a>
               </li>
