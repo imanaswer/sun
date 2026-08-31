@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getShopifyProductByHandle, createCheckoutUrl } from "@/lib/shopify";
 import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
@@ -27,7 +27,9 @@ export const Route = createFileRoute("/products/$handle")({
   loader: async ({ params }) => {
     const product = await getShopifyProductByHandle(params.handle);
     if (!product) {
-      throw new Error("Product not found");
+      // notFound() rather than a plain throw: an unknown handle must answer 404,
+      // not 500, or crawlers treat a delisted product as a broken server.
+      throw notFound();
     }
     // Reviews come from Judge.me and are optional — getProductReviews already
     // swallows its own failures and returns [], so it can't fail the route.
@@ -35,6 +37,7 @@ export const Route = createFileRoute("/products/$handle")({
     return { product, reviews };
   },
   component: ProductDetailRoute,
+  notFoundComponent: ProductNotFoundError,
   errorComponent: ProductNotFoundError,
 });
 

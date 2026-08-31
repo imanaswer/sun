@@ -40,38 +40,41 @@ const SHOP = "https://sunumbrella.in";
 // The real Sun Umbrella product categories + sub-categories (from
 // sunumbrellas.in), linked to their live category / fold-type pages.
 const SU = "https://www.sunumbrellas.in";
+// Handles are Shopify's own, so they resolve identically on this site and on
+// sunumbrella.in. "3 Fold / Black" previously pointed at 2-fold-colors-umbrella;
+// it now points at 3-fold-black-umbrellas, which is the collection that exists.
 const NAV_LINKS = [
   {
     label: "Non-Fold",
-    href: "#",
+    href: "/collections/non-fold-black-umbrellas",
     items: [
-      { label: "Black", href: "https://sunumbrella.in/collections/non-fold-black-umbrellas" },
-      { label: "Colors", href: "https://sunumbrella.in/collections/non-fold-color-umbrellas" },
+      { label: "Black", href: "/collections/non-fold-black-umbrellas" },
+      { label: "Colors", href: "/collections/non-fold-color-umbrellas" },
     ],
   },
   {
     label: "2 Fold",
-    href: "#",
+    href: "/collections/2-fold-umbrella-black-catagory",
     items: [
-      { label: "Black", href: "https://sunumbrella.in/collections/2-fold-umbrella-black-catagory" },
-      { label: "Colors", href: "https://sunumbrella.in/collections/2-fold-colors-umbrella" },
+      { label: "Black", href: "/collections/2-fold-umbrella-black-catagory" },
+      { label: "Colors", href: "/collections/2-fold-colors-umbrella" },
     ],
   },
   {
     label: "3 Fold",
-    href: "#",
+    href: "/collections/3-fold-black-umbrellas",
     items: [
-      { label: "Black", href: "https://sunumbrella.in/collections/2-fold-colors-umbrella" },
-      { label: "Colors", href: "https://sunumbrella.in/collections/3-fols-colour-umbrelllas" },
+      { label: "Black", href: "/collections/3-fold-black-umbrellas" },
+      { label: "Colors", href: "/collections/3-fols-colour-umbrelllas" },
     ],
   },
   {
     label: "Kids",
-    href: "https://sunumbrella.in/collections/kids-umbrellas-tuesday",
+    href: "/collections/kids-umbrellas-tuesday",
   },
   {
     label: "Promotional",
-    href: "https://sunumbrella.in/collections/promotional-umbrella",
+    href: "/collections/promotional-umbrella",
   },
 ];
 
@@ -593,7 +596,7 @@ export function VideoReelSection() {
           </h2>
 
           <div className="shrink-0">
-            <TactileButton link={`${SHOP}/collections/all`} />
+            <TactileButton link={"/collections/all"} />
           </div>
         </div>
 
@@ -752,7 +755,7 @@ export function CollectionsSection() {
               <TypeSequence text="Find your umbrella" />
             </h2>
             <TactileButton 
-              link={`${SHOP}/collections/all`} 
+              link={"/collections/all"} 
               label="Find your size" 
             />
           </div>
@@ -1063,7 +1066,7 @@ export function BestsellersSection() {
               Auto open &amp; close · UV protective · windproof
             </p>
           </div>
-          <TactileButton link={`${SHOP}/collections/all`} />
+          <TactileButton link={"/collections/all"} />
         </div>
       </div>
     </section>
@@ -1183,7 +1186,7 @@ export function SiteFooter() {
               <li>
                 <a
                   className="hover:text-white transition-colors"
-                  href={`${SHOP}/collections/promotional-umbrella`}
+                  href={"/collections/promotional-umbrella"}
                 >
                   Corporate &amp; branding
                 </a>
