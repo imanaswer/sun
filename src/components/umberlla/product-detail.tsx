@@ -73,17 +73,13 @@ export function ProductGallery({
           reads as a hole punched in it, and boxes the photo twice over. */}
       <div
         className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[28px]"
-        style={{
-          border: "1px solid var(--u-slate)",
-          background:
-            "radial-gradient(120% 90% at 50% 0%, rgba(242,194,48,0.10) 0%, rgba(242,194,48,0) 55%), linear-gradient(180deg, #16213c 0%, var(--u-well) 100%)",
-        }}
+        style={{ border: "1px solid var(--u-slate)", background: "var(--u-stage)" }}
       >
         <img
           src={activeUrl}
           alt={title}
           className="h-full w-full object-contain p-10 md:p-14"
-          style={{ filter: "drop-shadow(0 26px 45px rgba(0,0,0,0.55))" }}
+          style={{ filter: "var(--u-photo-shadow)" }}
           width={900}
           height={900}
         />
@@ -127,7 +123,7 @@ export function ProductGallery({
 export function SectionHeading({ index, title }: { index: string; title: string }) {
   return (
     <div className="flex items-center gap-5">
-      <span className="u-mono text-xs" style={{ color: "var(--u-yellow)" }}>
+      <span className="u-mono text-xs" style={{ color: "var(--u-accent-text)" }}>
         {index}
       </span>
       <h2 className="u-fun-head text-2xl md:text-3xl" style={{ color: "var(--u-bone)" }}>
@@ -145,11 +141,7 @@ export function BuyPanelCard({ children }: { children: React.ReactNode }) {
   return (
     <div
       className="rounded-[28px] p-7 md:p-9"
-      style={{
-        border: "1px solid var(--u-slate)",
-        background:
-          "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 45%), var(--u-well)",
-      }}
+      style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
     >
       {children}
     </div>
@@ -166,7 +158,7 @@ export function BrandBand() {
   return (
     <section
       className="mt-8 px-5 py-16 text-center md:py-20"
-      style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+      style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
     >
       <p className="u-mono text-[11px] uppercase tracking-[0.22em]">Since 1889</p>
       <p className="u-fun-head mx-auto mt-4 max-w-[22ch] text-3xl leading-[1.05] md:text-5xl">
@@ -175,7 +167,7 @@ export function BrandBand() {
       <Link
         to="/"
         className="u-mono mt-8 inline-block rounded-full px-7 py-3.5 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-90"
-        style={{ backgroundColor: "var(--u-navy)", color: "var(--u-yellow)" }}
+        style={{ backgroundColor: "var(--u-ink)", color: "var(--u-yellow)" }}
       >
         Shop all umbrellas
       </Link>
@@ -202,7 +194,7 @@ export function TrustRow() {
     <ul className="mt-8 grid gap-4 border-t pt-7 sm:grid-cols-3" style={{ borderTopColor: "var(--u-slate)" }}>
       {TRUST_ITEMS.map(({ Icon, label, detail }) => (
         <li key={label} className="flex items-start gap-3">
-          <Icon size={19} weight="regular" style={{ color: "var(--u-yellow)", flexShrink: 0 }} />
+          <Icon size={19} weight="regular" style={{ color: "var(--u-accent-text)", flexShrink: 0 }} />
           <div className="min-w-0">
             <div className="text-xs leading-tight font-semibold" style={{ color: "var(--u-bone)" }}>
               {label}
@@ -230,14 +222,11 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
           <div
             key={spec.key}
             className="rounded-2xl px-5 py-6 transition-colors"
-            style={{
-              border: "1px solid var(--u-slate)",
-              background: "linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0) 100%), var(--u-well)",
-            }}
+            style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
           >
             <div
               className="u-mono text-[10px] uppercase tracking-[0.16em]"
-              style={{ color: "var(--u-yellow)" }}
+              style={{ color: "var(--u-accent-text)" }}
             >
               {spec.label}
             </div>
@@ -277,7 +266,7 @@ export function ProductReviews({
         <span />
         {rating && (
           <div className="flex items-center gap-3">
-            <span className="u-fun-head text-3xl" style={{ color: "var(--u-yellow)" }}>
+            <span className="u-fun-head text-3xl" style={{ color: "var(--u-accent-text)" }}>
               {rating.value.toFixed(1)}
             </span>
             <div>
@@ -392,7 +381,7 @@ export function OptionSwatches({
                     isActive
                       ? {
                           backgroundColor: "var(--u-yellow)",
-                          color: "var(--u-navy)",
+                          color: "var(--u-ink)",
                           border: "1px solid var(--u-yellow)",
                           fontWeight: 600,
                         }
@@ -424,7 +413,7 @@ export function PriceRow({
   return (
     <div className="mt-6 border-b pb-6" style={{ borderBottomColor: "var(--u-slate)" }}>
       <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-        <span className="u-mono text-3xl font-bold" style={{ color: "var(--u-yellow)" }}>
+        <span className="u-mono text-3xl font-bold" style={{ color: "var(--u-price)" }}>
           {price}
         </span>
         {originalPrice && (
@@ -435,7 +424,7 @@ export function PriceRow({
         {discount && (
           <span
             className="u-mono rounded px-2 py-1 text-[11px] font-bold"
-            style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+            style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
           >
             {discount}
           </span>
@@ -500,7 +489,7 @@ export function StickyBuyBar({
           <div className="truncate text-xs font-semibold" style={{ color: "var(--u-bone)" }}>
             {title}
           </div>
-          <div className="u-mono flex items-baseline gap-2 text-xs" style={{ color: "var(--u-yellow)" }}>
+          <div className="u-mono flex items-baseline gap-2 text-xs" style={{ color: "var(--u-price)" }}>
             {price}
             {originalPrice && (
               <span className="line-through" style={{ color: "var(--u-muted)" }}>
@@ -514,7 +503,7 @@ export function StickyBuyBar({
           onClick={onAddToCart}
           disabled={disabled}
           className="u-mono shrink-0 cursor-pointer rounded-xl px-4 py-3 text-[11px] font-bold uppercase tracking-widest transition-transform active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50"
-          style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+          style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
         >
           <ShoppingBag size={15} className="inline" /> Add
         </button>

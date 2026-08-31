@@ -43,13 +43,13 @@ export const Route = createFileRoute("/products/$handle")({
 
 function ProductNotFoundError() {
   return (
-    <div className="u-page">
+    <div className="u-page u-light">
       <SiteNav />
       <main
         className="flex min-h-[70vh] flex-col items-center justify-center px-5 text-center"
         style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}
       >
-        <h1 className="u-fun-head text-4xl md:text-6xl" style={{ color: "var(--u-yellow)" }}>
+        <h1 className="u-fun-head text-4xl md:text-6xl" style={{ color: "var(--u-accent-text)" }}>
           Umbrella Not Found
         </h1>
         <p className="mt-4 max-w-[40ch] text-sm" style={{ color: "var(--u-muted)" }}>
@@ -58,12 +58,14 @@ function ProductNotFoundError() {
         <Link
           to="/"
           className="u-mono mt-8 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-90"
-          style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+          style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
         >
           Back to Store
         </Link>
       </main>
-      <SiteFooter />
+      <div className="u-dark">
+        <SiteFooter />
+      </div>
     </div>
   );
 }
@@ -140,7 +142,7 @@ function ProductDetailRoute() {
   };
 
   return (
-    <div className="u-page" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
+    <div className="u-page u-light" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
       <SiteNav />
 
       <main className="mx-auto max-w-[1200px] px-5 py-24 md:px-8 md:py-32">
@@ -153,7 +155,8 @@ function ProductDetailRoute() {
           Back to Collections
         </Link>
 
-        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+        {/* A <section> here so SiteNav resolves dark links over this light page. */}
+        <section className="grid gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-7">
             <div className="lg:sticky lg:top-28">
               <ProductGallery
@@ -171,8 +174,8 @@ function ProductDetailRoute() {
               className="u-mono self-start rounded px-2.5 py-1 uppercase tracking-[0.18em]"
               style={{
                 fontSize: "11px",
-                color: isSoldOut ? "var(--u-muted)" : "var(--u-yellow)",
-                border: `1px solid ${isSoldOut ? "var(--u-slate)" : "var(--u-yellow)"}`,
+                color: isSoldOut ? "var(--u-muted)" : "var(--u-accent-text)",
+                border: `1px solid ${isSoldOut ? "var(--u-slate)" : "var(--u-accent-text)"}`,
               }}
             >
               {isSoldOut ? "Out of Stock" : "In Stock"}
@@ -224,7 +227,7 @@ function ProductDetailRoute() {
                 onClick={handleBuyNow}
                 disabled={isSoldOut || isInstantBuying}
                 className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+                style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
               >
                 {isInstantBuying ? "Processing…" : "Buy It Now"}
               </button>
@@ -233,7 +236,7 @@ function ProductDetailRoute() {
             <TrustRow />
             </BuyPanelCard>
           </div>
-        </div>
+        </section>
 
         <ProductSpecs specs={product.specs} />
 
@@ -263,7 +266,9 @@ function ProductDetailRoute() {
         onAddToCart={handleAddToCart}
       />
 
-      <SiteFooter />
+      <div className="u-dark">
+        <SiteFooter />
+      </div>
     </div>
   );
 }

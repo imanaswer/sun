@@ -243,10 +243,18 @@ export function SiteNav() {
               className="h-16 w-auto"
             />
             <div className="flex flex-col items-center mt-1 font-sans">
-              <span className="text-sm font-black tracking-wider text-white leading-none">
+              {/* Follows navTheme like the links do — hardcoded white vanished
+                  on the light product and collection pages. */}
+              <span className={[
+                "text-sm font-black tracking-wider leading-none",
+                navTheme === "dark" ? "text-[var(--u-ink)]" : "text-white",
+              ].join(" ")}>
                 Umbrellas
               </span>
-              <span className="text-[8px] font-medium tracking-tight text-white/80 mt-0.5 whitespace-nowrap">
+              <span className={[
+                "text-[8px] font-medium tracking-tight mt-0.5 whitespace-nowrap",
+                navTheme === "dark" ? "text-[var(--u-ink)]/70" : "text-white/80",
+              ].join(" ")}>
                 Trusted over 100 years
               </span>
             </div>

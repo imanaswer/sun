@@ -43,10 +43,12 @@ export const Route = createFileRoute("/collections/$handle")({
 
 function CollectionErrorRoute() {
   return (
-    <div className="u-page">
+    <div className="u-page u-light">
       <SiteNav />
       <CollectionNotFound />
-      <SiteFooter />
+      <div className="u-dark">
+        <SiteFooter />
+      </div>
     </div>
   );
 }
@@ -55,19 +57,24 @@ function CollectionRoute() {
   const { collection } = Route.useLoaderData();
 
   return (
-    <div className="u-page" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
+    <div className="u-page u-light" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
       <SiteNav />
 
       <main className="mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-32">
+        {/* A <section> here so SiteNav resolves dark links over this light page. */}
+        <section>
         <CollectionHeader
           title={collection.title}
           description={collection.description}
           count={collection.products.length}
         />
         <ProductGrid products={collection.products} />
+        </section>
       </main>
 
-      <SiteFooter />
+      <div className="u-dark">
+        <SiteFooter />
+      </div>
     </div>
   );
 }

@@ -13,6 +13,56 @@
   --u-mono: "IBM Plex Mono", ui-monospace, monospace;
   /* Chunky rounded "bubble" display, CRAV-style — used for big statement type. */
   --u-fun: "Fredoka", "Outfit", "Helvetica Neue", Arial, sans-serif;
+
+  /* Fixed navy that never remaps with the theme. Yellow stays yellow in both
+     themes, so text sitting ON yellow has to stay navy — var(--u-navy) turns
+     white under .u-light and would vanish. */
+  --u-ink: #101b33;
+  /* Accent used as TEXT (labels, section numbers). Yellow is unreadable on
+     white, so the light theme swaps in a deep gold. */
+  --u-accent-text: #f2c230;
+  /* Price. The strongest figure on the page: yellow on navy, navy on white. */
+  --u-price: #f2c230;
+  /* Backdrop behind a product photo, and the surface of a raised card. */
+  --u-stage:
+    radial-gradient(120% 90% at 50% 0%, rgba(242, 194, 48, 0.1) 0%, rgba(242, 194, 48, 0) 55%),
+    linear-gradient(180deg, #16213c 0%, #0b1324 100%);
+  --u-card:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0) 45%), #0b1324;
+  /* Shadow under a product photo. A near-black drop reads as depth on navy and
+     as grime on white, so each theme gets its own. */
+  --u-photo-shadow: drop-shadow(0 26px 45px rgba(0, 0, 0, 0.55));
+}
+
+/* Restores the dark tokens inside a light page. The site footer paints its own
+   navy background, so without this its text inherits .u-light's navy ink and
+   disappears. */
+.u-light .u-dark {
+  --u-navy: #101b33;
+  --u-well: #0b1324;
+  --u-slate: #2c3a56;
+  --u-bone: #f3efe4;
+  --u-muted: #9aa7bf;
+  --u-accent-text: #f2c230;
+  --u-price: #f2c230;
+}
+
+/* Light storefront surface, used by the product and collection pages. Every
+   token below is a remap — components keep referencing the same var() names, so
+   nothing needs a light-specific branch. */
+.u-light {
+  --u-navy: #ffffff;
+  --u-well: #faf9f6;
+  --u-slate: #e7e3d9;
+  --u-bone: #14203b;
+  --u-muted: #76809a;
+  --u-accent-text: #937413;
+  --u-price: #14203b;
+  --u-stage:
+    radial-gradient(120% 90% at 50% 0%, rgba(242, 194, 48, 0.14) 0%, rgba(242, 194, 48, 0) 58%),
+    linear-gradient(180deg, #ffffff 0%, #f4f2ec 100%);
+  --u-card: linear-gradient(180deg, #ffffff 0%, #fbfaf7 100%);
+  --u-photo-shadow: drop-shadow(0 16px 28px rgba(20, 32, 59, 0.14));
 }
 
 .u-page {

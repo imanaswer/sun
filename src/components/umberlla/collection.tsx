@@ -30,7 +30,7 @@ export function CollectionHeader({
         <h1 className="u-fun-head max-w-[18ch] text-4xl leading-[1.02] md:text-6xl" style={{ color: "var(--u-bone)" }}>
           {title}
         </h1>
-        <span className="u-mono text-xs uppercase tracking-[0.16em]" style={{ color: "var(--u-yellow)" }}>
+        <span className="u-mono text-xs uppercase tracking-[0.16em]" style={{ color: "var(--u-accent-text)" }}>
           {count} {count === 1 ? "umbrella" : "umbrellas"}
         </span>
       </div>
@@ -58,10 +58,7 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
           opens read as the same product rather than two different treatments. */}
       <div
         className="relative flex aspect-square w-full items-center justify-center overflow-hidden"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 50% 0%, rgba(242,194,48,0.10) 0%, rgba(242,194,48,0) 55%), linear-gradient(180deg, #16213c 0%, var(--u-well) 100%)",
-        }}
+        style={{ background: "var(--u-stage)" }}
       >
         <img
           src={product.image}
@@ -72,7 +69,7 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
         {product.discount && (
           <span
             className="u-mono absolute top-3 left-3 rounded px-2 py-1 text-[10px] font-bold"
-            style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+            style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
           >
             {product.discount}
           </span>
@@ -80,7 +77,7 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
         {!product.availableForSale && (
           <span
             className="u-mono absolute top-3 right-3 rounded px-2 py-1 text-[10px]"
-            style={{ backgroundColor: "var(--u-navy)", color: "var(--u-muted)" }}
+            style={{ backgroundColor: "var(--u-ink)", color: "#f3efe4" }}
           >
             Sold out
           </span>
@@ -95,7 +92,7 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
           {product.title}
         </h2>
         <div className="mt-auto flex flex-wrap items-baseline gap-2.5">
-          <span className="u-mono text-sm font-bold" style={{ color: "var(--u-yellow)" }}>
+          <span className="u-mono text-sm font-bold" style={{ color: "var(--u-price)" }}>
             {product.price}
           </span>
           {product.originalPrice && (
@@ -133,7 +130,7 @@ export function CollectionNotFound() {
       className="flex min-h-[70vh] flex-col items-center justify-center px-5 text-center"
       style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}
     >
-      <h1 className="u-fun-head text-4xl md:text-6xl" style={{ color: "var(--u-yellow)" }}>
+      <h1 className="u-fun-head text-4xl md:text-6xl" style={{ color: "var(--u-accent-text)" }}>
         Collection Not Found
       </h1>
       <p className="mt-4 max-w-[40ch] text-sm" style={{ color: "var(--u-muted)" }}>
@@ -142,7 +139,7 @@ export function CollectionNotFound() {
       <Link
         to="/"
         className="u-mono mt-8 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-90"
-        style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+        style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
       >
         Back to Store
       </Link>
