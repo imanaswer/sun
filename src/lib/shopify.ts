@@ -619,6 +619,44 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
   };
 }
 
+/**
+ * Every product handle in the store, following pagination to the end.
+ *
+ * Used by the sitemap, which has to list all of them — an unlisted product page
+ * exists but no crawler ever hears about it. Deliberately fetches only handles
+ * and updatedAt so the whole catalog fits in a few cheap requests.
+ */
+export async function getAllProductHandles(): Promise<Array<{ handle: string; updatedAt: string }>> {
+  const query = `
+    query AllProductHandles($cursor: String) {
+      products(first: 250, after: $cursor) {
+        pageInfo { hasNextPage endCursor }
+        edges { node { handle updatedAt } }
+      }
+    }
+  `;
+
+  const handles: Array<{ handle: string; updatedAt: string }> = [];
+  let cursor: string | null = null;
+
+  // Bounded so a pageInfo bug can never spin forever: 250 x 20 is far past any
+  // plausible catalog size for this store.
+  for (let page = 0; page < 20; page++) {
+    const data: {
+      products: {
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+        edges: Array<{ node: { handle: string; updatedAt: string } }>;
+      };
+    } = await shopifyFetch({ query, variables: { cursor } });
+
+    handles.push(...data.products.edges.map(({ node }) => node));
+    if (!data.products.pageInfo.hasNextPage) break;
+    cursor = data.products.pageInfo.endCursor;
+  }
+
+  return handles;
+}
+
 export interface ShopifyCollectionDetail {
   id: string;
   title: string;
