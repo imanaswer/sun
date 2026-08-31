@@ -48,7 +48,12 @@ export default defineConfig(({ command, mode }) => {
             },
           }
         : {}),
-      noExternal: isCloudflare ? true : undefined,
+      // Must bundle deps for the production server build: scripts/vercel-build.mjs
+      // copies dist/server into the Vercel function WITHOUT node_modules, so any
+      // externalized bare import is ERR_MODULE_NOT_FOUND at runtime. Dev keeps them
+      // external — inlining CJS react into vite's SSR module runner throws
+      // "module is not defined".
+      noExternal: command === "build" ? true : undefined,
       external: ["cloudflare:workers"],
     },
     build: {
