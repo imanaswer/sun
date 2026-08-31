@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Minus, Plus, ShoppingBag, Star } from "@phosphor-icons/react";
+import { Link } from "@tanstack/react-router";
+import { Medal, Minus, Plus, ShieldCheck, ShoppingBag, Star, Truck } from "@phosphor-icons/react";
 import type { ProductSpec, ShopifyProductDetail } from "@/lib/shopify";
 import type { ProductReview } from "@/lib/api/reviews.functions";
 
@@ -68,14 +69,21 @@ export function ProductGallery({
 
   return (
     <div className="flex flex-col gap-4 md:flex-row-reverse md:items-start">
+      {/* A tonal stage rather than a white card: a white slab on a navy page
+          reads as a hole punched in it, and boxes the photo twice over. */}
       <div
-        className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-3xl bg-white p-8"
-        style={{ border: "1px solid var(--u-slate)" }}
+        className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[28px]"
+        style={{
+          border: "1px solid var(--u-slate)",
+          background:
+            "radial-gradient(120% 90% at 50% 0%, rgba(242,194,48,0.10) 0%, rgba(242,194,48,0) 55%), linear-gradient(180deg, #16213c 0%, var(--u-well) 100%)",
+        }}
       >
         <img
           src={activeUrl}
           alt={title}
-          className="h-full w-full object-contain"
+          className="h-full w-full object-contain p-10 md:p-14"
+          style={{ filter: "drop-shadow(0 26px 45px rgba(0,0,0,0.55))" }}
           width={900}
           height={900}
         />
@@ -92,10 +100,12 @@ export function ProductGallery({
                 onClick={() => onSelect(img.url)}
                 aria-label={`View image: ${img.altText}`}
                 aria-current={isActive}
-                className="flex h-20 w-20 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-xl bg-white p-2 transition-all"
+                className="flex h-[74px] w-[74px] shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl p-2 transition-all"
                 style={{
-                  border: `2px solid ${isActive ? "var(--u-yellow)" : "var(--u-slate)"}`,
-                  opacity: isActive ? 1 : 0.65,
+                  backgroundColor: "var(--u-well)",
+                  border: `1px solid ${isActive ? "var(--u-yellow)" : "var(--u-slate)"}`,
+                  boxShadow: isActive ? "0 0 0 3px rgba(242,194,48,0.18)" : "none",
+                  opacity: isActive ? 1 : 0.55,
                 }}
               >
                 <img src={img.url} alt="" className="h-full w-full object-contain" />
@@ -108,22 +118,122 @@ export function ProductGallery({
   );
 }
 
+/* -------------------------------------------------------------- sections --- */
+
+/**
+ * Numbered section rule, echoing the numbering already used in the mobile nav.
+ * It gives the lower half of the page a spine the old layout never had.
+ */
+export function SectionHeading({ index, title }: { index: string; title: string }) {
+  return (
+    <div className="flex items-center gap-5">
+      <span className="u-mono text-xs" style={{ color: "var(--u-yellow)" }}>
+        {index}
+      </span>
+      <h2 className="u-fun-head text-2xl md:text-3xl" style={{ color: "var(--u-bone)" }}>
+        {title}
+      </h2>
+      <span className="h-px flex-1" style={{ backgroundColor: "var(--u-slate)" }} />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------ buy panel --- */
+
+/** Raised card for the buy column, so it has weight instead of floating. */
+export function BuyPanelCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="rounded-[28px] p-7 md:p-9"
+      style={{
+        border: "1px solid var(--u-slate)",
+        background:
+          "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0) 45%), var(--u-well)",
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------ brand band --- */
+
+/**
+ * Closing band. It anchors the foot of the page on every product, including the
+ * ones with no specs, rating or extra images to fill it.
+ */
+export function BrandBand() {
+  return (
+    <section
+      className="mt-8 px-5 py-16 text-center md:py-20"
+      style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
+    >
+      <p className="u-mono text-[11px] uppercase tracking-[0.22em]">Since 1889</p>
+      <p className="u-fun-head mx-auto mt-4 max-w-[22ch] text-3xl leading-[1.05] md:text-5xl">
+        Built to be already in your hand when the monsoon turns.
+      </p>
+      <Link
+        to="/"
+        className="u-mono mt-8 inline-block rounded-full px-7 py-3.5 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-90"
+        style={{ backgroundColor: "var(--u-navy)", color: "var(--u-yellow)" }}
+      >
+        Shop all umbrellas
+      </Link>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------------- trust --- */
+
+/**
+ * Three claims that hold for every product, so the buy column has a floor even
+ * on a listing with no metafields. All three are Sun Umbrella's own: free
+ * delivery and the 1889 date are on the live storefront, and checkout is
+ * Shopify's.
+ */
+const TRUST_ITEMS = [
+  { Icon: Truck, label: "Free delivery", detail: "Across India" },
+  { Icon: ShieldCheck, label: "Secure checkout", detail: "via Shopify" },
+  { Icon: Medal, label: "Est. 1889", detail: "135 years" },
+];
+
+export function TrustRow() {
+  return (
+    <ul className="mt-8 grid gap-4 border-t pt-7 sm:grid-cols-3" style={{ borderTopColor: "var(--u-slate)" }}>
+      {TRUST_ITEMS.map(({ Icon, label, detail }) => (
+        <li key={label} className="flex items-start gap-3">
+          <Icon size={19} weight="regular" style={{ color: "var(--u-yellow)", flexShrink: 0 }} />
+          <div className="min-w-0">
+            <div className="text-xs leading-tight font-semibold" style={{ color: "var(--u-bone)" }}>
+              {label}
+            </div>
+            <div className="u-mono text-[10px]" style={{ color: "var(--u-muted)" }}>
+              {detail}
+            </div>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /* ----------------------------------------------------------------- specs --- */
 
 export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
   if (specs.length === 0) return null;
 
   return (
-    <section className="mt-20 md:mt-28">
-      <h2 className="u-mono text-xs uppercase tracking-[0.18em]" style={{ color: "var(--u-muted)" }}>
-        Specifications
-      </h2>
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <section className="mt-24 md:mt-32">
+      <SectionHeading index="01" title="Specifications" />
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {specs.map((spec) => (
           <div
             key={spec.key}
-            className="rounded-2xl px-5 py-6"
-            style={{ border: "1px solid var(--u-slate)", backgroundColor: "var(--u-well)" }}
+            className="rounded-2xl px-5 py-6 transition-colors"
+            style={{
+              border: "1px solid var(--u-slate)",
+              background: "linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0) 100%), var(--u-well)",
+            }}
           >
             <div
               className="u-mono text-[10px] uppercase tracking-[0.16em]"
@@ -131,7 +241,7 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
             >
               {spec.label}
             </div>
-            <div className="mt-2.5 text-sm leading-snug font-semibold" style={{ color: "var(--u-bone)" }}>
+            <div className="mt-3 text-sm leading-snug font-semibold" style={{ color: "var(--u-bone)" }}>
               {spec.value}
             </div>
           </div>
@@ -161,11 +271,10 @@ export function ProductReviews({
   if (!rating && reviews.length === 0) return null;
 
   return (
-    <section className="mt-20 md:mt-28">
-      <div className="flex flex-wrap items-end justify-between gap-4 border-b pb-6" style={{ borderBottomColor: "var(--u-slate)" }}>
-        <h2 className="u-fun-head text-3xl md:text-4xl" style={{ color: "var(--u-bone)" }}>
-          Customer Reviews
-        </h2>
+    <section className="mt-24 md:mt-32">
+      <SectionHeading index="03" title="Customer Reviews" />
+      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+        <span />
         {rating && (
           <div className="flex items-center gap-3">
             <span className="u-fun-head text-3xl" style={{ color: "var(--u-yellow)" }}>

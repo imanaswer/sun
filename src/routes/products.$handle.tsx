@@ -5,6 +5,8 @@ import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
 import {
+  BrandBand,
+  BuyPanelCard,
   OptionSwatches,
   PriceRow,
   ProductGallery,
@@ -12,7 +14,9 @@ import {
   ProductSpecs,
   QuantityStepper,
   RatingSummary,
+  SectionHeading,
   StickyBuyBar,
+  TrustRow,
   useScrolledPast,
 } from "@/components/umberlla/product-detail";
 import { CaretLeft, ShoppingBag } from "@phosphor-icons/react";
@@ -159,6 +163,7 @@ function ProductDetailRoute() {
           </div>
 
           <div className="lg:col-span-5">
+            <BuyPanelCard>
             <span
               className="u-mono self-start rounded px-2.5 py-1 uppercase tracking-[0.18em]"
               style={{
@@ -221,18 +226,19 @@ function ProductDetailRoute() {
                 {isInstantBuying ? "Processing…" : "Buy It Now"}
               </button>
             </div>
+
+            <TrustRow />
+            </BuyPanelCard>
           </div>
         </div>
 
         <ProductSpecs specs={product.specs} />
 
         {product.descriptionHtml && (
-          <section className="mt-20 md:mt-28">
-            <h2 className="u-mono text-xs uppercase tracking-[0.18em]" style={{ color: "var(--u-muted)" }}>
-              Product Details
-            </h2>
+          <section className="mt-24 md:mt-32">
+            <SectionHeading index="02" title="Product Details" />
             <div
-              className="prose prose-invert mt-6 max-w-[70ch] text-sm leading-relaxed"
+              className="prose prose-invert mt-8 max-w-[68ch] text-sm leading-[1.85]"
               style={{ color: "var(--u-bone)" }}
               dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
             />
@@ -241,6 +247,8 @@ function ProductDetailRoute() {
 
         <ProductReviews rating={product.rating} reviews={reviews} />
       </main>
+
+      <BrandBand />
 
       <StickyBuyBar
         visible={showStickyBar && !isSoldOut}
