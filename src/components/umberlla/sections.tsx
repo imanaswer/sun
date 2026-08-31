@@ -885,22 +885,26 @@ export function BestsellersSection() {
   return (
     <section
       id="bestsellers"
-      className="relative z-10 px-5 pt-0 pb-24 md:px-8 md:pb-32 md:pt-12"
+      className="relative u-section-warm px-5 py-24 md:px-8 md:py-32 overflow-hidden"
     >
-      <div className="mx-auto max-w-[1400px]">
-        <Sticker tone="yellow" rotate={-4} className="mb-6">
+      <div className="absolute inset-0 z-0">
+        <DottedBg2 bgColor="var(--u-yellow)" />
+      </div>
+      <div className="relative z-10 mx-auto max-w-[1400px]">
+        <Sticker tone="navy" rotate={-4} className="mb-6">
           ☂ Trending now
         </Sticker>
-        <h2 className="u-fun-heading mb-14 max-w-[20ch] text-4xl md:text-7xl !text-[#F3EFE4]">
-          Best sellers
+        <h2 className="u-fun-heading mb-14 max-w-[20ch] text-4xl md:text-7xl">
+          <TypeSequence text="Best sellers" />
         </h2>
 
-        <div className="hidden md:grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {items.map((p) => (
+        <div className="hidden md:grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {items.map((p, index) => (
             <a
               key={p.name}
               href={p.href}
-              className="group flex flex-col overflow-hidden border border-[var(--u-slate)]/70 bg-[var(--u-navy)] transition-colors hover:border-[var(--u-yellow)]"
+              className="u-card-on-yellow group relative flex flex-col"
+              style={{ transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)` }}
             >
               <div className="aspect-square w-full overflow-hidden bg-white">
                 <img
@@ -910,20 +914,20 @@ export function BestsellersSection() {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                 />
               </div>
-              <div className="flex flex-1 flex-col p-5">
-                <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-muted)]">
+              <div className="flex flex-1 flex-col bg-white p-5">
+                <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-navy)]/60">
                   {p.tag}
                 </span>
-                <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-bone)]">
+                <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
                   {p.name}
                 </h3>
                 <div className="mt-4 flex items-end justify-between">
                   <div className="flex flex-col">
-                    <span className="u-mono text-sm text-[var(--u-yellow)]">
+                    <span className="u-mono text-sm text-[var(--u-navy)] font-bold">
                       {p.price}
                     </span>
                     {p.originalPrice && (
-                      <span className="u-mono text-[10px] text-[var(--u-muted)] line-through mt-0.5">
+                      <span className="u-mono text-[10px] text-[var(--u-navy)]/60 line-through mt-0.5">
                         {p.originalPrice}
                       </span>
                     )}
@@ -949,12 +953,12 @@ export function BestsellersSection() {
                             image: p.image,
                           });
                         }}
-                        className="u-mono rounded-full bg-[var(--u-yellow)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-[var(--u-navy)] hover:bg-[var(--u-yellow)]/95 active:scale-95 transition-all cursor-pointer"
+                        className="u-mono rounded-full bg-[var(--u-navy)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-white hover:bg-[var(--u-navy)]/90 active:scale-95 transition-all cursor-pointer"
                       >
                         Add to Cart
                       </button>
                     ) : (
-                      <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
+                      <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-navy)]">
                         View
                         <span
                           aria-hidden="true"
@@ -971,13 +975,13 @@ export function BestsellersSection() {
           ))}
         </div>
 
-        <div className="md:hidden mt-8 -mx-5 overflow-hidden" ref={emblaRef}>
+        <div className="md:hidden mt-8 -mx-5 overflow-hidden py-4" ref={emblaRef}>
           <div className="flex touch-pan-y" style={{ backfaceVisibility: "hidden" }}>
             {items.map((p, index) => (
               <div key={p.name} className="min-w-0 flex-[0_0_85%] pl-5 last:pr-5">
                 <a
                   href={p.href}
-                  className="group flex flex-col overflow-hidden border border-[var(--u-slate)]/70 bg-[var(--u-navy)] transition-colors hover:border-[var(--u-yellow)] h-full relative"
+                  className="u-card-on-yellow group relative flex flex-col h-full"
                 >
                   <div className="aspect-[4/5] w-full overflow-hidden bg-white relative">
                     <div
@@ -994,20 +998,20 @@ export function BestsellersSection() {
                       />
                     </div>
                   </div>
-                  <div className="flex flex-1 flex-col p-5 bg-[var(--u-navy)] z-10">
-                    <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-muted)]">
+                  <div className="flex flex-1 flex-col bg-white p-5 z-10">
+                    <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-navy)]/60">
                       {p.tag}
                     </span>
-                    <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-bone)]">
+                    <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
                       {p.name}
                     </h3>
                     <div className="mt-4 flex items-end justify-between">
                       <div className="flex flex-col">
-                        <span className="u-mono text-sm text-[var(--u-yellow)]">
+                        <span className="u-mono text-sm text-[var(--u-navy)] font-bold">
                           {p.price}
                         </span>
                         {p.originalPrice && (
-                          <span className="u-mono text-[10px] text-[var(--u-muted)] line-through mt-0.5">
+                          <span className="u-mono text-[10px] text-[var(--u-navy)]/60 line-through mt-0.5">
                             {p.originalPrice}
                           </span>
                         )}
@@ -1033,12 +1037,12 @@ export function BestsellersSection() {
                                 image: p.image,
                               });
                             }}
-                            className="u-mono rounded-full bg-[var(--u-yellow)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-[var(--u-navy)] hover:bg-[var(--u-yellow)]/95 active:scale-95 transition-all cursor-pointer"
+                            className="u-mono rounded-full bg-[var(--u-navy)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-white hover:bg-[var(--u-navy)]/90 active:scale-95 transition-all cursor-pointer"
                           >
                             Add to Cart
                           </button>
                         ) : (
-                          <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
+                          <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-navy)]">
                             View
                             <span
                               aria-hidden="true"
@@ -1059,10 +1063,10 @@ export function BestsellersSection() {
 
         <div className="mt-16 flex flex-col items-start gap-6 border-t border-[var(--u-slate)]/60 pt-12 md:flex-row md:items-end md:justify-between">
           <div>
-            <h3 className="max-w-[20ch] text-2xl font-semibold tracking-tight text-[var(--u-bone)] md:text-3xl">
+            <h3 className="max-w-[20ch] text-2xl font-semibold tracking-tight text-[var(--u-navy)] md:text-3xl">
               135 years of sheltering India.
             </h3>
-            <p className="u-mono mt-3 text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+            <p className="u-mono mt-3 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Auto open &amp; close · UV protective · windproof
             </p>
           </div>
@@ -1098,9 +1102,9 @@ export function TestimonialsSection() {
 
   <section
     id="reviews"
-    className="u-section-cream relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
+    className="bg-[var(--u-navy)] relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
   >
-    <LazyInView className="absolute inset-0 z-0">
+    <LazyInView className="absolute inset-0 z-0 opacity-40">
       <FluidField />
     </LazyInView>
       <div className="relative z-10 mx-auto max-w-[1400px]">
@@ -1249,14 +1253,14 @@ export function SunBrandSection() {
       id="sun-brand"
       className="u-section-cream px-5 py-24 md:px-8 md:py-32 overflow-hidden relative"
     >
-      <Particles
+      <div 
         className="absolute inset-0 z-0 pointer-events-none"
-        quantity={200}
-        size={2.5}
-        staticity={40}
-        ease={80}
-        color="#101b33"
-        refresh
+        style={{
+          backgroundImage: 'url("/assets/background.webp")',
+          backgroundRepeat: 'repeat',
+          backgroundSize: 'auto',
+          backgroundPosition: 'center'
+        }}
       />
       <div className="mx-auto max-w-[1400px] relative z-10">
         <div className="text-center mb-14">
