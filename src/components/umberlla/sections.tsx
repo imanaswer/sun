@@ -4,14 +4,15 @@
  * grid, the bestsellers strip, and the footer. Copy, prices and links come from
  * the live Shopify store via src/sun-data.ts.
  */
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
+import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import LiquidGrid from "../liquid-grid";
 import DottedBg2 from "../dotted-bg-2";
 import { TypeSequence } from "@/components/umberlla/type-sequence";
 
-import { TestimonialsColumn } from "@/components/ui/testimonials-columns-1";
+import { TestimonialsColumn, TestimonialsRow } from "@/components/ui/testimonials-columns-1";
 import { Reveal } from "@/lib/reveal";
 import ElementalWater from "./../elemental-water";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
@@ -93,7 +94,11 @@ function LazyInView({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(max-width: 767px)").matches) return; // phones: skip
+    
+    if (window.matchMedia("(max-width: 767px)").matches) {
+      const timer = setTimeout(() => setShow(true), 0);
+      return () => clearTimeout(timer);
+    }
     const io = new IntersectionObserver(
       ([entry]) => setShow(entry.isIntersecting),
       { rootMargin: "250px 0px" },
@@ -146,9 +151,12 @@ export function SiteNav() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const check = () => {
       const sentinel = document.getElementById("hero-end");
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 20);
 
       let currentTheme: "light" | "dark" = "light";
       
@@ -180,13 +188,16 @@ export function SiteNav() {
 
       setNavTheme(currentTheme);
 
-      // Hide nav if scrolled past the Collections section
-      const collections = document.getElementById("collections");
-      if (collections) {
-        setNavVisible(collections.getBoundingClientRect().bottom >= 50);
-      } else {
+      // Scroll direction logic: hide when scrolling down, show when scrolling up
+      if (currentScrollY < 100) {
+        setNavVisible(true);
+      } else if (currentScrollY > lastScrollY) {
+        setNavVisible(false);
+      } else if (currentScrollY < lastScrollY) {
         setNavVisible(true);
       }
+      
+      lastScrollY = currentScrollY;
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
@@ -210,12 +221,15 @@ export function SiteNav() {
 
   return (
     <>
-    <header className={[
-      "fixed inset-x-0 top-0 z-50 bg-transparent transition-all duration-300 pt-4 md:pt-4",
-      navVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
-    ].join(" ")}>
-      <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:h-28 md:px-8">
-        <a href="#top" className="flex h-12 items-center md:h-24">
+    <header 
+      className={[
+        "fixed inset-x-0 top-0 z-50 bg-transparent transition-transform duration-300 pt-4 md:pt-4 pointer-events-none",
+        navVisible ? "translate-y-0" : "-translate-y-[150%]"
+      ].join(" ")}
+    >
+      {/* DESKTOP HEADER */}
+      <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
+        <a href="#top" className="flex h-24 items-center">
           <div className={[
             "flex flex-col items-center transition-opacity duration-300",
             isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
@@ -223,13 +237,13 @@ export function SiteNav() {
             <img
               src="/assets/sun/logo-icon-transparent.png"
               alt="Sun Umbrella"
-              className="h-8 w-auto md:h-16"
+              className="h-16 w-auto"
             />
             <div className="flex flex-col items-center mt-1 font-sans">
-              <span className="text-[10px] md:text-sm font-black tracking-wider text-white leading-none">
+              <span className="text-sm font-black tracking-wider text-white leading-none">
                 Umbrellas
               </span>
-              <span className="text-[6px] md:text-[8px] font-medium tracking-tight text-white/80 mt-0.5 whitespace-nowrap">
+              <span className="text-[8px] font-medium tracking-tight text-white/80 mt-0.5 whitespace-nowrap">
                 Trusted over 100 years
               </span>
             </div>
@@ -241,11 +255,11 @@ export function SiteNav() {
           </filter>
         </svg>
 
-        <div className="flex items-center gap-3 md:gap-4">
+        <div className="flex items-center gap-4">
           <nav 
             aria-label="Categories" 
             className={[
-              "hidden items-center md:flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
+              "flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
               navTheme === "dark" ? "bg-[var(--u-navy)]/[0.02] border border-[var(--u-navy)]/5" : "bg-white/5 border border-white/10"
             ].join(" ")}
             onMouseLeave={() => setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))}
@@ -264,7 +278,6 @@ export function SiteNav() {
               <div 
                 className="absolute inset-0 rounded-full pointer-events-none"
                 style={{
-                  // Frosted white fill with glossy edges so the black text is perfectly readable!
                   background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
                   boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(255, 255, 255, 0.2)"
                 }}
@@ -340,26 +353,44 @@ export function SiteNav() {
               </span>
             )}
           </button>
+        </div>
+      </div>
 
-          {/* Mobile Menu Button */}
+      {/* MOBILE FLOATING PILL HEADER */}
+      <div className="md:hidden mx-auto mt-4 flex w-11/12 max-w-[380px] items-center justify-between gap-4 rounded-full bg-[#111111]/60 backdrop-blur-md pl-4 pr-1.5 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] border border-white/10 pointer-events-auto">
+        <a href="#top" className="flex items-center h-8">
+          <img src="/assets/sun/logo-icon-transparent.png" alt="Sun" className="h-5 w-auto object-contain" />
+        </a>
+        <div className="flex items-center gap-1">
+          {/* Cart Icon (Mobile) */}
+          <button
+            type="button"
+            onClick={openCart}
+            className="relative flex h-9 w-9 items-center justify-center rounded-full text-white/90 hover:bg-white/10 transition-colors cursor-pointer"
+            aria-label="Shopping Cart"
+          >
+            <ShoppingBag size={18} />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[9px] font-bold text-[var(--u-navy)]">
+                {cartCount}
+              </span>
+            )}
+          </button>
+          
+          {/* Menu Button (Mobile) */}
           <button
             type="button"
             aria-label="Open menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(true)}
-            className="flex h-11 w-11 items-center justify-center md:hidden"
+            className="flex h-9 items-center gap-2 rounded-full bg-white/10 pl-3 pr-4 transition-colors active:bg-white/20"
           >
-            <span className="relative block h-4 w-6">
-              <span
-                className={`absolute left-0 top-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-              />
-              <span
-                className={`absolute left-0 top-1/2 h-0.5 w-6 -translate-y-1/2 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-              />
-              <span
-                className={`absolute bottom-0 left-0 h-0.5 w-6 rounded-full ${navTheme === "dark" ? "bg-[var(--u-navy)]" : "bg-[var(--u-bone)]"}`}
-              />
+            <span className="flex flex-col gap-[3px] items-center justify-center w-3.5">
+              <span className="h-[1.5px] w-full rounded-full bg-white/90" />
+              <span className="h-[1.5px] w-full rounded-full bg-white/90" />
+              <span className="h-[1.5px] w-full rounded-full bg-white/90" />
             </span>
+            <span className="text-[11px] font-medium tracking-wide text-white/90 uppercase">Menu</span>
           </button>
         </div>
       </div>
@@ -451,7 +482,7 @@ export function SiteNav() {
  * scrolls into view (preload="none" + IntersectionObserver), then it autoplays
  * muted/looping and pauses again when it leaves the viewport.
  */
-function ReelVideo({ src, poster, label, caption, href, index }: (typeof REEL)[number] & { index: number }) {
+function ReelVideo({ src, poster, label, caption, href, index, className }: (typeof REEL)[number] & { index: number; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   useEffect(() => {
     const v = ref.current;
@@ -474,7 +505,7 @@ function ReelVideo({ src, poster, label, caption, href, index }: (typeof REEL)[n
   return (
     <a
       href={href}
-      className={[
+      className={className || [
         "u-tilt-card u-wobble group relative block w-[76vw] max-w-[300px] shrink-0 snap-center bg-black sm:w-auto",
         index % 2 === 0 ? "u-tilt-left" : "u-tilt-right",
       ].join(" ")}
@@ -504,6 +535,45 @@ function ReelVideo({ src, poster, label, caption, href, index }: (typeof REEL)[n
 }
 
 export function VideoReelSection() {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: false, align: "center" });
+  const [tweenValues, setTweenValues] = useState<{ scale: number; opacity: number }[]>([]);
+
+  const onScroll = useCallback(() => {
+    if (!emblaApi) return;
+    const engine = emblaApi.internalEngine();
+    const scrollProgress = emblaApi.scrollProgress();
+
+    const styles = emblaApi.scrollSnapList().map((scrollSnap, index) => {
+      let diffToTarget = scrollSnap - scrollProgress;
+
+      if (engine.options.loop) {
+        engine.slideLooper.loopPoints.forEach((loopItem) => {
+          const target = loopItem.target();
+          if (index === loopItem.index && target !== 0) {
+            const sign = Math.sign(target);
+            if (sign === -1) diffToTarget = scrollSnap - (1 + scrollProgress);
+            if (sign === 1) diffToTarget = scrollSnap + (1 - scrollProgress);
+          }
+        });
+      }
+
+      const tweenValue = 1 - Math.abs(diffToTarget * 1.5);
+      const scale = Math.max(0.85, Math.min(1, tweenValue));
+      const opacity = Math.max(0.4, Math.min(1, tweenValue));
+
+      return { scale, opacity };
+    });
+    setTweenValues(styles);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const timer = setTimeout(() => onScroll(), 0);
+    emblaApi.on("scroll", onScroll);
+    emblaApi.on("reInit", onScroll);
+    return () => clearTimeout(timer);
+  }, [emblaApi, onScroll]);
+
   return (
     <section
       id="next-gen"
@@ -527,10 +597,42 @@ export function VideoReelSection() {
           </div>
         </div>
 
-        <div className="mt-14 flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {/* Desktop View */}
+        <div className="hidden mt-14 md:flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:justify-center [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {REEL.map((r, i) => (
             <ReelVideo key={r.label} {...r} index={i} />
           ))}
+        </div>
+
+        {/* Mobile View with Coverflow Effect */}
+        <div className="md:hidden mt-14 -mx-5 overflow-hidden" ref={emblaRef}>
+          <div className="flex touch-pan-y" style={{ backfaceVisibility: "hidden" }}>
+            {REEL.map((r, index) => {
+              const tween = tweenValues[index] || { scale: 0.85, opacity: 0.4 };
+              return (
+                <div 
+                  key={r.label} 
+                  className="min-w-0 flex-[0_0_65%] pl-4 first:pl-5 last:pr-5"
+                >
+                  <div
+                    style={{
+                      transform: `scale(${tween.scale})`,
+                      opacity: tween.opacity,
+                      transition: "transform 0.1s ease-out, opacity 0.1s ease-out",
+                      transformOrigin: "center center"
+                    }}
+                    className="h-full"
+                  >
+                    <ReelVideo 
+                      {...r} 
+                      index={index} 
+                      className="u-tilt-card group relative block w-full bg-black rounded-lg overflow-hidden" 
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>
@@ -548,6 +650,80 @@ function MonsoonMarquee() {
         <span>{items}</span>
         <span>{items}</span>
       </div>
+    </div>
+  );
+}
+
+function MobileCollectionsStack({ items }: { items: typeof COLLECTIONS }) {
+  const [cards, setCards] = useState(items);
+
+  const handleNext = () => {
+    setCards((prev) => {
+      const newCards = [...prev];
+      const item = newCards.shift();
+      if (item) newCards.push(item);
+      return newCards;
+    });
+  };
+
+  return (
+    <div className="relative w-full h-[560px]">
+      <AnimatePresence mode="popLayout">
+        {cards.map((item, index) => {
+          const isVisible = index < 3;
+          if (!isVisible) return null;
+
+          const isTop = index === 0;
+
+          return (
+            <motion.div
+              key={item.name}
+              layout
+              initial={{ scale: 0.8, opacity: 0, y: 50 }}
+              animate={{
+                y: index * 35,
+                scale: 1 - index * 0.05,
+                opacity: 1 - index * 0.1,
+                zIndex: cards.length - index,
+              }}
+              exit={{
+                x: -300,
+                opacity: 0,
+                scale: 0.9,
+                transition: { duration: 0.2 }
+              }}
+              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              className="absolute top-0 left-0 w-full rounded-2xl overflow-hidden shadow-xl bg-white border border-[var(--u-slate)]/10"
+              style={{ transformOrigin: "top center" }}
+              drag={isTop ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              onDragEnd={(_, info) => {
+                if (Math.abs(info.offset.x) > 50 || Math.abs(info.velocity.x) > 300) {
+                  handleNext();
+                }
+              }}
+            >
+              <div className="relative aspect-[4/3] w-full overflow-hidden select-none">
+                <img src={item.image} alt={item.name} className="w-full h-full object-cover pointer-events-none" draggable={false} />
+                <Sticker tone="yellow" rotate={6} className="absolute top-3 right-3 text-[11px] pointer-events-none">{item.sub}</Sticker>
+              </div>
+              <div className="flex flex-col bg-white p-6 pb-8 pointer-events-none">
+                <h3 className="text-2xl font-bold tracking-tight text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
+                  {item.name}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-[var(--u-navy)]/65">
+                  {item.blurb}
+                </p>
+                <div className="pointer-events-auto mt-4">
+                  <a href={item.href} className="u-mono inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
+                    Shop {item.name} <span aria-hidden="true">&rarr;</span>
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
     </div>
   );
 }
@@ -581,7 +757,8 @@ export function CollectionsSection() {
             />
           </div>
 
-          <Reveal className="mt-16 grid gap-8 md:grid-cols-6" stagger>
+          {/* Desktop Grid */}
+          <Reveal className="hidden md:grid mt-16 gap-8 md:grid-cols-6" stagger>
             {COLLECTIONS.map((c, index) => (
               <a
                 key={c.name}
@@ -625,6 +802,11 @@ export function CollectionsSection() {
               </a>
             ))}
           </Reveal>
+
+          {/* Mobile Gallery Stack */}
+          <div className="md:hidden mt-16 w-full relative">
+            <MobileCollectionsStack items={COLLECTIONS} />
+          </div>
         </div>
       </section>
     </>
@@ -659,6 +841,44 @@ export function BestsellersSection() {
       });
   }, []);
 
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: true });
+  const [tweenValues, setTweenValues] = useState<number[]>([]);
+
+  const onScroll = useCallback(() => {
+    if (!emblaApi) return;
+    const engine = emblaApi.internalEngine();
+    const scrollProgress = emblaApi.scrollProgress();
+    const styles = emblaApi.scrollSnapList().map((scrollSnap, index) => {
+      let diffToTarget = scrollSnap - scrollProgress;
+
+      if (engine.options.loop) {
+        engine.slideLooper.loopPoints.forEach((loopItem) => {
+          const target = loopItem.target();
+          if (index === loopItem.index && target !== 0) {
+            const sign = Math.sign(target);
+            if (sign === -1) diffToTarget = scrollSnap - (1 + scrollProgress);
+            if (sign === 1) diffToTarget = scrollSnap + (1 - scrollProgress);
+          }
+        });
+      }
+
+      return diffToTarget * 100 * -0.4;
+    });
+    setTweenValues(styles);
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    // Avoid synchronous state updates during render by delaying the initial call
+    requestAnimationFrame(() => {
+      onScroll();
+    });
+    
+    emblaApi.on("scroll", onScroll);
+    emblaApi.on("reInit", onScroll);
+  }, [emblaApi, onScroll]);
+
   return (
     <section
       id="bestsellers"
@@ -672,7 +892,7 @@ export function BestsellersSection() {
           Best sellers
         </h2>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="hidden md:grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((p) => (
             <a
               key={p.name}
@@ -748,6 +968,92 @@ export function BestsellersSection() {
           ))}
         </div>
 
+        <div className="md:hidden mt-8 -mx-5 overflow-hidden" ref={emblaRef}>
+          <div className="flex touch-pan-y" style={{ backfaceVisibility: "hidden" }}>
+            {items.map((p, index) => (
+              <div key={p.name} className="min-w-0 flex-[0_0_85%] pl-5 last:pr-5">
+                <a
+                  href={p.href}
+                  className="group flex flex-col overflow-hidden border border-[var(--u-slate)]/70 bg-[var(--u-navy)] transition-colors hover:border-[var(--u-yellow)] h-full relative"
+                >
+                  <div className="aspect-[4/5] w-full overflow-hidden bg-white relative">
+                    <div
+                      className="absolute inset-0 h-full w-[140%] -left-[20%]"
+                      style={{
+                        transform: `translateX(${tweenValues.length ? tweenValues[index] : 0}%)`,
+                      }}
+                    >
+                      <img
+                        src={p.image}
+                        alt={p.name}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-1 flex-col p-5 bg-[var(--u-navy)] z-10">
+                    <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-muted)]">
+                      {p.tag}
+                    </span>
+                    <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-bone)]">
+                      {p.name}
+                    </h3>
+                    <div className="mt-4 flex items-end justify-between">
+                      <div className="flex flex-col">
+                        <span className="u-mono text-sm text-[var(--u-yellow)]">
+                          {p.price}
+                        </span>
+                        {p.originalPrice && (
+                          <span className="u-mono text-[10px] text-[var(--u-muted)] line-through mt-0.5">
+                            {p.originalPrice}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex flex-col items-end">
+                        {p.discount && (
+                          <span className="u-mono text-[10px] font-bold text-[#ff4d4f] mb-1">
+                            {p.discount}
+                          </span>
+                        )}
+                        {p.variantId ? (
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              addToCart({
+                                id: p.variantId!,
+                                title: p.name,
+                                handle: p.name.toLowerCase().replace(/ /g, "-"),
+                                price: p.price,
+                                priceNumeric: p.priceNumeric || 0,
+                                image: p.image,
+                              });
+                            }}
+                            className="u-mono rounded-full bg-[var(--u-yellow)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-[var(--u-navy)] hover:bg-[var(--u-yellow)]/95 active:scale-95 transition-all cursor-pointer"
+                          >
+                            Add to Cart
+                          </button>
+                        ) : (
+                          <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-bone)]">
+                            View
+                            <span
+                              aria-hidden="true"
+                              className="transition-transform duration-300 group-hover:translate-x-1"
+                            >
+                              &rarr;
+                            </span>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-16 flex flex-col items-start gap-6 border-t border-[var(--u-slate)]/60 pt-12 md:flex-row md:items-end md:justify-between">
           <div>
             <h3 className="max-w-[20ch] text-2xl font-semibold tracking-tight text-[var(--u-bone)] md:text-3xl">
@@ -813,7 +1119,8 @@ export function TestimonialsSection() {
           </p>
         </motion.div>
 
-        <div className="mt-14 flex max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
+        {/* Desktop Vertical Testimonials */}
+        <div className="hidden md:flex mt-14 max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
           <TestimonialsColumn testimonials={reviewCol1} duration={15} />
           <TestimonialsColumn
             testimonials={reviewCol2}
@@ -825,6 +1132,11 @@ export function TestimonialsSection() {
             className="hidden lg:block"
             duration={17}
           />
+        </div>
+
+        {/* Mobile Horizontal Testimonials */}
+        <div className="md:hidden mt-14 flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] -mx-5 px-5">
+          <TestimonialsRow testimonials={TESTIMONIALS} duration={35} />
         </div>
       </div>
     </section>
