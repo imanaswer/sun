@@ -1,24 +1,43 @@
-import React, { useState } from "react";
-import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import React, { useMemo, useRef, useState } from "react";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { getShopifyProductByHandle, createCheckoutUrl } from "@/lib/shopify";
+import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
-import { ArrowLeft, Minus, Plus, ShoppingBag, CaretLeft } from "@phosphor-icons/react";
+import {
+  BrandBand,
+  BuyPanelCard,
+  OptionSwatches,
+  PriceRow,
+  ProductGallery,
+  ProductReviews,
+  ProductSpecs,
+  QuantityStepper,
+  RatingSummary,
+  SectionHeading,
+  StickyBuyBar,
+  TrustRow,
+  useScrolledPast,
+} from "@/components/umberlla/product-detail";
+import { CaretLeft, ShoppingBag } from "@phosphor-icons/react";
+
+const FALLBACK_IMAGE = "/assets/sun/prod-walkingstick.png";
 
 export const Route = createFileRoute("/products/$handle")({
   loader: async ({ params }) => {
-    try {
-      const product = await getShopifyProductByHandle(params.handle);
-      if (!product) {
-        throw new Error("Product not found");
-      }
-      return { product };
-    } catch (e) {
-      console.error("Failed to load product in loader:", e);
-      throw e;
+    const product = await getShopifyProductByHandle(params.handle);
+    if (!product) {
+      // notFound() rather than a plain throw: an unknown handle must answer 404,
+      // not 500, or crawlers treat a delisted product as a broken server.
+      throw notFound();
     }
+    // Reviews come from Judge.me and are optional — getProductReviews already
+    // swallows its own failures and returns [], so it can't fail the route.
+    const reviews = await getProductReviews({ data: { handle: params.handle, perPage: 8 } });
+    return { product, reviews };
   },
   component: ProductDetailRoute,
+  notFoundComponent: ProductNotFoundError,
   errorComponent: ProductNotFoundError,
 });
 
@@ -38,7 +57,7 @@ function ProductNotFoundError() {
         </p>
         <Link
           to="/"
-          className="mt-8 u-mono rounded-full px-6 py-3 text-xs uppercase tracking-widest font-bold transition-all hover:opacity-90"
+          className="u-mono mt-8 rounded-full px-6 py-3 text-xs font-bold uppercase tracking-widest transition-opacity hover:opacity-90"
           style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
         >
           Back to Store
@@ -50,24 +69,60 @@ function ProductNotFoundError() {
 }
 
 function ProductDetailRoute() {
-  const { product } = Route.useLoaderData();
+  const { product, reviews } = Route.useLoaderData();
   const { addToCart } = useCart();
-  
-  const [selectedVariant, setSelectedVariant] = useState(product.variants[0] || null);
-  const [activeImage, setActiveImage] = useState(product.images[0]?.url || "/assets/sun/prod-walkingstick.png");
+
+  // Option values drive the selection; the variant is derived from them, so a
+  // multi-option product can't land on a variant that doesn't exist.
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      (product.variants[0]?.selectedOptions ?? []).map((option) => [option.name, option.value])
+    )
+  );
+  const [pickedImage, setPickedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isInstantBuying, setIsInstantBuying] = useState(false);
+
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const showStickyBar = useScrolledPast(ctaRef);
+
+  const selectedVariant = useMemo(() => {
+    const match = product.variants.find((variant) =>
+      variant.selectedOptions.every((option) => selectedOptions[option.name] === option.value)
+    );
+    return match ?? product.variants[0] ?? null;
+  }, [product.variants, selectedOptions]);
+
+  // An explicit thumbnail click wins; otherwise follow the selected variant.
+  const activeImage =
+    pickedImage ?? selectedVariant?.image ?? product.images[0]?.url ?? FALLBACK_IMAGE;
+
+  // Every price-related figure comes from the same variant, so a colour that
+  // costs more can't show the cheapest colour's badge next to its own price.
+  const displayPrice = selectedVariant?.price ?? product.price;
+  const displayOriginalPrice = selectedVariant?.originalPrice ?? product.originalPrice;
+  const displayDiscount = selectedVariant ? selectedVariant.discount : product.discount;
+  const displaySavings = selectedVariant ? selectedVariant.savings : product.savings;
+  const isSoldOut = !product.availableForSale || !selectedVariant?.availableForSale;
+
+  const handleSelectOption = (name: string, value: string) => {
+    setSelectedOptions((current) => ({ ...current, [name]: value }));
+    setPickedImage(null);
+  };
 
   const handleAddToCart = () => {
     if (!selectedVariant) return;
     addToCart(
       {
         id: selectedVariant.id,
-        title: `${product.title} ${selectedVariant.title !== "Default Title" ? `(${selectedVariant.title})` : ""}`,
+        title:
+          selectedVariant.title && selectedVariant.title !== "Default Title"
+            ? `${product.title} (${selectedVariant.title})`
+            : product.title,
         handle: product.handle,
         price: selectedVariant.price,
         priceNumeric: selectedVariant.priceNumeric,
-        image: product.images[0]?.url || "/assets/sun/prod-walkingstick.png",
+        image: activeImage,
       },
       quantity
     );
@@ -77,11 +132,9 @@ function ProductDetailRoute() {
     if (!selectedVariant) return;
     setIsInstantBuying(true);
     try {
-      const checkoutUrl = await createCheckoutUrl(selectedVariant.id, quantity);
-      window.location.href = checkoutUrl;
+      window.location.href = await createCheckoutUrl(selectedVariant.id, quantity);
     } catch (e) {
       console.error("Instant checkout failed:", e);
-      alert("Failed to proceed to checkout. Please try again.");
       setIsInstantBuying(false);
     }
   };
@@ -90,193 +143,125 @@ function ProductDetailRoute() {
     <div className="u-page" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
       <SiteNav />
 
-      {/* Main product box */}
-      <main className="mx-auto max-w-[1200px] px-5 py-24 md:px-8 md:py-36">
-        {/* Back Link */}
+      <main className="mx-auto max-w-[1200px] px-5 py-24 md:px-8 md:py-32">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 u-mono text-xs uppercase tracking-[0.14em] transition-colors mb-8 hover:opacity-80"
+          className="u-mono mb-10 inline-flex items-center gap-2 text-xs uppercase tracking-[0.14em] transition-opacity hover:opacity-70"
           style={{ color: "var(--u-muted)" }}
         >
           <CaretLeft size={16} weight="bold" />
           Back to Collections
         </Link>
 
-        <div className="grid gap-12 lg:grid-cols-12">
-          {/* Images Section */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Active Display Image */}
-            <div
-              className="aspect-[4/5] w-full overflow-hidden rounded-2xl border bg-white p-6 flex items-center justify-center"
-              style={{ borderColor: "var(--u-slate)" }}
-            >
-              <img
-                src={activeImage}
-                alt={product.title}
-                className="h-full max-h-[500px] w-full object-contain"
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="lg:col-span-7">
+            <div className="lg:sticky lg:top-28">
+              <ProductGallery
+                images={product.images}
+                title={product.title}
+                activeUrl={activeImage}
+                onSelect={setPickedImage}
               />
             </div>
-
-            {/* Thumbnail Selectors */}
-            {product.images.length > 1 && (
-              <div className="flex flex-wrap gap-3">
-                {product.images.map((img) => (
-                  <button
-                    key={img.url}
-                    onClick={() => setActiveImage(img.url)}
-                    className="h-20 w-20 overflow-hidden rounded-xl border-2 bg-white p-2 flex items-center justify-center transition-colors cursor-pointer"
-                    style={{
-                      borderColor: activeImage === img.url ? "var(--u-yellow)" : "var(--u-slate)",
-                    }}
-                  >
-                    <img src={img.url} alt={img.altText} className="h-full w-full object-contain" />
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
 
-          {/* Details Section */}
-          <div className="lg:col-span-5 flex flex-col justify-start">
+          <div className="lg:col-span-5">
+            <BuyPanelCard>
             <span
-              className="u-mono uppercase tracking-[0.18em] rounded px-2.5 py-1 self-start"
+              className="u-mono self-start rounded px-2.5 py-1 uppercase tracking-[0.18em]"
               style={{
                 fontSize: "11px",
-                color: "var(--u-yellow)",
-                border: "1px solid var(--u-yellow)",
-                background: "transparent",
+                color: isSoldOut ? "var(--u-muted)" : "var(--u-yellow)",
+                border: `1px solid ${isSoldOut ? "var(--u-slate)" : "var(--u-yellow)"}`,
               }}
             >
-              {product.availableForSale ? "In Stock" : "Out of Stock"}
+              {isSoldOut ? "Out of Stock" : "In Stock"}
             </span>
 
-            <h1 className="u-fun-head text-3xl md:text-5xl mt-4 leading-none" style={{ color: "var(--u-bone)" }}>
+            <h1
+              className="u-fun-head mt-4 text-3xl leading-[1.05] md:text-5xl"
+              style={{ color: "var(--u-bone)" }}
+            >
               {product.title}
             </h1>
 
-            {/* Price display */}
-            <div className="mt-6 flex items-baseline gap-4 border-b pb-6" style={{ borderBottomColor: "var(--u-slate)" }}>
-              <span className="u-mono text-2xl font-bold" style={{ color: "var(--u-yellow)" }}>
-                {selectedVariant ? selectedVariant.price : product.price}
+            {product.rating && <RatingSummary rating={product.rating} />}
+
+            <PriceRow
+              price={displayPrice}
+              originalPrice={displayOriginalPrice}
+              discount={displayDiscount}
+              savings={displaySavings}
+            />
+
+            <OptionSwatches
+              options={product.options}
+              selected={selectedOptions}
+              onSelect={handleSelectOption}
+            />
+
+            <div className="mt-8 space-y-2.5">
+              <span className="u-mono text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
+                Quantity
               </span>
-              {product.originalPrice && (
-                <span className="u-mono text-base line-through" style={{ color: "var(--u-muted)" }}>
-                  {product.originalPrice}
-                </span>
-              )}
-              {product.discount && (
-                <span className="u-mono text-xs font-bold text-red-500 border border-red-500/35 px-2 py-0.5 rounded">
-                  {product.discount}
-                </span>
-              )}
+              <QuantityStepper quantity={quantity} onChange={setQuantity} />
             </div>
 
-            {/* Variants Selector */}
-            {product.variants.length > 1 && (
-              <div className="mt-6 space-y-3">
-                <span className="u-mono text-xs uppercase tracking-wider" style={{ color: "var(--u-muted)" }}>Select Options:</span>
-                <div className="flex flex-wrap gap-2">
-                  {product.variants.map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => {
-                        setSelectedVariant(v);
-                      }}
-                      className="u-mono px-4 py-2 text-xs border rounded-full transition-all cursor-pointer"
-                      style={
-                        selectedVariant?.id === v.id
-                          ? {
-                              backgroundColor: "var(--u-yellow)",
-                              color: "var(--u-navy)",
-                              borderColor: "var(--u-yellow)",
-                              fontWeight: "600",
-                            }
-                          : { borderColor: "var(--u-slate)", color: "var(--u-bone)" }
-                      }
-                    >
-                      {v.title}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quantity Selector */}
-            <div className="mt-8 space-y-3">
-              <span className="u-mono text-xs uppercase tracking-wider" style={{ color: "var(--u-muted)" }}>Quantity:</span>
-              <div className="flex items-center rounded-full border bg-black/25 px-2.5 py-1 w-fit" style={{ borderColor: "var(--u-slate)" }}>
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="p-1 hover:opacity-80 transition-colors cursor-pointer"
-                  aria-label="Decrease quantity"
-                >
-                  <Minus size={14} weight="bold" />
-                </button>
-                <span className="u-mono px-6 text-sm font-semibold w-12 text-center">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="p-1 hover:opacity-80 transition-colors cursor-pointer"
-                  aria-label="Increase quantity"
-                >
-                  <Plus size={14} weight="bold" />
-                </button>
-              </div>
-            </div>
-
-            {/* Checkout buttons */}
-            <div className="mt-10 grid gap-4 sm:grid-cols-2">
+            <div ref={ctaRef} className="mt-10 grid gap-4 sm:grid-cols-2">
               <button
+                type="button"
                 onClick={handleAddToCart}
-                disabled={!product.availableForSale}
-                className="flex items-center justify-center gap-2 u-mono rounded-full border py-4 text-xs uppercase tracking-widest font-bold transition-colors active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                style={{ borderColor: "var(--u-slate)", color: "var(--u-bone)" }}
+                disabled={isSoldOut}
+                className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+                style={{ border: "1px solid var(--u-slate)", color: "var(--u-bone)" }}
               >
                 <ShoppingBag size={16} />
                 Add to Cart
               </button>
 
               <button
+                type="button"
                 onClick={handleBuyNow}
-                disabled={!product.availableForSale || isInstantBuying}
-                className="flex items-center justify-center gap-2 u-mono rounded-full py-4 text-xs uppercase tracking-widest font-bold transition-all hover:opacity-95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                disabled={isSoldOut || isInstantBuying}
+                className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
                 style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-navy)" }}
               >
-                {isInstantBuying ? (
-                  <>
-                    <svg
-                      className="animate-spin -ml-1 mr-2 h-4 w-4"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      style={{ color: "var(--u-navy)" }}
-                    >
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Processing...
-                  </>
-                ) : (
-                  "Buy It Now"
-                )}
+                {isInstantBuying ? "Processing…" : "Buy It Now"}
               </button>
             </div>
 
-            {/* Description Section */}
-            {product.descriptionHtml && (
-              <div className="mt-12 border-t pt-8" style={{ borderTopColor: "var(--u-slate)" }}>
-                <h3 className="u-mono text-xs uppercase tracking-wider mb-4" style={{ color: "var(--u-muted)" }}>Product Details</h3>
-                <div
-                  className="prose prose-invert max-w-none text-sm leading-relaxed space-y-4"
-                  style={{ color: "var(--u-bone)" }}
-                  dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-                />
-              </div>
-            )}
+            <TrustRow />
+            </BuyPanelCard>
           </div>
         </div>
+
+        <ProductSpecs specs={product.specs} />
+
+        {product.descriptionHtml && (
+          <section className="mt-24 md:mt-32">
+            <SectionHeading index="02" title="Product Details" />
+            <div
+              className="prose prose-invert mt-8 max-w-[68ch] text-sm leading-[1.85]"
+              style={{ color: "var(--u-bone)" }}
+              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
+            />
+          </section>
+        )}
+
+        <ProductReviews rating={product.rating} reviews={reviews} />
       </main>
+
+      <BrandBand />
+
+      <StickyBuyBar
+        visible={showStickyBar && !isSoldOut}
+        image={activeImage}
+        title={product.title}
+        price={displayPrice}
+        originalPrice={displayOriginalPrice}
+        disabled={isSoldOut}
+        onAddToCart={handleAddToCart}
+      />
 
       <SiteFooter />
     </div>

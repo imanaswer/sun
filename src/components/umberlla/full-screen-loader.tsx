@@ -129,10 +129,12 @@ export function FullScreenLoader() {
       setTimeout(() => {
         document.body.style.overflow = "";
 
-        // Desktop only: nudge into the tall scrub so it visibly comes alive. On
-        // the phone hero (one viewport) this nudge lands on the wave-transition
-        // trigger and would fire it immediately — so skip it there.
-        if (window.matchMedia("(max-width: 767px)").matches) return;
+        // Desktop home page only: nudge into the tall scrub so it visibly comes
+        // alive. On the phone hero (one viewport) this nudge lands on the
+        // wave-transition trigger and would fire it immediately — and on any
+        // other route there is no scrub, so it just scrolls the page for no
+        // reason.
+        if (!isHome || window.matchMedia("(max-width: 767px)").matches) return;
 
         const scrollProxy = { y: window.scrollY };
         gsap.to(scrollProxy, {
@@ -151,15 +153,21 @@ export function FullScreenLoader() {
     // than MAX_LOAD_TIME on a slow network.
     const MAX_LOAD_TIME = 15000;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    const heroAssets = scrollScrubScenes.map((s) =>
-      isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
-    );
-    let heroReady = false;
-    Promise.allSettled(
-      heroAssets.map((url) => fetch(url).then((r) => r.blob())),
-    ).then(() => {
-      heroReady = true;
-    });
+    // Only the home route renders the scroll-scrub hero. Everywhere else those
+    // clips are tens of MB the visitor never sees, and waiting on them held the
+    // loader up for ~30s on a product page.
+    const isHome = window.location.pathname === "/";
+    let heroReady = !isHome;
+    if (isHome) {
+      const heroAssets = scrollScrubScenes.map((s) =>
+        isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
+      );
+      Promise.allSettled(
+        heroAssets.map((url) => fetch(url).then((r) => r.blob())),
+      ).then(() => {
+        heroReady = true;
+      });
+    }
 
     const attemptExit = () => {
       const elapsed = Date.now() - startTime;

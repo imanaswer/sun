@@ -33,7 +33,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "The full-length stick that lives by the door. Rose-wood finish, UV-protective, windproof.",
     image: "/assets/sun/prod-walkingstick.png",
-    href: `${SHOP}/collections/non-fold`,
+    href: "/collections/non-fold-black-umbrellas",
   },
   {
     name: "2-Fold",
@@ -41,7 +41,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "Auto-open compact that still spans wide — the everyday monsoon carry for the bag.",
     image: "/assets/sun/blue-droplet.jpg",
-    href: `${SHOP}/collections/2-fold`,
+    href: "/collections/2-fold-umbrella-black-catagory",
   },
   {
     name: "3-Fold",
@@ -49,7 +49,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "Folds to a paperback. Auto open-and-close, double-rib storm frames that spring back.",
     image: "/assets/sun/prod-reporter-silver.png",
-    href: `${SHOP}/collections/3-fold`,
+    href: "/collections/3-fold-black-umbrellas",
   },
   {
     name: "Kids",
@@ -57,7 +57,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "Light sticks and non-folds sized for small hands, big puddles and brighter walks to school.",
     image: "/assets/sun/sun-poster.png",
-    href: `${SHOP}/collections/kids`,
+    href: "/collections/kids-umbrellas-tuesday",
   },
   {
     name: "Promotional",
@@ -65,7 +65,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "Custom-branded umbrellas for corporates. Trusted by Bosch, Mercedes-Benz, Shell and more.",
     image: "/assets/sun/prod-pidilite.png",
-    href: `${SHOP}/collections/promotional-umbrella`,
+    href: "/collections/promotional-umbrella",
   },
   {
     name: "Outdoor & Golf",
@@ -73,7 +73,7 @@ export const COLLECTIONS: Collection[] = [
     blurb:
       "Extra-large canopies built for shade. Perfect for the beach, the golf course, and long summer days.",
     image: "/assets/sun/prod-reporter-silver.png",
-    href: `${SHOP}/collections/outdoor`,
+    href: "/collections/golf-umbrellas",
   },
 ];
 
@@ -173,21 +173,21 @@ export const REEL: Reel[] = [
     poster: "",
     label: "Come rain or shine",
     caption: "Built for every downpour",
-    href: `${SHOP}/collections/all`,
+    href: "/collections/all",
   },
   {
     src: "/assets/sun/videos/reel-maybach.mp4",
     poster: "",
     label: "Designed for style",
     caption: "UV protective · windproof",
-    href: `${SHOP}/collections/all`,
+    href: "/collections/all",
   },
   {
     src: "/assets/sun/videos/reel-walkingstick.mp4",
     poster: "",
     label: "Unmatched durability",
     caption: "Tested in heavy storms",
-    href: `${SHOP}/collections/all`,
+    href: "/collections/all",
   },
 ];
 
