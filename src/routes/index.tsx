@@ -4,7 +4,6 @@ import { ScrollScrub } from "@/components/scroll-scrub/scroll-scrub";
 import { journeyScenes } from "@/components/umberlla/journey-scenes";
 import { MobileHero, useIsMobile } from "@/components/umberlla/mobile-hero";
 import {
-  CollectionsSection,
   SiteFooter,
   SiteNav,
   TestimonialsSection,
@@ -47,7 +46,6 @@ function Index() {
           <VideoReelSection />
           <BestsellersSection />
         </div>
-        <CollectionsSection />
         <SunBrandSection />
         <TestimonialsSection />
         <RetailSection />
