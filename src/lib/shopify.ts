@@ -7,36 +7,51 @@
 /**
  * Storefront credentials.
  *
- * These used to fall back to baked-in literals, so an empty Vercel environment
- * shipped a build that *worked* — silently pinned to a hardcoded store and a
- * two-year-old API version, with nobody the wiser. Failing loudly at startup is
- * the whole point.
+ * These once fell back to baked-in literals, so an empty environment shipped a
+ * build that *worked* while silently pointing at a hardcoded store — a
+ * misconfiguration nobody would ever notice.
+ *
+ * Validating at module scope fixed that and introduced something worse: the
+ * throw ran at import time, so a missing variable took down every route in the
+ * app, including ones that never touch Shopify. Config problems are checked at
+ * the point of use instead, where a clear error reaches the route's error
+ * boundary and the rest of the site keeps serving.
  *
  * The access token is a Storefront token: public by design, safe in the client
  * bundle. `import.meta.env` inlines at BUILD time, so these must be set as
- * Vercel *build* environment variables, not just runtime ones.
+ * *build* environment variables on Vercel, not runtime-only ones.
  */
-function requireEnv(name: string, value: string | undefined): string {
-  if (!value) {
-    throw new Error(
-      `Missing ${name}. Set it in .env for local dev and as a build environment variable on Vercel — see .env.example.`,
-    );
-  }
-  return value;
-}
-
-const SHOPIFY_STORE_DOMAIN = requireEnv(
-  "VITE_SHOPIFY_STORE_DOMAIN",
-  import.meta.env.VITE_SHOPIFY_STORE_DOMAIN,
-);
-const SHOPIFY_STOREFRONT_ACCESS_TOKEN = requireEnv(
-  "VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN",
-  import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
-);
+const SHOPIFY_STORE_DOMAIN = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN;
+const SHOPIFY_STOREFRONT_ACCESS_TOKEN = import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 // Shopify supports a version for roughly a year; bump this deliberately.
 const SHOPIFY_API_VERSION = import.meta.env.VITE_SHOPIFY_API_VERSION || "2026-07";
 
-const GRAPHQL_ENDPOINT = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
+/** True when the storefront can talk to Shopify at all. Callers that can
+ *  degrade (the sitemap, the homepage) check this instead of catching. */
+export function isShopifyConfigured(): boolean {
+  return Boolean(SHOPIFY_STORE_DOMAIN && SHOPIFY_STOREFRONT_ACCESS_TOKEN);
+}
+
+function requireShopifyConfig(): { endpoint: string; token: string } {
+  const missing = [
+    !SHOPIFY_STORE_DOMAIN && "VITE_SHOPIFY_STORE_DOMAIN",
+    !SHOPIFY_STOREFRONT_ACCESS_TOKEN && "VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+  ].filter(Boolean);
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Shopify is not configured: missing ${missing.join(" and ")}. ` +
+        "Set these as BUILD environment variables on Vercel (import.meta.env is " +
+        "inlined at build time, so a runtime-only value never reaches the bundle) " +
+        "and in .env locally — see .env.example.",
+    );
+  }
+
+  return {
+    endpoint: `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`,
+    token: SHOPIFY_STOREFRONT_ACCESS_TOKEN as string,
+  };
+}
 
 export interface ShopifyProduct {
   id: string;
@@ -78,11 +93,15 @@ export async function shopifyFetch<T>({
   query: string;
   variables?: Record<string, unknown>;
 }): Promise<T> {
-  const response = await fetch(GRAPHQL_ENDPOINT, {
+  // Checked here, not at import time: a missing variable must fail this call,
+  // not the whole server.
+  const { endpoint, token } = requireShopifyConfig();
+
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Shopify-Storefront-Access-Token": SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+      "X-Shopify-Storefront-Access-Token": token,
     },
     body: JSON.stringify({ query, variables }),
   });
