@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { gsap } from "gsap";
 import { scrollScrubScenes } from "@/scroll-scrub-scenes";
+
+/** Remembers that the intro already played, so it is a first-impression rather
+ *  than a toll booth on every reload. */
+const SESSION_KEY = "sun_loader_shown";
 
 const START_FRAME = 24;
 // The loader only displays ~2.5s (~60 frames at 24fps) before sweeping away, so
@@ -11,14 +16,45 @@ const TOTAL_FRAMES = END_FRAME - START_FRAME + 1;
 const FPS = 24;
 const FRAME_DURATION = 1000 / FPS;
 
+/**
+ * The branded intro.
+ *
+ * It is mounted in __root, so it used to run on product and collection pages
+ * too: ~90 PNG frames (~18MB) plus a forced 2.5s hold in front of someone who
+ * arrived from Google on a product URL. It is a homepage moment, so it now only
+ * renders there, and only once per session.
+ */
 export function FullScreenLoader() {
+  // From the router rather than window.location so the server and the client
+  // agree — reading location during render would break hydration.
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const layersRef = useRef<(HTMLDivElement | null)[]>([]);
   const imgRef = useRef<HTMLImageElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const [isRemoved, setIsRemoved] = useState(false);
   const [progress, setProgress] = useState(0);
+  const isHome = pathname === "/";
 
   useEffect(() => {
+    if (!isHome) return;
+
+    // Already seen this session: skip the hold and the frame download entirely.
+    let alreadyShown = false;
+    try {
+      alreadyShown = sessionStorage.getItem(SESSION_KEY) === "1";
+    } catch {
+      // Private mode / blocked storage — show the intro rather than fail.
+    }
+    if (alreadyShown) {
+      setIsRemoved(true);
+      return;
+    }
+    try {
+      sessionStorage.setItem(SESSION_KEY, "1");
+    } catch {
+      // Non-fatal: the intro just plays again next reload.
+    }
+
     // 1. Lock body scrolling
     document.body.style.overflow = "hidden";
 
@@ -134,7 +170,7 @@ export function FullScreenLoader() {
         // wave-transition trigger and would fire it immediately — and on any
         // other route there is no scrub, so it just scrolls the page for no
         // reason.
-        if (!isHome || window.matchMedia("(max-width: 767px)").matches) return;
+        if (window.matchMedia("(max-width: 767px)").matches) return;
 
         const scrollProxy = { y: window.scrollY };
         gsap.to(scrollProxy, {
@@ -153,21 +189,16 @@ export function FullScreenLoader() {
     // than MAX_LOAD_TIME on a slow network.
     const MAX_LOAD_TIME = 15000;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    // Only the home route renders the scroll-scrub hero. Everywhere else those
-    // clips are tens of MB the visitor never sees, and waiting on them held the
-    // loader up for ~30s on a product page.
-    const isHome = window.location.pathname === "/";
-    let heroReady = !isHome;
-    if (isHome) {
-      const heroAssets = scrollScrubScenes.map((s) =>
-        isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
-      );
-      Promise.allSettled(
-        heroAssets.map((url) => fetch(url).then((r) => r.blob())),
-      ).then(() => {
-        heroReady = true;
-      });
-    }
+    // Warm the hero so the reveal is smooth the instant the loader lifts.
+    // Desktop scrubs video frame-by-frame; phones get the lightweight static
+    // hero, so gating on the small poster is enough and far faster.
+    let heroReady = false;
+    const heroAssets = scrollScrubScenes.map((s) =>
+      isMobile ? s.mobilePoster ?? s.poster ?? s.clip : s.clip,
+    );
+    Promise.allSettled(heroAssets.map((url) => fetch(url).then((r) => r.blob()))).then(() => {
+      heroReady = true;
+    });
 
     const attemptExit = () => {
       const elapsed = Date.now() - startTime;
@@ -183,9 +214,9 @@ export function FullScreenLoader() {
       cancelAnimationFrame(rafId);
       document.body.style.overflow = "";
     };
-  }, []);
+  }, [isHome]);
 
-  if (isRemoved) return null;
+  if (!isHome || isRemoved) return null;
 
   return (
     <>

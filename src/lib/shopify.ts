@@ -4,12 +4,37 @@
  * and generate native checkout URLs.
  */
 
-const SHOPIFY_STORE_DOMAIN =
-  import.meta.env.VITE_SHOPIFY_STORE_DOMAIN || "k6grrg-1a.myshopify.com";
-const SHOPIFY_STOREFRONT_ACCESS_TOKEN =
-  import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN || "8b1ff51bada35183b34138a4a8cded27";
-const SHOPIFY_API_VERSION =
-  import.meta.env.VITE_SHOPIFY_API_VERSION || "2024-07";
+/**
+ * Storefront credentials.
+ *
+ * These used to fall back to baked-in literals, so an empty Vercel environment
+ * shipped a build that *worked* — silently pinned to a hardcoded store and a
+ * two-year-old API version, with nobody the wiser. Failing loudly at startup is
+ * the whole point.
+ *
+ * The access token is a Storefront token: public by design, safe in the client
+ * bundle. `import.meta.env` inlines at BUILD time, so these must be set as
+ * Vercel *build* environment variables, not just runtime ones.
+ */
+function requireEnv(name: string, value: string | undefined): string {
+  if (!value) {
+    throw new Error(
+      `Missing ${name}. Set it in .env for local dev and as a build environment variable on Vercel — see .env.example.`,
+    );
+  }
+  return value;
+}
+
+const SHOPIFY_STORE_DOMAIN = requireEnv(
+  "VITE_SHOPIFY_STORE_DOMAIN",
+  import.meta.env.VITE_SHOPIFY_STORE_DOMAIN,
+);
+const SHOPIFY_STOREFRONT_ACCESS_TOKEN = requireEnv(
+  "VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+  import.meta.env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN,
+);
+// Shopify supports a version for roughly a year; bump this deliberately.
+const SHOPIFY_API_VERSION = import.meta.env.VITE_SHOPIFY_API_VERSION || "2026-07";
 
 const GRAPHQL_ENDPOINT = `https://${SHOPIFY_STORE_DOMAIN}/api/${SHOPIFY_API_VERSION}/graphql.json`;
 

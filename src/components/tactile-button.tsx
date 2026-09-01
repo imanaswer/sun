@@ -514,7 +514,9 @@ const __originkitPresetProps = {
     "offsetX": -1,
     "offsetY": 11
   },
-  "newTab": true
+  // Every call site links to a page on this site, so opening a new tab just
+  // orphans the current one. Pass newTab explicitly for a genuine outbound link.
+  "newTab": false
 };
 
 export default function TactileButton(props: Partial<TactileButtonProps>) {

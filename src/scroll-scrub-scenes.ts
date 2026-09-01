@@ -23,7 +23,7 @@ export const scrollScrubTheme: ScrollScrubTheme = {
 
 export const scrollScrubScenes: ScrollScrubScene[] = [
   {
-    body: "For 135 years Sun Umbrella has stood between India and the sky. Built to be already in your hand when the monsoon turns, and to open before you are wet.",
+    body: "Since 1889 Sun Umbrella has stood between India and the sky. Built to be already in your hand when the monsoon turns, and to open before you are wet.",
     clip: "/assets/world/scene-01.mp4",
     id: "scene-01",
     label: "Since 1889",
@@ -35,7 +35,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-01-mobile-poster.png",
     poster: "/assets/world/scene-01-poster.png",
     scroll: 1.6,
-    tags: ["Est. 1889", "135 years of shelter"],
+    tags: ["Est. 1889", "Sheltering India since 1889"],
     title: "Monsoon never\nlooked this good",
   },
   {

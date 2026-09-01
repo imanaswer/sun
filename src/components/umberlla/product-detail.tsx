@@ -186,7 +186,7 @@ export function BrandBand() {
 const TRUST_ITEMS = [
   { Icon: Truck, label: "Free delivery", detail: "Across India" },
   { Icon: ShieldCheck, label: "Secure checkout", detail: "via Shopify" },
-  { Icon: Medal, label: "Est. 1889", detail: "135 years" },
+  { Icon: Medal, label: "Est. 1889", detail: "Five generations" },
 ];
 
 export function TrustRow() {

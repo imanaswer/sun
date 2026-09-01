@@ -3,6 +3,7 @@ import { getShopifyCollections } from "@/lib/shopify";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
 import { COLLECTIONS } from "@/sun-data";
 import { canonical, pageMeta } from "@/lib/seo";
+import { CollectionPending } from "@/components/umberlla/route-pending";
 
 // Shopify serves /collections on the old storefront, so bookmarks and indexed
 // results for that URL survive the domain move instead of hitting a 404.
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/collections/")({
     }),
     links: [canonical("/collections")],
   }),
+  pendingComponent: CollectionPending,
   component: CollectionsIndex,
 });
 

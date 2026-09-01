@@ -38,12 +38,41 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+/**
+ * Let the CDN hold rendered pages briefly.
+ *
+ * Every page view re-issued live Shopify GraphQL from the function, so latency
+ * and Storefront rate-limit exposure both scaled with traffic. Pages don't vary
+ * per visitor — the cart lives in localStorage and renders client-side — so a
+ * shared cache is safe. The browser still revalidates (`max-age=0`); only the
+ * edge holds a copy, and `stale-while-revalidate` means a price change is at
+ * most a minute late rather than a cache miss for everyone at once.
+ *
+ * Routes that set their own Cache-Control (robots.txt, sitemap.xml) keep it.
+ */
+function applyPageCaching(request: Request, response: Response): Response {
+  if (request.method !== "GET") return response;
+  if (response.status !== 200) return response;
+  if (response.headers.has("cache-control")) return response;
+  if (!(response.headers.get("content-type") ?? "").includes("text/html")) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set("Cache-Control", "public, max-age=0, s-maxage=60, stale-while-revalidate=300");
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return applySecurityHeaders(await normalizeCatastrophicSsrResponse(response));
+      return applySecurityHeaders(
+        applyPageCaching(request, await normalizeCatastrophicSsrResponse(response)),
+      );
     } catch (error) {
       console.error(error);
       return applySecurityHeaders(

@@ -22,6 +22,7 @@ import { WaveTransition } from "../lib/wave-transition";
 import { CartProvider } from "../context/cart-context";
 import { CartDrawer } from "../components/umberlla/cart-drawer";
 import { BRAND_THEME_COLOR } from "../umberlla-tokens";
+import { SITE_ORIGIN } from "../lib/seo";
 
 declare const __HF_DESIGN_INSPECTOR__: boolean;
 
@@ -72,6 +73,11 @@ function toOwnAssetUrl(value: string | null | undefined): string | null {
   }
 }
 
+function absoluteUrl(value: string | null): string | null {
+  if (!value) return null;
+  return value.startsWith("/") ? new URL(value, SITE_ORIGIN).toString() : value;
+}
+
 /** The branded icon set lives in /public/assets/brand and is what the tab
  *  should show; app-meta.json's remote favicon is scaffolding. */
 const BRAND_ICONS_PRESENT = true;
@@ -79,7 +85,9 @@ const BRAND_ICONS_PRESENT = true;
 function buildHead(meta: AppMeta) {
   const title = meta.og_title ?? DEFAULT_TITLE;
   const description = meta.og_description ?? DEFAULT_DESCRIPTION;
-  const ogImage = toOwnAssetUrl(meta.og_image_url);
+  // Social crawlers do not resolve relative URLs, so og:image has to be
+  // absolute even though the file is served from this app.
+  const ogImage = absoluteUrl(toOwnAssetUrl(meta.og_image_url));
   const favicon = toOwnAssetUrl(meta.favicon_url);
   const ogVideo = toOwnAssetUrl(meta.og_video_url);
 
@@ -168,13 +176,14 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
               router.invalidate();
               reset();
             }}
+            type="button"
             className={button({ variant: "primary", size: "md" })}
           >
             Try again
           </button>
-          <a href="/" className={button({ variant: "outline", size: "md" })}>
+          <Link to="/" className={button({ variant: "outline", size: "md" })}>
             Go home
-          </a>
+          </Link>
         </div>
       </div>
     </div>

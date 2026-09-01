@@ -79,15 +79,35 @@ export default async function handler(req, res) {
 fs.writeFileSync(`${funcDir}/index.mjs`, adapterCode);
 
 fs.writeFileSync(`${funcDir}/.vc-config.json`, JSON.stringify({
-  runtime: "nodejs20.x",
+  runtime: "nodejs22.x",
   handler: "index.mjs",
   launcherType: "Nodejs"
 }));
 
 // 3. Create routing config
+//
+// Without explicit headers the Build Output API serves everything as
+// `max-age=0, must-revalidate`, so all 167MB of /public was revalidated on
+// every repeat visit. Two rules, because the directory mixes two kinds of file:
+//
+//   - Vite's JS/CSS carry a content hash in the filename, so a changed file is
+//     a changed URL and they can be cached forever.
+//   - Media in /public is NOT content-hashed, so `immutable` would strip our
+//     ability to swap a product photo. A month with revalidation instead:
+//     ponytail: bump to immutable once these filenames carry hashes.
 fs.writeFileSync(`${outDir}/config.json`, JSON.stringify({
   version: 3,
   routes: [
+    {
+      src: "^/assets/.*\\.(js|css|map)$",
+      headers: { "cache-control": "public, max-age=31536000, immutable" },
+      continue: true
+    },
+    {
+      src: "^/assets/.*\\.(png|jpe?g|webp|avif|gif|svg|ico|mp4|webm|woff2?)$",
+      headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=86400" },
+      continue: true
+    },
     { handle: "filesystem" },
     { src: "/(.*)", dest: "/" }
   ]

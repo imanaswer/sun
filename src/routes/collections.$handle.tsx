@@ -7,6 +7,7 @@ import {
   ProductGrid,
 } from "@/components/umberlla/collection";
 import { RouteLoadError } from "@/components/umberlla/route-error";
+import { CollectionPending } from "@/components/umberlla/route-pending";
 import { canonical, metaDescription, pageMeta } from "@/lib/seo";
 
 // The largest collection in the store holds 25 products; ask for well past that
@@ -53,6 +54,7 @@ export const Route = createFileRoute("/collections/$handle")({
       links: [canonical(`/collections/${params.handle}`)],
     };
   },
+  pendingComponent: CollectionPending,
   component: CollectionRoute,
   notFoundComponent: CollectionNotFoundRoute,
   errorComponent: () => <RouteLoadError title="Couldn't load this collection" />,

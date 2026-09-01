@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
+import { Link } from "@tanstack/react-router";
 import { useCart } from "@/context/cart-context";
 import { X, Minus, Plus, Trash, ShoppingBag, ArrowRight } from "@phosphor-icons/react";
 import { formatPrice } from "@/lib/shopify";
@@ -19,6 +20,17 @@ export function CartDrawer() {
     hasUnavailable,
     removeUnavailable,
   } = useCart();
+
+  // Escape closes the drawer. The backdrop was a bare <div onClick>, so a
+  // keyboard user had no way out at all.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeCart();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isOpen, closeCart]);
 
   // Prevent background scrolling when cart is open
   useEffect(() => {
@@ -40,10 +52,18 @@ export function CartDrawer() {
           isOpen ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={closeCart}
+        aria-hidden="true"
       />
 
-      {/* Drawer Container */}
+      {/* Drawer Container.
+          `inert` when closed: it is only slid off-screen, so without this a
+          keyboard user tabbing any page walks through invisible quantity
+          steppers, remove buttons and the checkout button. */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Your cart"
+        inert={!isOpen}
         className={`fixed bottom-0 right-0 top-0 z-50 flex h-full w-full max-w-md flex-col bg-[var(--u-navy)] text-[var(--u-bone)] shadow-2xl transition-transform duration-300 ease-in-out border-l border-[var(--u-slate)]/40 ${
           isOpen ? "translate-x-0" : "translate-x-full"
         }`}
@@ -60,6 +80,7 @@ export function CartDrawer() {
             </span>
           </div>
           <button
+            type="button"
             onClick={closeCart}
             className="rounded-full p-1.5 transition-colors hover:bg-[var(--u-slate)]/30 text-[var(--u-bone)]/80 hover:text-[var(--u-bone)]"
             aria-label="Close cart"
@@ -77,12 +98,14 @@ export function CartDrawer() {
               <p className="mt-1 text-sm text-[var(--u-muted)]">
                 Add some umbrellas to get ready for the monsoon!
               </p>
-              <button
+              <Link
+                to="/collections/$handle"
+                params={{ handle: "all" }}
                 onClick={closeCart}
                 className="mt-6 u-mono rounded-full bg-[var(--u-yellow)] px-6 py-2.5 text-xs uppercase tracking-wider font-bold text-[var(--u-navy)] transition-transform active:scale-95 hover:bg-[var(--u-yellow)]/90"
               >
                 Start Shopping
-              </button>
+              </Link>
             </div>
           ) : (
             cart.map((item) => (
@@ -120,6 +143,7 @@ export function CartDrawer() {
                   <div className="mt-3 flex items-center justify-between">
                     <div className="flex items-center rounded-full border border-[var(--u-slate)]/55 bg-black/25 px-1.5 py-0.5">
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="p-1 hover:text-[var(--u-yellow)] transition-colors"
                         aria-label="Decrease quantity"
@@ -130,6 +154,7 @@ export function CartDrawer() {
                         {item.quantity}
                       </span>
                       <button
+                        type="button"
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="p-1 hover:text-[var(--u-yellow)] transition-colors"
                         aria-label="Increase quantity"
@@ -139,6 +164,7 @@ export function CartDrawer() {
                     </div>
 
                     <button
+                      type="button"
                       onClick={() => removeFromCart(item.id)}
                       className="text-[var(--u-muted)] hover:text-[#ff4d4f] transition-colors p-1"
                       aria-label="Remove item"

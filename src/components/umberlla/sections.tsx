@@ -7,6 +7,7 @@
 import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "@tanstack/react-router";
+import { SiteLink } from "@/components/umberlla/site-link";
 import { motion, AnimatePresence } from "motion/react";
 import LiquidGrid from "../liquid-grid";
 import DottedBg2 from "../dotted-bg-2";
@@ -211,6 +212,16 @@ export function SiteNav() {
       window.removeEventListener("resize", check);
     };
   }, []);
+  // Escape closes the mobile menu, matching the cart drawer.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [menuOpen]);
+
   // Lock the page while the mobile menu is open.
   useEffect(() => {
     if (menuOpen) {
@@ -233,7 +244,7 @@ export function SiteNav() {
     >
       {/* DESKTOP HEADER */}
       <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
-        <a href="#top" className="flex h-24 items-center">
+        <Link to="/" className="flex h-24 items-center">
           <div className={[
             "flex flex-col items-center transition-opacity duration-300",
             isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
@@ -256,11 +267,11 @@ export function SiteNav() {
                 "text-[8px] font-medium tracking-tight mt-0.5 whitespace-nowrap",
                 navTheme === "dark" ? "text-[var(--u-ink)]/70" : "text-white/80",
               ].join(" ")}>
-                Trusted over 100 years
+                Trusted since 1889
               </span>
             </div>
           </div>
-        </a>
+        </Link>
         <svg width="0" height="0" className="absolute pointer-events-none">
           <filter id="glass-displacement" colorInterpolationFilters="linearRGB" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse">
             <feDisplacementMap in="SourceGraphic" in2="SourceGraphic" scale="5" xChannelSelector="A" yChannelSelector="A" x="5" y="-5" width="100%" height="100%" result="displacementMap"/>
@@ -308,7 +319,7 @@ export function SiteNav() {
                   });
                 }}
               >
-                <a
+                <SiteLink
                   href={l.href}
                   className={[
                     "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors relative z-10",
@@ -326,18 +337,18 @@ export function SiteNav() {
                       &#9662;
                     </span>
                   )}
-                </a>
+                </SiteLink>
                 {l.items && (
                   <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
                     <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-ink)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
                       {l.items.map((s) => (
-                        <a
+                        <SiteLink
                           key={s.href}
                           href={s.href}
                           className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-ink)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-ink)]"
                         >
                           {s.label}
-                        </a>
+                        </SiteLink>
                       ))}
                     </div>
                   </div>
@@ -370,9 +381,9 @@ export function SiteNav() {
 
       {/* MOBILE FLOATING PILL HEADER */}
       <div className="md:hidden mx-auto mt-4 flex w-11/12 max-w-[380px] items-center justify-between gap-4 rounded-full bg-[#111111]/60 backdrop-blur-md pl-4 pr-1.5 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] border border-white/10 pointer-events-auto">
-        <a href="#top" className="flex items-center h-8">
+        <Link to="/" className="flex items-center h-8">
           <img src="/assets/sun/logo-icon-transparent.png" alt="Sun" className="h-5 w-auto object-contain" />
-        </a>
+        </Link>
         <div className="flex items-center gap-1">
           {/* Cart Icon (Mobile) */}
           <button
@@ -394,6 +405,7 @@ export function SiteNav() {
             type="button"
             aria-label="Open menu"
             aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
             onClick={() => setMenuOpen(true)}
             className="flex h-9 items-center gap-2 rounded-full bg-white/10 pl-3 pr-4 transition-colors active:bg-white/20"
           >
@@ -408,8 +420,14 @@ export function SiteNav() {
       </div>
     </header>
 
-    {/* Full-screen mobile menu */}
+    {/* Full-screen mobile menu. `inert` when closed — it is only faded out, so
+        without it every page keeps the whole category menu in the tab order. */}
     <div
+      id="mobile-menu"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      inert={!menuOpen}
       className={[
         "fixed inset-x-0 top-0 z-[60] h-[100dvh] w-full bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
         menuOpen
@@ -439,7 +457,7 @@ export function SiteNav() {
             key={l.label}
             className="border-t border-[var(--u-ink)]/10 py-4 first:border-t-0"
           >
-            <a
+            <SiteLink
               href={l.href}
               onClick={() => setMenuOpen(false)}
               className="flex items-baseline justify-between gap-3"
@@ -450,18 +468,18 @@ export function SiteNav() {
               <span className="u-mono text-[11px] tracking-[0.1em] text-[var(--u-ink)]/35">
                 {`0${i + 1}`}
               </span>
-            </a>
+            </SiteLink>
             {l.items && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {l.items.map((s) => (
-                  <a
+                  <SiteLink
                     key={s.href}
                     href={s.href}
                     onClick={() => setMenuOpen(false)}
                     className="u-mono rounded-full bg-[var(--u-ink)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-ink)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-ink)]"
                   >
                     {s.label}
-                  </a>
+                  </SiteLink>
                 ))}
               </div>
             )}
@@ -471,7 +489,6 @@ export function SiteNav() {
         <div className="mt-8 border-t border-[var(--u-ink)]/10 pt-7">
           <TactileButton
             link="/collections/all"
-            newTab={false}
             label="Shop all umbrellas"
           />
           <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-ink)]/60">
@@ -516,7 +533,7 @@ function ReelVideo({ src, poster, label, caption, href, index, className }: (typ
   }, []);
 
   return (
-    <a
+    <SiteLink
       href={href}
       className={className || [
         "u-tilt-card u-wobble group relative block w-[76vw] max-w-[300px] shrink-0 snap-center bg-black sm:w-auto",
@@ -543,7 +560,7 @@ function ReelVideo({ src, poster, label, caption, href, index, className }: (typ
           {label}
         </p>
       </div>
-    </a>
+    </SiteLink>
   );
 }
 
@@ -728,9 +745,9 @@ function MobileCollectionsStack({ items }: { items: typeof COLLECTIONS }) {
                   {item.blurb}
                 </p>
                 <div className="pointer-events-auto mt-4">
-                  <a href={item.href} className="u-mono inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
+                  <SiteLink href={item.href} className="u-mono inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-[var(--u-navy)]">
                     Shop {item.name} <span aria-hidden="true">&rarr;</span>
-                  </a>
+                  </SiteLink>
                 </div>
               </div>
             </motion.div>
@@ -773,7 +790,7 @@ export function CollectionsSection() {
           {/* Desktop Grid */}
           <Reveal className="hidden md:grid mt-16 gap-8 md:grid-cols-6" stagger>
             {COLLECTIONS.map((c, index) => (
-              <a
+              <SiteLink
                 key={c.name}
                 href={c.href}
                 className="u-card-on-yellow group relative flex flex-col md:col-span-3"
@@ -812,7 +829,7 @@ export function CollectionsSection() {
                     </span>
                   </span>
                 </div>
-              </a>
+              </SiteLink>
             ))}
           </Reveal>
 
@@ -957,7 +974,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
 
         <div className="hidden md:grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {items.map((p, index) => (
-            <a
+            <SiteLink
               key={p.name}
               href={p.href}
               className="u-card-on-yellow group relative flex flex-col"
@@ -999,7 +1016,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
                   </div>
                 </div>
               </div>
-            </a>
+            </SiteLink>
           ))}
         </div>
 
@@ -1007,7 +1024,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
           <div className="flex touch-pan-y" style={{ backfaceVisibility: "hidden" }}>
             {items.map((p, index) => (
               <div key={p.name} className="min-w-0 flex-[0_0_85%] pl-5 last:pr-5">
-                <a
+                <SiteLink
                   href={p.href}
                   className="u-card-on-yellow group relative flex flex-col h-full"
                 >
@@ -1054,7 +1071,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
                       </div>
                     </div>
                   </div>
-                </a>
+                </SiteLink>
               </div>
             ))}
           </div>
@@ -1063,7 +1080,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
         <div className="mt-16 flex flex-col items-start gap-6 border-t border-[var(--u-slate)]/60 pt-12 md:flex-row md:items-end md:justify-between">
           <div>
             <h3 className="max-w-[20ch] text-2xl font-semibold tracking-tight text-[var(--u-navy)] md:text-3xl">
-              135 years of sheltering India.
+              Sheltering India since 1889.
             </h3>
             <p className="u-mono mt-3 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Auto open &amp; close · UV protective · windproof
@@ -1140,7 +1157,7 @@ export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[
             <TypeSequence text={"What our customers\nsay"} />
           </h2>
           <p className="mt-4 text-[#F3EFE4]">
-            135 years of keeping India dry — here&rsquo;s what people carry, and why.
+            Keeping India dry since 1889 — here&rsquo;s what people carry, and why.
           </p>
         </motion.div>
 
@@ -1197,9 +1214,9 @@ export function SiteFooter() {
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               {COLLECTIONS.map((c) => (
                 <li key={c.name}>
-                  <a className="hover:text-white transition-colors" href={c.href}>
+                  <SiteLink className="hover:text-white transition-colors" href={c.href}>
                     {c.name}
-                  </a>
+                  </SiteLink>
                 </li>
               ))}
             </ul>
@@ -1217,12 +1234,12 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <a
+                <SiteLink
                   className="hover:text-white transition-colors"
                   href={"/collections/promotional-umbrella"}
                 >
                   Corporate &amp; branding
-                </a>
+                </SiteLink>
               </li>
               <li>
                 <a className="hover:text-white transition-colors" href="/#stores">
@@ -1325,7 +1342,7 @@ export function SunBrandSection() {
               id: i,
               title: brand.name,
               subtitle: "Sun Umbrella",
-              buttonLabel: "View Collection",
+              buttonLabel: "View product",
               link: brand.href,
               image: { src: brand.image, alt: brand.name }
             }))} 

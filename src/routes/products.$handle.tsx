@@ -6,6 +6,7 @@ import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
 import { RouteLoadError } from "@/components/umberlla/route-error";
+import { ProductPending } from "@/components/umberlla/route-pending";
 import { StructuredData } from "@/components/StructuredData";
 import { canonical, metaDescription, pageMeta, productJsonLd } from "@/lib/seo";
 import {
@@ -55,6 +56,7 @@ export const Route = createFileRoute("/products/$handle")({
       links: [canonical(`/products/${product.handle}`)],
     };
   },
+  pendingComponent: ProductPending,
   component: ProductDetailRoute,
   notFoundComponent: ProductNotFound,
   errorComponent: () => <RouteLoadError title="Couldn't load this umbrella" />,

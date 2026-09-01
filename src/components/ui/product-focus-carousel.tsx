@@ -300,9 +300,16 @@ function ProductCard({
               {product.title}
             </span>
           </div>
-          {showButton && isActive && (
-            <motion.button
+          {showButton && isActive && product.link && (
+            /* Was a <button> firing window.open at an external product URL:
+               no middle-click, no copy-link, invisible to crawlers, and
+               announced as "button" rather than "link". */
+            <motion.a
+              href={product.link}
+              onClick={(event) => event.stopPropagation()}
               style={{
+                display: "inline-block",
+                textDecoration: "none",
                 backgroundColor: buttonColor,
                 color: buttonTextColor,
                 border: "none",
@@ -318,21 +325,9 @@ function ProductCard({
               }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={(event) => {
-                event.stopPropagation();
-                if (!product.link) return;
-                const newWindow = window.open(
-                  product.link,
-                  "_blank",
-                  "noopener,noreferrer"
-                );
-                if (newWindow) {
-                  newWindow.opener = null;
-                }
-              }}
             >
               {product.buttonLabel}
-            </motion.button>
+            </motion.a>
           )}
         </div>
       </div>
