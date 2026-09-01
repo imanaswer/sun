@@ -4,7 +4,7 @@
  * grid, the bestsellers strip, and the footer. Copy, prices and links come from
  * the live Shopify store via src/sun-data.ts.
  */
-import { useEffect, useRef, useState, useCallback, type ReactNode } from "react";
+import { useEffect, useRef, useState, useCallback, type CSSProperties, type ReactNode } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Link } from "@tanstack/react-router";
 import { SiteLink } from "@/components/umberlla/site-link";
@@ -918,44 +918,6 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
         }))
       : BESTSELLERS;
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: true });
-  const [tweenValues, setTweenValues] = useState<number[]>([]);
-
-  const onScroll = useCallback(() => {
-    if (!emblaApi) return;
-    const engine = emblaApi.internalEngine();
-    const scrollProgress = emblaApi.scrollProgress();
-    const styles = emblaApi.scrollSnapList().map((scrollSnap, index) => {
-      let diffToTarget = scrollSnap - scrollProgress;
-
-      if (engine.options.loop) {
-        engine.slideLooper.loopPoints.forEach((loopItem) => {
-          const target = loopItem.target();
-          if (index === loopItem.index && target !== 0) {
-            const sign = Math.sign(target);
-            if (sign === -1) diffToTarget = scrollSnap - (1 + scrollProgress);
-            if (sign === 1) diffToTarget = scrollSnap + (1 - scrollProgress);
-          }
-        });
-      }
-
-      return diffToTarget * 100 * -0.4;
-    });
-    setTweenValues(styles);
-  }, [emblaApi]);
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    
-    // Avoid synchronous state updates during render by delaying the initial call
-    requestAnimationFrame(() => {
-      onScroll();
-    });
-    
-    emblaApi.on("scroll", onScroll);
-    emblaApi.on("reInit", onScroll);
-  }, [emblaApi, onScroll]);
-
   return (
     <section
       id="bestsellers"
@@ -968,17 +930,17 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
         <Sticker tone="navy" rotate={-4} className="mb-6">
           ☂ Trending now
         </Sticker>
-        <h2 className="u-fun-heading mb-14 max-w-[20ch] text-4xl md:text-7xl">
+        <h2 className="u-fun-heading mb-8 max-w-[20ch] text-4xl md:mb-14 md:text-7xl">
           <TypeSequence text="Best sellers" />
         </h2>
 
-        <div className="hidden md:grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:gap-8 lg:grid-cols-4">
           {items.map((p, index) => (
             <SiteLink
               key={p.name}
               href={p.href}
-              className="u-card-on-yellow group relative flex flex-col"
-              style={{ transform: `rotate(${index % 2 === 0 ? -1 : 1}deg)` }}
+              className="u-card-on-yellow group relative flex flex-col md:[transform:rotate(var(--tilt))]"
+              style={{ "--tilt": `${index % 2 === 0 ? -1 : 1}deg` } as CSSProperties}
             >
               <div className="aspect-square w-full overflow-hidden bg-white">
                 <img
@@ -988,14 +950,16 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
                 />
               </div>
-              <div className="flex flex-1 flex-col bg-white p-5">
-                <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-navy)]/60">
+              <div className="flex flex-1 flex-col bg-white p-3.5 md:p-5">
+                <span className="u-mono text-[9px] uppercase tracking-[0.18em] text-[var(--u-navy)]/60 md:text-[10px]">
                   {p.tag}
                 </span>
-                <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
+                <h3 className="mt-2 flex-1 text-sm font-medium leading-snug text-[var(--u-navy)] md:text-base" style={{ fontFamily: "var(--u-fun)" }}>
                   {p.name}
                 </h3>
-                <div className="mt-4 flex items-end justify-between">
+                {/* Price and button sit side by side once there is room; on a
+                    half-width phone card they stack instead of squeezing. */}
+                <div className="mt-3 flex flex-col items-start gap-2 md:mt-4 md:flex-row md:items-end md:justify-between">
                   <div className="flex flex-col">
                     <span className="u-mono text-sm text-[var(--u-navy)] font-bold">
                       {p.price}
@@ -1006,9 +970,9 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-col items-end">
+                  <div className="flex w-full flex-col items-start md:w-auto md:items-end">
                     {p.discount && (
-                      <span className="u-mono text-[10px] font-bold text-[#ff4d4f] mb-1">
+                      <span className="u-mono mb-1 text-[10px] font-bold text-[#ff4d4f]">
                         {p.discount}
                       </span>
                     )}
@@ -1018,63 +982,6 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
               </div>
             </SiteLink>
           ))}
-        </div>
-
-        <div className="md:hidden mt-8 -mx-5 overflow-hidden py-4" ref={emblaRef}>
-          <div className="flex touch-pan-y" style={{ backfaceVisibility: "hidden" }}>
-            {items.map((p, index) => (
-              <div key={p.name} className="min-w-0 flex-[0_0_85%] pl-5 last:pr-5">
-                <SiteLink
-                  href={p.href}
-                  className="u-card-on-yellow group relative flex flex-col h-full"
-                >
-                  <div className="aspect-[4/5] w-full overflow-hidden bg-white relative">
-                    <div
-                      className="absolute inset-0 h-full w-[140%] -left-[20%]"
-                      style={{
-                        transform: `translateX(${tweenValues.length ? tweenValues[index] : 0}%)`,
-                      }}
-                    >
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        loading="lazy"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex flex-1 flex-col bg-white p-5 z-10">
-                    <span className="u-mono text-[10px] uppercase tracking-[0.18em] text-[var(--u-navy)]/60">
-                      {p.tag}
-                    </span>
-                    <h3 className="mt-2 flex-1 text-base font-medium leading-snug text-[var(--u-navy)]" style={{ fontFamily: "var(--u-fun)" }}>
-                      {p.name}
-                    </h3>
-                    <div className="mt-4 flex items-end justify-between">
-                      <div className="flex flex-col">
-                        <span className="u-mono text-sm text-[var(--u-navy)] font-bold">
-                          {p.price}
-                        </span>
-                        {p.originalPrice && (
-                          <span className="u-mono text-[10px] text-[var(--u-navy)]/60 line-through mt-0.5">
-                            {p.originalPrice}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-end">
-                        {p.discount && (
-                          <span className="u-mono text-[10px] font-bold text-[#ff4d4f] mb-1">
-                            {p.discount}
-                          </span>
-                        )}
-                        <BestsellerBuyButton item={p} />
-                      </div>
-                    </div>
-                  </div>
-                </SiteLink>
-              </div>
-            ))}
-          </div>
         </div>
 
         <div className="mt-16 flex flex-col items-start gap-6 border-t border-[var(--u-slate)]/60 pt-12 md:flex-row md:items-end md:justify-between">
