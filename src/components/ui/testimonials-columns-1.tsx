@@ -4,9 +4,43 @@ import { motion } from "motion/react";
 
 export interface Testimonial {
   text: string;
-  image: string;
+  /** Optional: Judge.me reviewers have no avatar, and substituting stock photos
+   *  for real people is exactly what this section stopped doing. */
+  image?: string;
   name: string;
   role: string;
+}
+
+/** Initials stand in when a real reviewer has no photo. */
+function Avatar({ image, name }: { image?: string; name: string }) {
+  if (image) {
+    return (
+      <img
+        width={40}
+        height={40}
+        src={image}
+        alt={name}
+        loading="lazy"
+        className="h-10 w-10 rounded-full object-cover"
+      />
+    );
+  }
+
+  const initials = name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] ?? "")
+    .join("")
+    .toUpperCase();
+
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-neutral-200 text-xs font-semibold text-neutral-600"
+    >
+      {initials}
+    </span>
+  );
 }
 
 export const TestimonialsColumn = (props: {
@@ -38,14 +72,7 @@ export const TestimonialsColumn = (props: {
                 >
                   <div>{text}</div>
                   <div className="mt-5 flex items-center gap-2">
-                    <img
-                      width={40}
-                      height={40}
-                      src={image}
-                      alt={name}
-                      loading="lazy"
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
+                    <Avatar image={image} name={name} />
                     <div className="flex flex-col">
                       <div className="font-medium leading-5 tracking-tight text-neutral-900">
                         {name}
@@ -92,14 +119,7 @@ export const TestimonialsRow = (props: {
                 >
                   <div className="text-sm line-clamp-4">{text}</div>
                   <div className="mt-5 flex items-center gap-3">
-                    <img
-                      width={40}
-                      height={40}
-                      src={image}
-                      alt={name}
-                      loading="lazy"
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
+                    <Avatar image={image} name={name} />
                     <div className="flex flex-col">
                       <div className="font-medium leading-5 tracking-tight text-neutral-900 text-sm">
                         {name}

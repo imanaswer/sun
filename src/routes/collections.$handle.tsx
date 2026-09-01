@@ -6,6 +6,8 @@ import {
   CollectionNotFound,
   ProductGrid,
 } from "@/components/umberlla/collection";
+import { RouteLoadError } from "@/components/umberlla/route-error";
+import { canonical, metaDescription, pageMeta } from "@/lib/seo";
 
 // The largest collection in the store holds 25 products; ask for well past that
 // so a category never silently shows a truncated set.
@@ -36,12 +38,27 @@ export const Route = createFileRoute("/collections/$handle")({
     }
     return { collection };
   },
+  head: ({ loaderData, params }) => {
+    const collection = loaderData?.collection;
+    if (!collection) return {};
+    return {
+      meta: pageMeta({
+        title: collection.title,
+        description: metaDescription(
+          collection.description ||
+            `Shop ${collection.title} from Sun Umbrella — ${collection.products.length} umbrellas, UV protective and built for the monsoon.`,
+        ),
+        image: collection.products[0]?.image,
+      }),
+      links: [canonical(`/collections/${params.handle}`)],
+    };
+  },
   component: CollectionRoute,
-  notFoundComponent: CollectionErrorRoute,
-  errorComponent: CollectionErrorRoute,
+  notFoundComponent: CollectionNotFoundRoute,
+  errorComponent: () => <RouteLoadError title="Couldn't load this collection" />,
 });
 
-function CollectionErrorRoute() {
+function CollectionNotFoundRoute() {
   return (
     <div className="u-page u-light">
       <SiteNav />

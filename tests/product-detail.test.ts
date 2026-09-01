@@ -42,7 +42,7 @@ describe("computeDiscount", () => {
   test("matches the live storefront figures for Shine", () => {
     expect(computeDiscount(455, 749, "INR")).toEqual({
       discount: "39% OFF",
-      savings: "Rs. 294.00",
+      savings: "₹294.00",
     });
   });
 
@@ -56,7 +56,7 @@ describe("computeDiscount", () => {
   test("drops a badge that rounds to zero but keeps the real saving", () => {
     expect(computeDiscount(999, 1000, "INR")).toEqual({
       discount: undefined,
-      savings: "Rs. 1.00",
+      savings: "₹1.00",
     });
   });
 });

@@ -1,12 +1,13 @@
 /**
  * Sun Umbrella storefront data. Collections + bestsellers with copy, prices and
- * links pulled from the live Shopify store (sunumbrella.in). Images are local
- * placeholders in /assets/sun/ — swap for final brand photography before launch.
- * Links point at the real Shopify collections/products, so the storefront is
- * navigable today and maps cleanly onto the Shopify Storefront API later.
+ * links pulled from the live Shopify store. Images are local placeholders in
+ * /assets/sun/ — swap for final brand photography before launch.
+ *
+ * Every href is an INTERNAL route. The old sunumbrella.in / sunumbrellas.in
+ * absolute URLs used to live here and shipped in the server-rendered HTML,
+ * which sent crawlers and pre-hydration taps off to the old storefront. Keep
+ * them out: tests/no-legacy-domain.test.ts fails if they come back.
  */
-
-const SHOP = "https://sunumbrella.in";
 
 export interface Collection {
   name: string;
@@ -81,38 +82,38 @@ export const BESTSELLERS: Product[] = [
   {
     name: "Jet - Auto Open 3-Fold Umbrella, UV protective",
     tag: "3-Fold · UV",
-    price: "Rs. 450.00",
-    originalPrice: "Rs. 950.00",
+    price: "₹450.00",
+    originalPrice: "₹950.00",
     discount: "53% OFF",
     image: "/assets/trending/jet.jpg",
-    href: `${SHOP}/products/jet-auto-open-3-fold-umbrella-uv-protective`,
+    href: "/products/jet-auto-open-3-fold-umbrella-uv-protective",
   },
   {
     name: "Edward - UV Protective 3 Fold Umbrella",
     tag: "3-Fold · UV",
-    price: "Rs. 475.00",
-    originalPrice: "Rs. 699.00",
+    price: "₹475.00",
+    originalPrice: "₹699.00",
     discount: "32% OFF",
     image: "/assets/trending/edward.jpg",
-    href: `${SHOP}/products/edward-uv-protective-3-fold-umbrella`,
+    href: "/products/edward-uv-protective-3-fold-umbrella",
   },
   {
     name: "Nirali - UV Protective 3 Fold Umbrella",
     tag: "3-Fold · UV",
-    price: "Rs. 435.00",
-    originalPrice: "Rs. 799.00",
+    price: "₹435.00",
+    originalPrice: "₹799.00",
     discount: "46% OFF",
     image: "/assets/trending/nirali.jpg",
-    href: `${SHOP}/products/nirali-uv-protective-3-fold-umbrella`,
+    href: "/products/nirali-uv-protective-3-fold-umbrella",
   },
   {
     name: "Madonna - Jumbo Size - 3 Fold - Auto Open",
     tag: "3-Fold · Jumbo",
-    price: "Rs. 765.00",
-    originalPrice: "Rs. 1,299.00",
+    price: "₹765.00",
+    originalPrice: "₹1,299.00",
     discount: "41% OFF",
     image: "/assets/trending/madonna.jpg",
-    href: `${SHOP}/products/madonna-jumbo-size-3-fold-auto-open-uv-protective-umbrella`,
+    href: "/products/madonna-jumbo-size-3-fold-auto-open-uv-protective-umbrella",
   },
 ];
 
@@ -120,37 +121,37 @@ export const BRANDS = [
   {
     name: "Bosch",
     image: "/assets/sunnxt/bosh.webp",
-    href: "https://sunumbrella.in/products/bosch",
+    href: "/products/bosch",
   },
   {
     name: "Antara",
     image: "/assets/sunnxt/antara.webp",
-    href: "https://sunumbrella.in/products/antara",
+    href: "/products/antara",
   },
   {
     name: "Mercedes Benz",
     image: "/assets/sunnxt/benz.webp",
-    href: "https://sunumbrella.in/products/mercedes-benz",
+    href: "/products/mercedes-benz",
   },
   {
     name: "Shell",
     image: "/assets/sunnxt/Shell.webp",
-    href: "https://sunumbrella.in/products/shell-umbrella",
+    href: "/products/shell-umbrella",
   },
   {
     name: "Crocs",
     image: "/assets/sunnxt/crocs.webp",
-    href: "https://sunumbrella.in/products/crocs-umbrella",
+    href: "/products/crocs-umbrella",
   },
   {
     name: "Sula",
     image: "/assets/sunnxt/sula.webp",
-    href: "https://sunumbrella.in/products/sula-wines-outdoor-umbrella",
+    href: "/products/sula-wines-outdoor-umbrella",
   },
   {
     name: "Tata",
     image: "/assets/sunnxt/Tata.webp",
-    href: "https://sunumbrella.in/products/tata-capital",
+    href: "/products/tata-capital",
   },
 ];
 
@@ -191,70 +192,10 @@ export const REEL: Reel[] = [
   },
 ];
 
-export interface TestimonialItem {
-  text: string;
-  image: string;
-  name: string;
-  role: string;
-}
-
-/** Sun Umbrella customer reviews (placeholder copy; swap for real reviews). */
-export const TESTIMONIALS: TestimonialItem[] = [
-  {
-    text: "Survived three Mumbai monsoons and still opens with one push. The auto-open is a lifesaver on a crowded local train.",
-    image: "https://randomuser.me/api/portraits/women/68.jpg",
-    name: "Priya Nair",
-    role: "Mumbai",
-  },
-  {
-    text: "Bought the 3-fold for my bag — folds to a paperback, opens huge. The UV coating actually keeps the heat off on Chennai afternoons.",
-    image: "https://randomuser.me/api/portraits/men/32.jpg",
-    name: "Rahul Menon",
-    role: "Chennai",
-  },
-  {
-    text: "We ordered 500 branded umbrellas for our dealership event. Premium quality, delivered on time, and everyone kept one.",
-    image: "https://randomuser.me/api/portraits/women/44.jpg",
-    name: "Anjali Rao",
-    role: "Brand Manager",
-  },
-  {
-    text: "135 years and it shows — the frame took a Bengaluru pre-monsoon gust head-on and sprang right back into shape.",
-    image: "https://randomuser.me/api/portraits/men/52.jpg",
-    name: "Vikram Shetty",
-    role: "Bengaluru",
-  },
-  {
-    text: "My kids love their bright umbrellas and I love that they're genuinely windproof, not the flimsy ones that flip inside out.",
-    image: "https://randomuser.me/api/portraits/women/26.jpg",
-    name: "Fatima Sheikh",
-    role: "Kochi",
-  },
-  {
-    text: "The walking-stick model gives my father support and shelter in one. Beautifully made, and the rose-wood handle feels solid.",
-    image: "https://randomuser.me/api/portraits/women/12.jpg",
-    name: "Deepa Iyer",
-    role: "Mysuru",
-  },
-  {
-    text: "Gifted these to the whole team for Diwali. Everyone keeps asking where they're from — best corporate gift we've done.",
-    image: "https://randomuser.me/api/portraits/men/76.jpg",
-    name: "Arjun Kapoor",
-    role: "HR Lead",
-  },
-  {
-    text: "The rose-wood finish looks so premium people think it cost triple. Rain just beads and slides straight off the canopy.",
-    image: "https://randomuser.me/api/portraits/women/90.jpg",
-    name: "Sana Qureshi",
-    role: "Hyderabad",
-  },
-  {
-    text: "Ordered on Amazon, arrived next day, and it has already outlasted every cheap umbrella I've ever owned. Worth every rupee.",
-    image: "https://randomuser.me/api/portraits/men/18.jpg",
-    name: "Karthik Reddy",
-    role: "Pune",
-  },
-];
+/* The homepage testimonials wall is fed by real Judge.me reviews via
+   getShopReviews(); the nine invented customers and their randomuser.me stock
+   portraits that used to live here have been removed. Do not re-add placeholder
+   reviews to a storefront that takes money. */
 
 export const RETAIL = [
   { name: "Amazon", image: "/assets/sun/retail-amazon.png" },

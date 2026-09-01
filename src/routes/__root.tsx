@@ -72,6 +72,10 @@ function toOwnAssetUrl(value: string | null | undefined): string | null {
   }
 }
 
+/** The branded icon set lives in /public/assets/brand and is what the tab
+ *  should show; app-meta.json's remote favicon is scaffolding. */
+const BRAND_ICONS_PRESENT = true;
+
 function buildHead(meta: AppMeta) {
   const title = meta.og_title ?? DEFAULT_TITLE;
   const description = meta.og_description ?? DEFAULT_DESCRIPTION;
@@ -85,12 +89,10 @@ function buildHead(meta: AppMeta) {
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title },
       { name: "description", content: description },
-      { name: "author", content: "Higgsfield" },
       { property: "og:title", content: title },
       { property: "og:description", content: description },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: ogImage ? "summary_large_image" : "summary" },
-      { name: "twitter:site", content: "@Higgsfield" },
       ...(ogImage
         ? [
             { property: "og:image", content: ogImage },
@@ -122,7 +124,9 @@ function buildHead(meta: AppMeta) {
       { rel: "icon", type: "image/png", sizes: "16x16", href: "/assets/brand/favicon-16.png" },
       { rel: "apple-touch-icon", href: "/assets/brand/apple-touch-icon.png" },
       { rel: "manifest", href: "/site.webmanifest" },
-      ...(favicon ? [{ rel: "icon", href: favicon }] : []),
+      // The remote favicon is appended last, so it would win over the branded
+      // local icons above. Only fall back to it when there is no local set.
+      ...(favicon && !BRAND_ICONS_PRESENT ? [{ rel: "icon", href: favicon }] : []),
     ],
   };
 }
@@ -204,6 +208,7 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 import { FullScreenLoader } from "../components/umberlla/full-screen-loader";
+import { Toaster } from "../components/ui/sonner";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -237,6 +242,9 @@ function RootComponent() {
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
         <CartDrawer />
+        {/* Cart and checkout failures surface here. They used to be a native
+            alert() on the money path, which said nothing actionable. */}
+        <Toaster position="bottom-right" richColors closeButton />
       </CartProvider>
     </QueryClientProvider>
   );

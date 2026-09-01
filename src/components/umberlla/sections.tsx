@@ -12,14 +12,15 @@ import LiquidGrid from "../liquid-grid";
 import DottedBg2 from "../dotted-bg-2";
 import { TypeSequence } from "@/components/umberlla/type-sequence";
 
+import type { Testimonial } from "@/components/ui/testimonials-columns-1";
 import { TestimonialsColumn, TestimonialsRow } from "@/components/ui/testimonials-columns-1";
+import type { ProductReview } from "@/lib/api/reviews.functions";
 import { Reveal } from "@/lib/reveal";
 import ElementalWater from "./../elemental-water";
 import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { Particles } from "@/components/ui/particles";
 import { ProductFocusCarousel } from "@/components/ui/product-focus-carousel";
 import FluidField from "@/components/fluid-field";
-import { FindYourSize, GetOne } from "@/components/umberlla/ctas";
 import TactileButton from "@/components/tactile-button";
 import {
   BESTSELLERS,
@@ -27,19 +28,16 @@ import {
   COLLECTIONS,
   REEL,
   RETAIL,
-  TESTIMONIALS,
   STORES,
   type Product,
 } from "@/sun-data";
-import { getShopifyProducts } from "@/lib/shopify";
+import type { ShopifyProduct } from "@/lib/shopify";
 import { useCart } from "@/context/cart-context";
 import { Video, Phone, MapPin, ArrowSquareOut, ShoppingBag } from "@phosphor-icons/react/dist/ssr";
 
-const SHOP = "https://sunumbrella.in";
-
-// The real Sun Umbrella product categories + sub-categories (from
-// sunumbrellas.in), linked to their live category / fold-type pages.
-const SU = "https://www.sunumbrellas.in";
+// Nothing here links off-site. The old absolute domains (sunumbrella.in, and
+// www.sunumbrellas.in whose TLS certificate has expired) used to be constants
+// in this file and shipped in the SSR HTML — see tests/no-legacy-domain.test.ts.
 // Handles are Shopify's own, so they resolve identically on this site and on
 // sunumbrella.in. "3 Fold / Black" previously pointed at 2-fold-colors-umbrella;
 // it now points at 3-fold-black-umbrellas, which is the collection that exists.
@@ -472,7 +470,8 @@ export function SiteNav() {
 
         <div className="mt-8 border-t border-[var(--u-ink)]/10 pt-7">
           <TactileButton
-            link={`${SU}/GENTS/1/products`}
+            link="/collections/all"
+            newTab={false}
             label="Shop all umbrellas"
           />
           <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-ink)]/60">
@@ -827,33 +826,80 @@ export function CollectionsSection() {
   );
 }
 
-export function BestsellersSection() {
-  const { addToCart } = useCart();
-  const [items, setItems] = useState<Array<Product & { variantId?: string; priceNumeric?: number }>>(BESTSELLERS);
+type BestsellerItem = Product & {
+  variantId?: string;
+  priceNumeric?: number;
+  handle?: string;
+  soldOut?: boolean;
+};
 
-  useEffect(() => {
-    getShopifyProducts({ first: 8 })
-      .then((liveProducts) => {
-        if (liveProducts && liveProducts.length > 0) {
-          setItems(
-            liveProducts.map((p) => ({
-              name: p.title,
-              tag: p.discount ? "Special Offer" : "Bestseller",
-              price: p.price,
-              originalPrice: p.originalPrice,
-              discount: p.discount,
-              image: p.image,
-              href: p.href,
-              variantId: p.variantId,
-              priceNumeric: parseFloat(p.price.replace(/[^\d.]/g, "")) || 0,
-            })),
-          );
-        }
-      })
-      .catch((err) => {
-        console.warn("Shopify live products fetch skipped, using fallback:", err);
-      });
-  }, []);
+/** Add to Cart / Sold out. Shared by the desktop grid and the mobile carousel —
+ *  they had two copies of this and only the product page knew about stock, so a
+ *  sold-out item could be added from here and only fail at checkout. */
+function BestsellerBuyButton({ item }: { item: BestsellerItem }) {
+  const { addToCart } = useCart();
+
+  if (!item.variantId) {
+    return (
+      <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-navy)]">
+        View
+        <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-x-1">
+          &rarr;
+        </span>
+      </span>
+    );
+  }
+
+  if (item.soldOut) {
+    return (
+      <span className="u-mono rounded-full border border-[var(--u-navy)]/25 px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-[var(--u-navy)]/50">
+        Sold out
+      </span>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        addToCart({
+          id: item.variantId!,
+          title: item.name,
+          handle: item.handle ?? item.href.replace("/products/", ""),
+          price: item.price,
+          priceNumeric: item.priceNumeric ?? 0,
+          image: item.image,
+        });
+      }}
+      className="u-mono rounded-full bg-[var(--u-navy)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-white hover:bg-[var(--u-navy)]/90 active:scale-95 transition-all cursor-pointer"
+    >
+      Add to Cart
+    </button>
+  );
+}
+
+/** `products` comes from the route loader, so the grid is server rendered. It
+ *  used to be fetched in a useEffect, which meant the SSR HTML shipped the
+ *  static fallback — old-domain links and stale prices — to every crawler. */
+export function BestsellersSection({ products }: { products?: ShopifyProduct[] }) {
+  const items: BestsellerItem[] =
+    products && products.length > 0
+      ? products.map((p) => ({
+          name: p.title,
+          tag: p.discount ? "Special Offer" : "Bestseller",
+          price: p.price,
+          originalPrice: p.originalPrice,
+          discount: p.discount,
+          image: p.image,
+          href: p.href,
+          handle: p.handle,
+          variantId: p.variantId,
+          priceNumeric: p.priceNumeric,
+          soldOut: !p.availableForSale,
+        }))
+      : BESTSELLERS;
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, dragFree: true });
   const [tweenValues, setTweenValues] = useState<number[]>([]);
@@ -949,36 +995,7 @@ export function BestsellersSection() {
                         {p.discount}
                       </span>
                     )}
-                    {p.variantId ? (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          addToCart({
-                            id: p.variantId!,
-                            title: p.name,
-                            handle: p.name.toLowerCase().replace(/ /g, "-"),
-                            price: p.price,
-                            priceNumeric: p.priceNumeric || 0,
-                            image: p.image,
-                          });
-                        }}
-                        className="u-mono rounded-full bg-[var(--u-navy)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-white hover:bg-[var(--u-navy)]/90 active:scale-95 transition-all cursor-pointer"
-                      >
-                        Add to Cart
-                      </button>
-                    ) : (
-                      <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-navy)]">
-                        View
-                        <span
-                          aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1"
-                        >
-                          &rarr;
-                        </span>
-                      </span>
-                    )}
+                    <BestsellerBuyButton item={p} />
                   </div>
                 </div>
               </div>
@@ -1033,36 +1050,7 @@ export function BestsellersSection() {
                             {p.discount}
                           </span>
                         )}
-                        {p.variantId ? (
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              addToCart({
-                                id: p.variantId!,
-                                title: p.name,
-                                handle: p.name.toLowerCase().replace(/ /g, "-"),
-                                price: p.price,
-                                priceNumeric: p.priceNumeric || 0,
-                                image: p.image,
-                              });
-                            }}
-                            className="u-mono rounded-full bg-[var(--u-navy)] px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-white hover:bg-[var(--u-navy)]/90 active:scale-95 transition-all cursor-pointer"
-                          >
-                            Add to Cart
-                          </button>
-                        ) : (
-                          <span className="u-mono inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.16em] text-[var(--u-navy)]">
-                            View
-                            <span
-                              aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1"
-                            >
-                              &rarr;
-                            </span>
-                          </span>
-                        )}
+                        <BestsellerBuyButton item={p} />
                       </div>
                     </div>
                   </div>
@@ -1102,11 +1090,30 @@ function TestimonialMarquee() {
   );
 }
 
-const reviewCol1 = TESTIMONIALS.slice(0, 3);
-const reviewCol2 = TESTIMONIALS.slice(3, 6);
-const reviewCol3 = TESTIMONIALS.slice(6, 9);
+/** Below this the wall looks thin rather than social proof, so we show nothing. */
+const MIN_TESTIMONIALS = 3;
 
-export function TestimonialsSection() {
+/**
+ * Real Judge.me reviews only. This section used to render nine invented
+ * customers with randomuser.me stock portraits, which is a misrepresentation
+ * problem on a live storefront quite apart from the code. Judge.me is the
+ * system of record; with no reviews (or no API token configured) the section
+ * renders nothing rather than being padded back out with fiction.
+ */
+export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[] }) {
+  const testimonials: Testimonial[] = reviews.map((r) => ({
+    text: r.body,
+    name: r.reviewerName,
+    role: `${r.rating}\u2605 \u00B7 Verified buyer`,
+  }));
+
+  if (testimonials.length < MIN_TESTIMONIALS) return null;
+
+  const perColumn = Math.ceil(testimonials.length / 3);
+  const reviewCol1 = testimonials.slice(0, perColumn);
+  const reviewCol2 = testimonials.slice(perColumn, perColumn * 2);
+  const reviewCol3 = testimonials.slice(perColumn * 2);
+
   return (
 <>
   <TestimonialMarquee />
@@ -1154,13 +1161,22 @@ export function TestimonialsSection() {
 
         {/* Mobile Horizontal Testimonials */}
         <div className="md:hidden mt-14 flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] -mx-5 px-5">
-          <TestimonialsRow testimonials={TESTIMONIALS} duration={35} />
+          <TestimonialsRow testimonials={testimonials} duration={35} />
         </div>
       </div>
     </section>
     </>
   );
 }
+
+/** Handles match Shopify's own policy URLs, so links indexed against the old
+ *  storefront keep resolving after the domain moves. */
+const POLICY_LINKS = [
+  { handle: "shipping-policy", label: "Shipping" },
+  { handle: "refund-policy", label: "Returns & refunds" },
+  { handle: "privacy-policy", label: "Privacy" },
+  { handle: "terms-of-service", label: "Terms of service" },
+] as const;
 
 export function SiteFooter() {
   return (
@@ -1173,7 +1189,7 @@ export function SiteFooter() {
         <LiquidGrid mode="dots" lineColor="rgba(243, 239, 228, 0.05)" glowColor="rgba(243, 239, 228, 0.15)" background="transparent" />
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-3 md:gap-10">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-4 md:gap-10">
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
               Shop
@@ -1194,7 +1210,9 @@ export function SiteFooter() {
             </h2>
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
               <li>
-                <a className="hover:text-white transition-colors" href={`${SHOP}/pages/about-us`}>
+                {/* Shopify's /pages/about-us is empty (the old theme built it
+                    from metafields), so this points at our own brand story. */}
+                <a className="hover:text-white transition-colors" href="/#sun-brand">
                   Our heritage
                 </a>
               </li>
@@ -1207,10 +1225,28 @@ export function SiteFooter() {
                 </a>
               </li>
               <li>
-                <a className="hover:text-white transition-colors" href={`${SHOP}/pages/contact`}>
+                <a className="hover:text-white transition-colors" href="/#stores">
                   Store locations
                 </a>
               </li>
+            </ul>
+          </div>
+          <div>
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+              Policies
+            </h2>
+            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
+              {POLICY_LINKS.map((p) => (
+                <li key={p.handle}>
+                  <Link
+                    className="hover:text-white transition-colors"
+                    to="/policies/$handle"
+                    params={{ handle: p.handle }}
+                  >
+                    {p.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>

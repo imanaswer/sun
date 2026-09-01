@@ -554,3 +554,56 @@
 .group:hover .animate-u-marquee {
   animation-play-state: paused;
 }
+
+/* Shopify-authored policy HTML. It arrives as bare <p>/<h2>/<ul> with no
+   classes, so the rhythm has to come from here. */
+.u-policy-body h2,
+.u-policy-body h3,
+.u-policy-body h4 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  font-family: var(--u-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--u-bone);
+}
+
+.u-policy-body p,
+.u-policy-body li {
+  margin-bottom: 0.85rem;
+  color: var(--u-muted);
+}
+
+.u-policy-body ul,
+.u-policy-body ol {
+  margin: 0 0 1rem 1.25rem;
+  list-style: disc;
+}
+
+.u-policy-body ol {
+  list-style: decimal;
+}
+
+.u-policy-body a {
+  color: var(--u-accent-text);
+  text-decoration: underline;
+}
+
+.u-policy-body strong {
+  color: var(--u-bone);
+  font-weight: 600;
+}
+
+.u-policy-body table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+}
+
+.u-policy-body td,
+.u-policy-body th {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--u-slate);
+  text-align: left;
+}

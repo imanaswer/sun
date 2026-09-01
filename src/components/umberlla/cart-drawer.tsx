@@ -16,6 +16,8 @@ export function CartDrawer() {
     checkout,
     cartTotal,
     cartCount,
+    hasUnavailable,
+    removeUnavailable,
   } = useCart();
 
   // Prevent background scrolling when cart is open
@@ -86,7 +88,9 @@ export function CartDrawer() {
             cart.map((item) => (
               <div
                 key={item.id}
-                className="flex items-start gap-4 border-b border-[var(--u-slate)]/20 pb-4 last:border-0 last:pb-0"
+                className={`flex items-start gap-4 border-b border-[var(--u-slate)]/20 pb-4 last:border-0 last:pb-0 ${
+                  item.unavailable ? "opacity-55" : ""
+                }`}
               >
                 {/* Product Image */}
                 <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md bg-white p-1">
@@ -102,9 +106,15 @@ export function CartDrawer() {
                   <h3 className="text-sm font-semibold text-[var(--u-bone)] truncate">
                     {item.title}
                   </h3>
-                  <p className="mt-1 u-mono text-xs text-[var(--u-yellow)]">
-                    {item.price}
-                  </p>
+                  {item.unavailable ? (
+                    <p className="mt-1 u-mono text-xs text-[#ff6b6b]">
+                      No longer available &mdash; remove to check out
+                    </p>
+                  ) : (
+                    <p className="mt-1 u-mono text-xs text-[var(--u-yellow)]">
+                      {item.price}
+                    </p>
+                  )}
 
                   {/* Quantity & Delete Controls */}
                   <div className="mt-3 flex items-center justify-between">
@@ -155,9 +165,20 @@ export function CartDrawer() {
               Shipping, taxes, and discounts calculated at checkout.
             </p>
 
+            {hasUnavailable && (
+              <button
+                type="button"
+                onClick={removeUnavailable}
+                className="u-mono w-full rounded-full border border-[#ff6b6b]/50 py-2.5 text-xs uppercase tracking-widest text-[#ff6b6b] transition-colors hover:bg-[#ff6b6b]/10 cursor-pointer"
+              >
+                Remove unavailable items
+              </button>
+            )}
+
             <button
+              type="button"
               onClick={checkout}
-              disabled={isCheckingOut}
+              disabled={isCheckingOut || hasUnavailable}
               className="flex w-full items-center justify-center gap-2 u-mono rounded-full bg-[var(--u-yellow)] py-3.5 text-sm uppercase tracking-widest font-bold text-[var(--u-navy)] transition-all hover:bg-[var(--u-yellow)]/95 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               {isCheckingOut ? (

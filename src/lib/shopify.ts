@@ -20,8 +20,14 @@ export interface ShopifyProduct {
   description: string;
   availableForSale: boolean;
   price: string;
+  /** The same figure as `price`, unformatted. Callers that need arithmetic (the
+   *  cart) must use this — re-parsing the formatted string silently yields 0
+   *  for any format it doesn't expect, which reads as a free line item. */
+  priceNumeric: number;
+  currencyCode: string;
   originalPrice?: string;
   discount?: string;
+  savings?: string;
   image: string;
   imageAlt: string;
   variantId?: string;
@@ -74,10 +80,13 @@ export async function shopifyFetch<T>({
  */
 export function formatPrice(amount: string | number, currencyCode: string = "INR"): string {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  if (isNaN(num)) return `Rs. 0.00`;
-  
+  // A NaN price must not render as a number. Zero is wrong too, but it is
+  // visibly wrong, which is the point — see tests/pricing.test.ts.
+  if (isNaN(num)) return "₹0.00";
+
   if (currencyCode === "INR") {
-    return `Rs. ${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    // Indian digit grouping (1,29,900) — en-IN, not en-US.
+    return `₹${num.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   }
   return new Intl.NumberFormat("en-US", { style: "currency", currency: currencyCode }).format(num);
 }
@@ -157,11 +166,8 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
       ? parseFloat(node.compareAtPriceRange.minVariantPrice.amount)
       : null;
 
-    let discount: string | undefined;
-    if (comparePrice && comparePrice > minPrice) {
-      const discountPct = Math.round(((comparePrice - minPrice) / comparePrice) * 100);
-      if (discountPct > 0) discount = `${discountPct}% OFF`;
-    }
+    const currencyCode = node.priceRange.minVariantPrice.currencyCode;
+    const { discount, savings } = computeDiscount(minPrice, comparePrice, currencyCode);
 
     const firstImage = node.images.edges[0]?.node;
     const firstVariant = node.variants.edges[0]?.node;
@@ -172,11 +178,14 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
       handle: node.handle,
       description: node.description,
       availableForSale: node.availableForSale,
-      price: formatPrice(minPrice, node.priceRange.minVariantPrice.currencyCode),
+      price: formatPrice(minPrice, currencyCode),
+      priceNumeric: minPrice,
+      currencyCode,
       originalPrice: comparePrice && comparePrice > minPrice
         ? formatPrice(comparePrice, node.compareAtPriceRange?.minVariantPrice.currencyCode)
         : undefined,
       discount,
+      savings,
       image: firstImage?.url || "/assets/sun/prod-walkingstick.png",
       imageAlt: firstImage?.altText || node.title,
       variantId: firstVariant?.id,
@@ -231,7 +240,7 @@ export async function getShopifyCollections(first: number = 8): Promise<ShopifyC
     handle: node.handle,
     description: node.description,
     image: node.image?.url,
-    href: `https://sunumbrella.in/collections/${node.handle}`,
+    href: `/collections/${node.handle}`,
   }));
 }
 
@@ -758,11 +767,8 @@ export async function getShopifyCollectionByHandle(handle: string, first: number
       ? parseFloat(prod.compareAtPriceRange.minVariantPrice.amount)
       : null;
 
-    let discount: string | undefined;
-    if (comparePrice && comparePrice > minPrice) {
-      const discountPct = Math.round(((comparePrice - minPrice) / comparePrice) * 100);
-      if (discountPct > 0) discount = `${discountPct}% OFF`;
-    }
+    const currencyCode = prod.priceRange.minVariantPrice.currencyCode;
+    const { discount, savings } = computeDiscount(minPrice, comparePrice, currencyCode);
 
     const firstImage = prod.images.edges[0]?.node;
     const firstVariant = prod.variants.edges[0]?.node;
@@ -773,11 +779,14 @@ export async function getShopifyCollectionByHandle(handle: string, first: number
       handle: prod.handle,
       description: prod.description,
       availableForSale: prod.availableForSale,
-      price: formatPrice(minPrice, prod.priceRange.minVariantPrice.currencyCode),
+      price: formatPrice(minPrice, currencyCode),
+      priceNumeric: minPrice,
+      currencyCode,
       originalPrice: comparePrice && comparePrice > minPrice
         ? formatPrice(comparePrice, prod.compareAtPriceRange?.minVariantPrice.currencyCode)
         : undefined,
       discount,
+      savings,
       image: firstImage?.url || "/assets/sun/prod-walkingstick.png",
       imageAlt: firstImage?.altText || prod.title,
       variantId: firstVariant?.id,
@@ -796,3 +805,106 @@ export async function getShopifyCollectionByHandle(handle: string, first: number
 
 
 
+
+/** The four policies Shopify hosts, keyed by the URL handle the old storefront
+ *  used — so /policies/refund-policy keeps working after the domain moves. */
+export const SHOP_POLICIES = {
+  "privacy-policy": "privacyPolicy",
+  "refund-policy": "refundPolicy",
+  "terms-of-service": "termsOfService",
+  "shipping-policy": "shippingPolicy",
+} as const;
+
+export type ShopPolicyHandle = keyof typeof SHOP_POLICIES;
+
+export function isShopPolicyHandle(handle: string): handle is ShopPolicyHandle {
+  return handle in SHOP_POLICIES;
+}
+
+export interface ShopPolicy {
+  handle: ShopPolicyHandle;
+  title: string;
+  body: string;
+}
+
+/** Policies are written and maintained in Shopify admin, so nothing here needs
+ *  keeping in sync by hand. Returns null when the merchant hasn't written one. */
+export async function getShopPolicy(handle: ShopPolicyHandle): Promise<ShopPolicy | null> {
+  const field = SHOP_POLICIES[handle];
+  const data = await shopifyFetch<{
+    shop: Record<string, { title: string; body: string } | null>;
+  }>({
+    query: `query GetShopPolicy { shop { ${field} { title body } } }`,
+  });
+
+  const policy = data.shop?.[field];
+  if (!policy?.body) return null;
+  return { handle, title: policy.title, body: policy.body };
+}
+
+const CART_VARIANTS_QUERY = `
+  query CartVariants($ids: [ID!]!) {
+    nodes(ids: $ids) {
+      ... on ProductVariant {
+        id
+        availableForSale
+        quantityAvailable
+        title
+        price { amount currencyCode }
+        product { title handle }
+      }
+    }
+  }
+`;
+
+export interface CartVariantState {
+  id: string;
+  availableForSale: boolean;
+  quantityAvailable: number | null;
+  price: string;
+  priceNumeric: number;
+  title: string;
+  handle: string;
+}
+
+/**
+ * Current Shopify state for the variants sitting in someone's saved cart.
+ *
+ * The cart is a localStorage snapshot taken at add-to-cart time and is never
+ * otherwise reconciled. A variant deleted or unpublished in Shopify used to sit
+ * there forever, failing `cartCreate` with an unactionable "please try again" —
+ * a returning customer could never check out and had no way to find the bad
+ * line. Variants that no longer resolve are simply absent from the result.
+ */
+export async function getCartVariantStates(ids: string[]): Promise<Map<string, CartVariantState>> {
+  const states = new Map<string, CartVariantState>();
+  if (ids.length === 0) return states;
+
+  const data = await shopifyFetch<{
+    nodes: Array<{
+      id: string;
+      availableForSale: boolean;
+      quantityAvailable: number | null;
+      title: string;
+      price: { amount: string; currencyCode: string };
+      product: { title: string; handle: string };
+    } | null>;
+  }>({ query: CART_VARIANTS_QUERY, variables: { ids } });
+
+  for (const node of data.nodes) {
+    // A null node is a variant that no longer exists.
+    if (!node?.id) continue;
+    const priceNumeric = parseFloat(node.price.amount);
+    states.set(node.id, {
+      id: node.id,
+      availableForSale: node.availableForSale,
+      quantityAvailable: node.quantityAvailable,
+      price: formatPrice(priceNumeric, node.price.currencyCode),
+      priceNumeric,
+      title: node.product.title,
+      handle: node.product.handle,
+    });
+  }
+
+  return states;
+}

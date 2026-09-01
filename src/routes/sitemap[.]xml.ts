@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAllProductHandles, getShopifyCollections } from "@/lib/shopify";
+import { getAllProductHandles, getShopifyCollections, SHOP_POLICIES } from "@/lib/shopify";
 
 function urlEntry(loc: string, lastmod: string, changefreq: string, priority: string) {
   return [
@@ -42,6 +42,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           '<?xml version="1.0" encoding="UTF-8"?>',
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
           urlEntry(`${origin}/`, today, "weekly", "1.0"),
+          urlEntry(`${origin}/collections`, today, "weekly", "0.9"),
           urlEntry(`${origin}/collections/all`, today, "weekly", "0.9"),
           ...collections.map((collection) =>
             urlEntry(`${origin}/collections/${encodeURIComponent(collection.handle)}`, today, "weekly", "0.7"),
@@ -53,6 +54,11 @@ export const Route = createFileRoute("/sitemap.xml")({
               "weekly",
               "0.8",
             ),
+          ),
+          // Policies change rarely but crawlers and payment-gateway reviewers
+          // both look for them.
+          ...Object.keys(SHOP_POLICIES).map((handle) =>
+            urlEntry(`${origin}/policies/${handle}`, today, "yearly", "0.3"),
           ),
           "</urlset>",
         ].join("\n");

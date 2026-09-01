@@ -1,9 +1,13 @@
 import React, { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { getShopifyProductByHandle, createCheckoutUrl } from "@/lib/shopify";
 import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
+import { RouteLoadError } from "@/components/umberlla/route-error";
+import { StructuredData } from "@/components/StructuredData";
+import { canonical, metaDescription, pageMeta, productJsonLd } from "@/lib/seo";
 import {
   BrandBand,
   BuyPanelCard,
@@ -36,12 +40,27 @@ export const Route = createFileRoute("/products/$handle")({
     const reviews = await getProductReviews({ data: { handle: params.handle, perPage: 8 } });
     return { product, reviews };
   },
+  head: ({ loaderData }) => {
+    const product = loaderData?.product;
+    if (!product) return {};
+    return {
+      meta: pageMeta({
+        title: product.title,
+        description: metaDescription(
+          product.description || `${product.title} from Sun Umbrella. ${product.price}.`,
+        ),
+        image: product.images[0]?.url,
+        type: "product",
+      }),
+      links: [canonical(`/products/${product.handle}`)],
+    };
+  },
   component: ProductDetailRoute,
-  notFoundComponent: ProductNotFoundError,
-  errorComponent: ProductNotFoundError,
+  notFoundComponent: ProductNotFound,
+  errorComponent: () => <RouteLoadError title="Couldn't load this umbrella" />,
 });
 
-function ProductNotFoundError() {
+function ProductNotFound() {
   return (
     <div className="u-page u-light">
       <SiteNav />
@@ -136,13 +155,22 @@ function ProductDetailRoute() {
     try {
       window.location.href = await createCheckoutUrl(selectedVariant.id, quantity);
     } catch (e) {
+      // Used to fail silently: the spinner stopped and the button just looked
+      // broken, with nothing to tell the customer what happened.
       console.error("Instant checkout failed:", e);
+      toast.error("We couldn't start checkout", {
+        description:
+          e instanceof Error && e.message
+            ? e.message
+            : "Please try again in a moment, or add the item to your cart.",
+      });
       setIsInstantBuying(false);
     }
   };
 
   return (
     <div className="u-page u-light" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
+      <StructuredData json={productJsonLd(product)} />
       <SiteNav />
 
       <main className="mx-auto max-w-[1200px] px-5 py-24 md:px-8 md:py-32">
