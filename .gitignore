@@ -62,3 +62,10 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Env files pulled from or destined for Vercel. `vercel env pull` writes
+# .env.local, but people also save these by hand under other names — none of
+# them belong in the repo.
+vercel.env
+*.env
+!.env.example
