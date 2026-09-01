@@ -79,7 +79,11 @@ export default async function handler(req, res) {
 fs.writeFileSync(`${funcDir}/index.mjs`, adapterCode);
 
 fs.writeFileSync(`${funcDir}/.vc-config.json`, JSON.stringify({
-  runtime: "nodejs22.x",
+  // nodejs20.x is what this project deployed successfully on. Bumping to
+  // nodejs22.x was gratuitous hygiene and coincided with every route returning
+  // FUNCTION_INVOCATION_FAILED — including ones that touch nothing. Change this
+  // only alongside a verified deploy.
+  runtime: "nodejs20.x",
   handler: "index.mjs",
   launcherType: "Nodejs"
 }));
