@@ -267,7 +267,7 @@ export function SiteNav() {
                 "text-[8px] font-medium tracking-tight mt-0.5 whitespace-nowrap",
                 navTheme === "dark" ? "text-[var(--u-ink)]/70" : "text-white/80",
               ].join(" ")}>
-                Trusted since 1889
+                Trusted 100+ years
               </span>
             </div>
           </div>
@@ -671,7 +671,7 @@ export function VideoReelSection() {
 
 /** Tilted marquee strip — scrolling monsoon feature callouts. */
 function MonsoonMarquee() {
-  const items = "☂ MONSOON READY \u00A0\u00A0 AUTO OPEN & CLOSE \u00A0\u00A0 UV PROTECTIVE \u00A0\u00A0 WINDPROOF \u00A0\u00A0 EST. 1889 \u00A0\u00A0 ";
+  const items = "☂ MONSOON READY \u00A0\u00A0 AUTO OPEN & CLOSE \u00A0\u00A0 UV PROTECTIVE \u00A0\u00A0 WINDPROOF \u00A0\u00A0 100+ YEARS \u00A0\u00A0 ";
   return (
     <div className="u-marquee-banner" aria-hidden="true">
       <div className="u-marquee">
@@ -1080,7 +1080,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
         <div className="mt-16 flex flex-col items-start gap-6 border-t border-[var(--u-slate)]/60 pt-12 md:flex-row md:items-end md:justify-between">
           <div>
             <h3 className="max-w-[20ch] text-2xl font-semibold tracking-tight text-[var(--u-navy)] md:text-3xl">
-              Sheltering India since 1889.
+              Sheltering India for 100+ years.
             </h3>
             <p className="u-mono mt-3 text-xs uppercase tracking-[0.2em] text-[var(--u-navy)]/70">
               Auto open &amp; close · UV protective · windproof
@@ -1094,7 +1094,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
 }
 
 function TestimonialMarquee() {
-  const items = "★ 5-STAR REVIEWS \u00A0\u00A0 TRUSTED QUALITY \u00A0\u00A0 LOVED BY MILLIONS \u00A0\u00A0 SINCE 1889 \u00A0\u00A0 ";
+  const items = "★ 5-STAR REVIEWS \u00A0\u00A0 TRUSTED QUALITY \u00A0\u00A0 LOVED BY MILLIONS \u00A0\u00A0 100+ YEARS \u00A0\u00A0 ";
   return (
     <div className="u-marquee-banner" aria-hidden="true">
       <div className="u-marquee">
@@ -1157,7 +1157,7 @@ export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[
             <TypeSequence text={"What our customers\nsay"} />
           </h2>
           <p className="mt-4 text-[#F3EFE4]">
-            Keeping India dry since 1889 — here&rsquo;s what people carry, and why.
+            Keeping India dry for 100+ years — here&rsquo;s what people carry, and why.
           </p>
         </motion.div>
 
@@ -1300,11 +1300,11 @@ export function SiteFooter() {
             rotate={-8}
             className="absolute bottom-4 right-[10%] text-sm"
           >
-            Est. 1889
+            100+ years
           </Sticker>
         </div>
         <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-          Sun Umbrella · Est. 1889 · Mysuru, India. All rights reserved.
+          Sun Umbrella · 100+ years · Mysuru, India. All rights reserved.
         </p>
       </div>
     </footer>

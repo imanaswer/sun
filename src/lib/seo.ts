@@ -104,7 +104,6 @@ export function organizationJsonLd(
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_ORIGIN,
-    foundingDate: "1889",
     logo: `${SITE_ORIGIN}/assets/sun/logo.png`,
     contactPoint: {
       "@type": "ContactPoint",

@@ -1,6 +1,6 @@
 # Sun Umbrella
 
-Headless storefront for **Sun Umbrella** (est. 1889), a heritage umbrella brand.
+Headless storefront for **Sun Umbrella**, a heritage umbrella brand of 100+ years.
 Cinematic scroll-film hero, autoplaying product reel, and a catalog served live
 from the Shopify Storefront API.
 

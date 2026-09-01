@@ -160,7 +160,7 @@ export function BrandBand() {
       className="mt-8 px-5 py-16 text-center md:py-20"
       style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
     >
-      <p className="u-mono text-[11px] uppercase tracking-[0.22em]">Since 1889</p>
+      <p className="u-mono text-[11px] uppercase tracking-[0.22em]">100+ years</p>
       <p className="u-fun-head mx-auto mt-4 max-w-[22ch] text-3xl leading-[1.05] md:text-5xl">
         Built to be already in your hand when the monsoon turns.
       </p>
@@ -180,13 +180,13 @@ export function BrandBand() {
 /**
  * Three claims that hold for every product, so the buy column has a floor even
  * on a listing with no metafields. All three are Sun Umbrella's own: free
- * delivery and the 1889 date are on the live storefront, and checkout is
+ * delivery and the heritage line are on the live storefront, and checkout is
  * Shopify's.
  */
 const TRUST_ITEMS = [
   { Icon: Truck, label: "Free delivery", detail: "Across India" },
   { Icon: ShieldCheck, label: "Secure checkout", detail: "via Shopify" },
-  { Icon: Medal, label: "Est. 1889", detail: "Five generations" },
+  { Icon: Medal, label: "Heritage", detail: "100+ years" },
 ];
 
 export function TrustRow() {
