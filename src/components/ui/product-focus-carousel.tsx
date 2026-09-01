@@ -2,6 +2,11 @@
 
 import { useState, useEffect, useCallback, useRef, startTransition } from "react";
 import { motion } from "framer-motion";
+import { SiteLink } from "@/components/umberlla/site-link";
+
+/** Keeps the hover/tap animation while routing in-app links through the
+ *  router — product.link points at our own /products/<handle>. */
+const MotionSiteLink = motion.create(SiteLink);
 
 export function ProductFocusCarousel({
   products = [],
@@ -304,7 +309,7 @@ function ProductCard({
             /* Was a <button> firing window.open at an external product URL:
                no middle-click, no copy-link, invisible to crawlers, and
                announced as "button" rather than "link". */
-            <motion.a
+            <MotionSiteLink
               href={product.link}
               onClick={(event) => event.stopPropagation()}
               style={{
@@ -327,7 +332,7 @@ function ProductCard({
               whileTap={{ scale: 0.95 }}
             >
               {product.buttonLabel}
-            </motion.a>
+            </MotionSiteLink>
           )}
         </div>
       </div>
