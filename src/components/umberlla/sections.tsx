@@ -143,6 +143,20 @@ function Sticker({
   );
 }
 
+/** Brightness 0..1 of the nearest painted background at or above `el`.
+ *  Sections that paint nothing fall through to the page ground, which is navy.
+ *  ponytail: background-color only — a section whose colour comes from a
+ *  background-image or a canvas child needs its own opaque colour to be read. */
+export function bgLuminance(el: Element | null): number {
+  for (let node = el; node; node = node.parentElement) {
+    const parts = getComputedStyle(node).backgroundColor.match(/[\d.]+/g);
+    if (!parts || Number(parts[3] ?? 1) === 0) continue;
+    const [r, g, b] = parts.map(Number);
+    return (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+  }
+  return 0;
+}
+
 export function SiteNav() {
   const { cartCount, openCart } = useCart();
   // Transparent over the dark hero (no logo, light links). Once the hero is
@@ -161,28 +175,17 @@ export function SiteNav() {
       const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 20);
 
-      let currentTheme: "light" | "dark" = "light";
-      
-      // Determine theme based on the section currently under the header (approx 45px down)
-      const sections = Array.from(document.querySelectorAll("section"));
-      for (const sec of sections) {
-        const rect = sec.getBoundingClientRect();
-        if (rect.top <= 90 && rect.bottom >= 90) {
-          if (sec.id === "next-gen" || sec.id === "bestsellers") {
-            currentTheme = "light";
-          } else {
-            currentTheme = "dark";
-          }
-          break;
-        }
-      }
-
-      // Handle footer
-      const footer = document.querySelector("footer");
-      if (footer) {
-        const rect = footer.getBoundingClientRect();
-        if (rect.top <= 90) currentTheme = "dark";
-      }
+      // Read the real background under the bar rather than matching section
+      // ids — the old allowlist called the navy #reviews section "dark" and
+      // painted navy links onto navy.
+      const band = Array.from(document.querySelectorAll("section, footer")).find(
+        (el) => {
+          const rect = el.getBoundingClientRect();
+          return rect.top <= 90 && rect.bottom >= 90;
+        },
+      );
+      let currentTheme: "light" | "dark" =
+        bgLuminance(band ?? null) > 0.55 ? "dark" : "light";
 
       // If we are above hero-end, we are in the hero (light text)
       if (sentinel && sentinel.getBoundingClientRect().top >= 90) {
