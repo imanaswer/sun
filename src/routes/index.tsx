@@ -9,7 +9,6 @@ import {
   TestimonialsSection,
   VideoReelSection,
   BestsellersSection,
-  CollectionsSection,
   SunBrandSection,
   RetailSection,
   StoreLocationsSection,
@@ -68,8 +67,6 @@ function Index() {
             <ElementalWater />
           </div>
           <VideoReelSection />
-          {/* Owns id="collections" — the hero's only CTA scrolls here. */}
-          <CollectionsSection />
           <BestsellersSection products={bestsellers} />
         </div>
         <SunBrandSection />
