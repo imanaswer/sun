@@ -32,6 +32,10 @@
   /* Shadow under a product photo. A near-black drop reads as depth on navy and
      as grime on white, so each theme gets its own. */
   --u-photo-shadow: drop-shadow(0 26px 45px rgba(0, 0, 0, 0.55));
+  /* SiteNav's sliding hover pill. White glass over the dark hero; over a white
+     page it has to tint the other way or it erases the label beneath it. */
+  --u-nav-pill-edge: rgba(255, 255, 255, 0.8);
+  --u-nav-pill-fill: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 100%);
 }
 
 /* Restores the dark tokens inside a light page. The site footer paints its own
@@ -63,6 +67,8 @@
     linear-gradient(180deg, #ffffff 0%, #f4f2ec 100%);
   --u-card: linear-gradient(180deg, #ffffff 0%, #fbfaf7 100%);
   --u-photo-shadow: drop-shadow(0 16px 28px rgba(20, 32, 59, 0.14));
+  --u-nav-pill-edge: rgba(16, 27, 51, 0.1);
+  --u-nav-pill-fill: linear-gradient(180deg, rgba(16, 27, 51, 0.07) 0%, rgba(16, 27, 51, 0.02) 100%);
 }
 
 .u-page {

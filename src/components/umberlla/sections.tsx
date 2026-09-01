@@ -271,7 +271,7 @@ export function SiteNav() {
             aria-label="Categories" 
             className={[
               "flex relative rounded-full backdrop-blur-md p-1 shadow-[0_4px_24px_rgba(0,0,0,0.05)] transition-colors duration-300",
-              navTheme === "dark" ? "bg-[var(--u-navy)]/[0.02] border border-[var(--u-navy)]/5" : "bg-white/5 border border-white/10"
+              navTheme === "dark" ? "bg-[var(--u-ink)]/[0.02] border border-[var(--u-ink)]/5" : "bg-white/5 border border-white/10"
             ].join(" ")}
             onMouseLeave={() => setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))}
           >
@@ -281,7 +281,7 @@ export function SiteNav() {
               style={{
                 ...indicatorStyle,
                 backdropFilter: "url(#glass-displacement) blur(4px)",
-                border: "1px solid rgba(255, 255, 255, 0.8)",
+                border: "1px solid var(--u-nav-pill-edge)",
                 boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                 transitionTimingFunction: "linear(0, 0.0018, 0.0069 1.15%, 0.026 2.3%, 0.0637, 0.1135 5.18%, 0.2229 7.78%, 0.5977 15.84%, 0.7014, 0.7904, 0.8641, 0.9228, 0.9676 28.8%, 1.0032 31.68%, 1.0225, 1.0352 36.29%, 1.0431 38.88%, 1.046 42.05%, 1.0448 44.35%, 1.0407 47.23%, 1.0118 61.63%, 1.0025 69.41%, 0.9981 80.35%, 0.9992 99.94%)"
               }}
@@ -289,8 +289,8 @@ export function SiteNav() {
               <div 
                 className="absolute inset-0 rounded-full pointer-events-none"
                 style={{
-                  background: "linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.2) 100%)",
-                  boxShadow: "inset 0 2px 4px rgba(255, 255, 255, 0.8), inset 0 -2px 6px rgba(255, 255, 255, 0.2)"
+                  background: "var(--u-nav-pill-fill)",
+                  boxShadow: "none"
                 }}
               />
             </div>
@@ -312,8 +312,8 @@ export function SiteNav() {
                   className={[
                     "u-mono inline-flex items-center gap-1 whitespace-nowrap text-xs uppercase tracking-[0.14em] transition-colors relative z-10",
                     navTheme === "dark"
-                      ? "text-[var(--u-navy)]/70 group-hover:text-[var(--u-navy)]"
-                      : "text-[var(--u-bone)]/80 group-hover:text-[var(--u-navy)]",
+                      ? "font-semibold text-[var(--u-ink)] group-hover:text-[var(--u-ink)]"
+                      : "font-semibold text-[var(--u-bone)] group-hover:text-[var(--u-ink)]",
                   ].join(" ")}
                 >
                   {l.label}
@@ -328,12 +328,12 @@ export function SiteNav() {
                 </a>
                 {l.items && (
                   <div className="pointer-events-none absolute left-1/2 top-full z-50 -translate-x-1/2 translate-y-1 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100">
-                    <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-navy)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
+                    <div className="min-w-[210px] overflow-hidden rounded-xl border border-[var(--u-ink)]/10 bg-white p-1.5 shadow-[0_18px_40px_-12px_rgba(16,27,51,0.28)]">
                       {l.items.map((s) => (
                         <a
                           key={s.href}
                           href={s.href}
-                          className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-navy)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-navy)]"
+                          className="block rounded-lg px-3 py-2 text-xs uppercase tracking-[0.12em] text-[var(--u-ink)]/75 transition-colors hover:bg-[var(--u-yellow)] hover:text-[var(--u-ink)]"
                         >
                           {s.label}
                         </a>
@@ -352,14 +352,14 @@ export function SiteNav() {
             className={[
               "relative flex h-11 w-11 items-center justify-center rounded-full transition-colors cursor-pointer",
               navTheme === "dark" 
-                ? "text-[var(--u-navy)] hover:bg-[var(--u-navy)]/10" 
+                ? "text-[var(--u-ink)] hover:bg-[var(--u-ink)]/10" 
                 : "text-[var(--u-bone)] hover:bg-white/10"
             ].join(" ")}
             aria-label="Shopping Cart"
           >
             <ShoppingBag size={22} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[10px] font-bold text-[var(--u-navy)]">
+              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[10px] font-bold text-[var(--u-ink)]">
                 {cartCount}
               </span>
             )}
@@ -382,7 +382,7 @@ export function SiteNav() {
           >
             <ShoppingBag size={18} />
             {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[9px] font-bold text-[var(--u-navy)]">
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--u-yellow)] text-[9px] font-bold text-[var(--u-ink)]">
                 {cartCount}
               </span>
             )}
@@ -422,7 +422,7 @@ export function SiteNav() {
           type="button"
           aria-label="Close menu"
           onClick={() => setMenuOpen(false)}
-          className="mt-1 grid h-10 w-10 place-items-center rounded-full bg-[var(--u-navy)]/[0.06] text-2xl leading-none text-[var(--u-navy)] transition-colors active:bg-[var(--u-navy)]/10"
+          className="mt-1 grid h-10 w-10 place-items-center rounded-full bg-[var(--u-ink)]/[0.06] text-2xl leading-none text-[var(--u-ink)] transition-colors active:bg-[var(--u-ink)]/10"
         >
           &times;
         </button>
@@ -436,17 +436,17 @@ export function SiteNav() {
         {NAV_LINKS.map((l, i) => (
           <div
             key={l.label}
-            className="border-t border-[var(--u-navy)]/10 py-4 first:border-t-0"
+            className="border-t border-[var(--u-ink)]/10 py-4 first:border-t-0"
           >
             <a
               href={l.href}
               onClick={() => setMenuOpen(false)}
               className="flex items-baseline justify-between gap-3"
             >
-              <span className="u-fun-head text-[2rem] leading-none text-[var(--u-navy)]">
+              <span className="u-fun-head text-[2rem] leading-none text-[var(--u-ink)]">
                 {l.label}
               </span>
-              <span className="u-mono text-[11px] tracking-[0.1em] text-[var(--u-navy)]/35">
+              <span className="u-mono text-[11px] tracking-[0.1em] text-[var(--u-ink)]/35">
                 {`0${i + 1}`}
               </span>
             </a>
@@ -457,7 +457,7 @@ export function SiteNav() {
                     key={s.href}
                     href={s.href}
                     onClick={() => setMenuOpen(false)}
-                    className="u-mono rounded-full bg-[var(--u-navy)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-navy)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-navy)]"
+                    className="u-mono rounded-full bg-[var(--u-ink)]/[0.05] px-3 py-1.5 text-[10px] uppercase tracking-[0.12em] text-[var(--u-ink)]/65 transition-colors active:bg-[var(--u-yellow)] active:text-[var(--u-ink)]"
                   >
                     {s.label}
                   </a>
@@ -467,19 +467,19 @@ export function SiteNav() {
           </div>
         ))}
 
-        <div className="mt-8 border-t border-[var(--u-navy)]/10 pt-7">
+        <div className="mt-8 border-t border-[var(--u-ink)]/10 pt-7">
           <TactileButton
             link={`${SU}/GENTS/1/products`}
             label="Shop all umbrellas"
           />
-          <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-navy)]/60">
+          <div className="u-mono mt-6 space-y-1.5 text-xs uppercase tracking-[0.14em] text-[var(--u-ink)]/60">
             <a href="mailto:info@sunumbrellas.in" className="block">
               info@sunumbrellas.in
             </a>
             <a href="tel:+918212514578" className="block">
               +91 821 2514578
             </a>
-            <p className="text-[var(--u-navy)]/40">Mysuru · Mumbai · Calicut</p>
+            <p className="text-[var(--u-ink)]/40">Mysuru · Mumbai · Calicut</p>
           </div>
         </div>
       </nav>
