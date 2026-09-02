@@ -165,20 +165,7 @@ export function FullScreenLoader() {
       setTimeout(() => {
         document.body.style.overflow = "";
 
-        // Desktop home page only: nudge into the tall scrub so it visibly comes
-        // alive. On the phone hero (one viewport) this nudge lands on the
-        // wave-transition trigger and would fire it immediately — and on any
-        // other route there is no scrub, so it just scrolls the page for no
-        // reason.
-        if (window.matchMedia("(max-width: 767px)").matches) return;
 
-        const scrollProxy = { y: window.scrollY };
-        gsap.to(scrollProxy, {
-          y: window.scrollY + window.innerHeight * 0.6,
-          duration: 2.5,
-          ease: "power2.inOut",
-          onUpdate: () => window.scrollTo(0, scrollProxy.y)
-        });
       }, 600);
     };
 

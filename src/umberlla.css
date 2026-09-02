@@ -607,3 +607,31 @@
   border: 1px solid var(--u-slate);
   text-align: left;
 }
+
+/* ── Footer link hover: nudge + sliding underline ────────────────────── */
+.u-footer-link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+  transition: color 0.25s ease, transform 0.25s ease;
+}
+
+.u-footer-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 1px;
+  background: var(--u-yellow);
+  transition: width 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.u-footer-link:hover {
+  color: #fff;
+  transform: translateX(4px);
+}
+
+.u-footer-link:hover::after {
+  width: 100%;
+}
