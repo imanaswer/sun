@@ -193,14 +193,8 @@ export function SiteNav() {
 
       setNavTheme(currentTheme);
 
-      // Scroll direction logic: hide when scrolling down, show when scrolling up
-      if (currentScrollY < 100) {
-        setNavVisible(true);
-      } else if (currentScrollY > lastScrollY) {
-        setNavVisible(false);
-      } else if (currentScrollY < lastScrollY) {
-        setNavVisible(true);
-      }
+      // Always visible
+      setNavVisible(true);
       
       lastScrollY = currentScrollY;
     };
@@ -246,8 +240,7 @@ export function SiteNav() {
       <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
         <Link to="/" className="flex h-24 items-center">
           <div className={[
-            "flex flex-col items-center transition-opacity duration-300",
-            isScrolled ? "opacity-0 pointer-events-none" : "opacity-100"
+            "flex flex-col items-center transition-opacity duration-300 opacity-100"
           ].join(" ")}>
             <img
               src="/assets/sun/logo-icon-transparent.png"
@@ -498,7 +491,7 @@ export function SiteNav() {
             <a href="tel:+918212514578" className="block">
               +91 821 2514578
             </a>
-            <p className="text-[var(--u-ink)]/40">Mysuru · Mumbai · Calicut</p>
+            <p className="text-[var(--u-ink)]/40">Mumbai · Calicut</p>
           </div>
         </div>
       </nav>
@@ -1102,6 +1095,82 @@ const POLICY_LINKS = [
   { handle: "terms-of-service", label: "Terms of service" },
 ] as const;
 
+/* ── Footer link data matching the original Sun Umbrella website ──────── */
+
+const ABOUT_LINKS = [
+  { label: "About Us", href: "/#sun-brand" },
+  { label: "Our Retail Store", href: "/#stores" },
+  { label: "Videos", href: "/#videos" },
+  { label: "Sun Facts", href: "/#sun-facts" },
+  { label: "Sun Care", href: "/#sun-care" },
+  { label: "Profile", href: "/#profile" },
+  { label: "Contact Us", href: "/#contact" },
+] as const;
+
+const TERMS_LINKS = [
+  { label: "Delivery", handle: "shipping-policy" },
+  { label: "Shipping Charges", handle: "shipping-policy" },
+  { label: "Returns Policy", handle: "refund-policy" },
+  { label: "Exchange Policy", handle: "refund-policy" },
+  { label: "Payment Methods", handle: "terms-of-service" },
+  { label: "Warranty Information", handle: "terms-of-service" },
+  { label: "Security & Privacy Policy", handle: "privacy-policy" },
+  { label: "Terms & Conditions", handle: "terms-of-service" },
+] as const;
+
+const SOCIAL_LINKS = [
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/SunUmbrellaOfficial",
+    gradient: "linear-gradient(135deg, #1877F2 0%, #0C5DC7 100%)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M9.198 21.5h4v-8.01h3.604l.396-3.98h-4V7.5a1 1 0 0 1 1-1h3v-4h-3a5 5 0 0 0-5 5v2.01h-2l-.396 3.98H9.198v8.01Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/sunumbrella_official/",
+    gradient: "linear-gradient(135deg, #F58529 0%, #DD2A7B 40%, #8134AF 70%, #515BD4 100%)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.254 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.416-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.416 2.428-.465C8.944 2.013 9.283 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm6.5-.25a1.25 1.25 0 1 0-2.5 0 1.25 1.25 0 0 0 2.5 0ZM12 9a3 3 0 1 1 0 6 3 3 0 0 1 0-6Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/@sunumbrella",
+    gradient: "linear-gradient(135deg, #FF0000 0%, #CC0000 100%)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "Pinterest",
+    href: "https://in.pinterest.com/sunumbrellaofficial/",
+    gradient: "linear-gradient(135deg, #E60023 0%, #BD081C 100%)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M12 0C5.373 0 0 5.372 0 12c0 5.084 3.163 9.426 7.627 11.174-.105-.949-.2-2.405.042-3.441.218-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12 24c6.627 0 12-5.373 12-12 0-6.628-5.373-12-12-12Z" />
+      </svg>
+    ),
+  },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/company/sun-umbrella/",
+    gradient: "linear-gradient(135deg, #0077B5 0%, #005582 100%)",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286ZM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065Zm1.782 13.019H3.555V9h3.564v11.452ZM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003Z" />
+      </svg>
+    ),
+  },
+] as const;
+
 export function SiteFooter() {
   return (
     <footer
@@ -1114,87 +1183,133 @@ export function SiteFooter() {
       </div>
       <div className="relative z-10 mx-auto max-w-[1400px]">
         <div className="grid grid-cols-2 gap-x-6 gap-y-11 md:grid-cols-4 md:gap-10">
+          {/* ── Column 1: About Sun Brand ── */}
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-              Shop
+              About Sun Brand
             </h2>
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
-              {COLLECTIONS.map((c) => (
-                <li key={c.name}>
-                  <SiteLink className="hover:text-white transition-colors" href={c.href}>
-                    {c.name}
-                  </SiteLink>
+              {ABOUT_LINKS.map((link) => (
+                <li key={link.label}>
+                  <a className="u-footer-link" href={link.href}>
+                    {link.label}
+                  </a>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* ── Column 2: Terms of Trade ── */}
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-              Company
+              Terms of Trade
             </h2>
             <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
-              <li>
-                {/* Shopify's /pages/about-us is empty (the old theme built it
-                    from metafields), so this points at our own brand story. */}
-                <a className="hover:text-white transition-colors" href="/#sun-brand">
-                  Our heritage
-                </a>
-              </li>
-              <li>
-                <SiteLink
-                  className="hover:text-white transition-colors"
-                  href={"/collections/promotional-umbrella"}
-                >
-                  Corporate &amp; branding
-                </SiteLink>
-              </li>
-              <li>
-                <a className="hover:text-white transition-colors" href="/#stores">
-                  Store locations
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-              Policies
-            </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
-              {POLICY_LINKS.map((p) => (
-                <li key={p.handle}>
+              {TERMS_LINKS.map((link) => (
+                <li key={link.label}>
                   <Link
-                    className="hover:text-white transition-colors"
+                    className="u-footer-link"
                     to="/policies/$handle"
-                    params={{ handle: p.handle }}
+                    params={{ handle: link.handle }}
                   >
-                    {p.label}
+                    {link.label}
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
+
+          {/* ── Column 3: Follow Us ── */}
           <div>
             <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-              Contact
+              Follow Us
             </h2>
-            <ul className="mt-4 space-y-2 text-base text-[var(--u-bone)]/90">
-              <li>
-                <a
-                  className="hover:text-white transition-colors"
-                  href="mailto:info@sunumbrellas.in"
-                >
-                  info@sunumbrellas.in
-                </a>
-              </li>
-              <li>
-                <a className="hover:text-white transition-colors" href="tel:+918212514578">
-                  +91 821 2514578
-                </a>
-              </li>
-              <li className="text-[var(--u-muted)]">Mysuru · Mumbai · Calicut</li>
+            <ul className="mt-4 space-y-3">
+              {SOCIAL_LINKS.map((social) => (
+                <li key={social.label}>
+                  <a
+                    className="flex items-center gap-3 group transition-colors text-[var(--u-bone)]/90 hover:text-white"
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-white shadow-lg transition-transform group-hover:scale-110"
+                      style={{ background: social.gradient }}
+                    >
+                      {social.icon}
+                    </span>
+                    <span className="text-base">{social.label}</span>
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
+
+          {/* ── Column 4: Reach Us ── */}
+          <div>
+            <h2 className="u-mono text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
+              Reach Us
+            </h2>
+            <div className="mt-4 space-y-4 text-base text-[var(--u-bone)]/90">
+              {/* Company address */}
+              <div className="space-y-1 text-sm leading-relaxed">
+                <p className="font-semibold text-[var(--u-bone)]">
+                  M/S. Sun Umbrella Pvt. Ltd.
+                </p>
+                <p># 211, Ground Floor,</p>
+                <p>JCK Industrial Park, Phase-2,</p>
+                <p>Belagola Industrial Area,</p>
+                <p>Mysuru – 570 016, Karnataka.</p>
+              </div>
+
+              {/* Timings */}
+              <p className="text-sm italic text-[var(--u-muted)]">
+                Timings : 10 am – 6 pm
+              </p>
+
+              {/* Phone numbers */}
+              <div className="space-y-1">
+                <a
+                  className="flex items-center gap-2 text-[var(--u-yellow)] hover:text-white transition-colors text-sm"
+                  href="tel:+918212514578"
+                >
+                  <Phone weight="fill" className="w-4 h-4 shrink-0" />
+                  +91 821 2514578
+                </a>
+                <a
+                  className="flex items-center gap-2 text-[var(--u-yellow)] hover:text-white transition-colors text-sm"
+                  href="tel:+916364913526"
+                >
+                  <Phone weight="fill" className="w-4 h-4 shrink-0" />
+                  +91 6364913526
+                </a>
+              </div>
+
+              {/* Email */}
+              <a
+                className="flex items-center gap-2 text-sm text-[var(--u-bone)]/90 hover:text-white transition-colors"
+                href="mailto:info@sunumbrellas.in"
+              >
+                <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0 text-[var(--u-muted)]">
+                  <path d="M1.5 8.67v8.58a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3V8.67l-8.928 5.493a3 3 0 0 1-3.144 0L1.5 8.67Z" />
+                  <path d="M22.5 6.908V6.75a3 3 0 0 0-3-3h-15a3 3 0 0 0-3 3v.158l9.714 5.978a1.5 1.5 0 0 0 1.572 0L22.5 6.908Z" />
+                </svg>
+                info@sunumbrellas.in
+              </a>
+
+              {/* Contact CTA */}
+              <a
+                href="/#contact"
+                className="mt-2 inline-block rounded-full border border-[var(--u-bone)]/30 px-5 py-2.5 text-xs uppercase tracking-[0.15em] text-[var(--u-bone)] transition-all hover:border-[var(--u-yellow)] hover:text-[var(--u-yellow)] hover:shadow-[0_0_20px_rgba(242,194,48,0.15)]"
+              >
+                Click here to contact us
+              </a>
+            </div>
+          </div>
         </div>
+
+        {/* ── Giant wordmark ── */}
         <div className="relative mt-20 inline-block w-full">
           <p
             aria-hidden="true"
@@ -1211,7 +1326,7 @@ export function SiteFooter() {
           </Sticker>
         </div>
         <p className="u-mono mt-8 text-xs uppercase tracking-[0.2em] text-[var(--u-muted)]">
-          Sun Umbrella · 100+ years · Mysuru, India. All rights reserved.
+          © {new Date().getFullYear()} Sun Umbrella Pvt. Ltd. · 100+ years · India. All rights reserved.
         </p>
       </div>
     </footer>
@@ -1269,14 +1384,7 @@ export function RetailSection() {
       id="retail"
       className="u-section-warm relative px-5 py-24 md:px-8 md:py-32 overflow-hidden"
     >
-      <Particles
-        className="absolute inset-0 z-0 opacity-50"
-        quantity={100}
-        ease={80}
-        color="#101b33"
-        refresh
-        size={2}
-      />
+
       <div className="mx-auto max-w-[1400px] relative z-10">
         <div className="text-center mb-14">
           <Sticker tone="navy" rotate={2} className="mb-6 mx-auto">
@@ -1297,7 +1405,7 @@ export function RetailSection() {
                       src={retail.image}
                       alt={retail.name}
                       loading="lazy"
-                      className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
+                      className="h-16 md:h-20 w-auto max-w-[85%] object-contain"
                     />
                   </CardItem>
                 </CardBody>
@@ -1313,7 +1421,7 @@ export function RetailSection() {
                       src={retail.image}
                       alt={retail.name}
                       loading="lazy"
-                      className="h-10 md:h-14 w-auto max-w-[70%] object-contain"
+                      className="h-16 md:h-20 w-auto max-w-[85%] object-contain"
                     />
                   </CardItem>
                 </CardBody>
@@ -1373,7 +1481,7 @@ export function StoreLocationsSection() {
                   ))}
                 </div>
               </div>
-              <div className="h-64 sm:h-72 w-full relative overflow-hidden bg-gray-200">
+              <div className="h-32 sm:h-40 w-full relative overflow-hidden bg-gray-200">
                 <iframe
                   className="absolute top-0 left-0 w-full h-[calc(100%+48px)]"
                   frameBorder="0"
