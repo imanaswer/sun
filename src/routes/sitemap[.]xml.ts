@@ -43,6 +43,7 @@ export const Route = createFileRoute("/sitemap.xml")({
           '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
           urlEntry(`${origin}/`, today, "weekly", "1.0"),
           urlEntry(`${origin}/collections`, today, "weekly", "0.9"),
+          urlEntry(`${origin}/contact`, today, "monthly", "0.5"),
           urlEntry(`${origin}/collections/all`, today, "weekly", "0.9"),
           ...collections.map((collection) =>
             urlEntry(`${origin}/collections/${encodeURIComponent(collection.handle)}`, today, "weekly", "0.7"),

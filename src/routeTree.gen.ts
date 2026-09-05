@@ -11,12 +11,14 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProductsIndexRouteImport } from './routes/products.index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as ProductsHandleRouteImport } from './routes/products.$handle'
 import { Route as PoliciesHandleRouteImport } from './routes/policies.$handle'
 import { Route as CollectionsHandleRouteImport } from './routes/collections.$handle'
+import { Route as AdminContactsDotcsvRouteImport } from './routes/admin.contacts[.]csv'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -26,6 +28,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -58,11 +65,18 @@ const CollectionsHandleRoute = CollectionsHandleRouteImport.update({
   path: '/collections/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminContactsDotcsvRoute = AdminContactsDotcsvRouteImport.update({
+  id: '/admin/contacts.csv',
+  path: '/admin/contacts.csv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
   '/products/$handle': typeof ProductsHandleRoute
@@ -71,8 +85,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
   '/products/$handle': typeof ProductsHandleRoute
@@ -82,8 +98,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
   '/products/$handle': typeof ProductsHandleRoute
@@ -94,8 +112,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
     | '/products/$handle'
@@ -104,8 +124,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
     | '/products/$handle'
@@ -114,8 +136,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
     | '/products/$handle'
@@ -125,8 +149,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactRoute: typeof ContactRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  AdminContactsDotcsvRoute: typeof AdminContactsDotcsvRoute
   CollectionsHandleRoute: typeof CollectionsHandleRoute
   PoliciesHandleRoute: typeof PoliciesHandleRoute
   ProductsHandleRoute: typeof ProductsHandleRoute
@@ -148,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -192,13 +225,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/contacts.csv': {
+      id: '/admin/contacts.csv'
+      path: '/admin/contacts.csv'
+      fullPath: '/admin/contacts.csv'
+      preLoaderRoute: typeof AdminContactsDotcsvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactRoute: ContactRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  AdminContactsDotcsvRoute: AdminContactsDotcsvRoute,
   CollectionsHandleRoute: CollectionsHandleRoute,
   PoliciesHandleRoute: PoliciesHandleRoute,
   ProductsHandleRoute: ProductsHandleRoute,

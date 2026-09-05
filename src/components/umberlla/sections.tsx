@@ -1104,7 +1104,7 @@ const ABOUT_LINKS = [
   { label: "Sun Facts", href: "/#sun-facts" },
   { label: "Sun Care", href: "/#sun-care" },
   { label: "Profile", href: "/#profile" },
-  { label: "Contact Us", href: "/#contact" },
+  { label: "Contact Us", href: "/contact" },
 ] as const;
 
 const TERMS_LINKS = [
@@ -1299,12 +1299,13 @@ export function SiteFooter() {
               </a>
 
               {/* Contact CTA */}
-              <a
-                href="/#contact"
+              {/* Was /#contact, which only scrolled to this same footer. */}
+              <Link
+                to="/contact"
                 className="mt-2 inline-block rounded-full border border-[var(--u-bone)]/30 px-5 py-2.5 text-xs uppercase tracking-[0.15em] text-[var(--u-bone)] transition-all hover:border-[var(--u-yellow)] hover:text-[var(--u-yellow)] hover:shadow-[0_0_20px_rgba(242,194,48,0.15)]"
               >
                 Click here to contact us
-              </a>
+              </Link>
             </div>
           </div>
         </div>
