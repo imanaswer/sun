@@ -188,7 +188,7 @@ export function CartDrawer() {
               </span>
             </div>
             <p className="text-xs text-[var(--u-muted)] text-center">
-              Shipping, taxes, and discounts calculated at checkout.
+              Free shipping on all orders.
             </p>
 
             {hasUnavailable && (
