@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Medal, Minus, Plus, ShieldCheck, ShoppingBag, Star, Truck } from "@phosphor-icons/react";
-import type { ProductSpec, ShopifyProductDetail } from "@/lib/shopify";
+import type { ProductSpec, ShopifyProduct, ShopifyProductDetail } from "@/lib/shopify";
+import { ProductCard } from "@/components/umberlla/collection";
 import type { ProductReview } from "@/lib/api/reviews.functions";
 
 /**
@@ -436,10 +437,42 @@ export function PriceRow({
         </div>
       )}
       <div className="u-mono mt-4 space-y-1.5 text-[11px]" style={{ color: "var(--u-muted)" }}>
-        <div>MRP inclusive of all taxes</div>
+        <div>Price inclusive of all taxes</div>
         <div>Delivery charges: Free delivery</div>
       </div>
     </div>
+  );
+}
+
+/* ------------------------------------------------------- related rail --- */
+
+/**
+ * Umbrellas matching this one on open diameter or frame, in a horizontal rail.
+ * Each card repeats those two parameters so the comparison is on the card
+ * rather than one tab away.
+ */
+export function RelatedProducts({ products, index }: { products: ShopifyProduct[]; index: string }) {
+  if (products.length === 0) return null;
+
+  return (
+    <section className="mt-24 md:mt-32">
+      <SectionHeading index={index} title="Related Umbrellas" />
+      <p className="u-mono mt-4 text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
+        Matched on open diameter and frame
+      </p>
+      <div
+        role="region"
+        aria-label="Related umbrellas"
+        tabIndex={0}
+        className="mt-8 flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {products.map((product) => (
+          <div key={product.handle} className="w-[260px] shrink-0 snap-start">
+            <ProductCard product={product} specs={product.specs} />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

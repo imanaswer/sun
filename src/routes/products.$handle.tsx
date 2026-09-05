@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getShopifyProductByHandle, createCheckoutUrl } from "@/lib/shopify";
+import { getShopifyProductByHandle, getShopifyProducts, pickRelated, createCheckoutUrl } from "@/lib/shopify";
 import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
@@ -17,6 +17,7 @@ import {
   ProductGallery,
   ProductReviews,
   ProductSpecs,
+  RelatedProducts,
   QuantityStepper,
   RatingSummary,
   SectionHeading,
@@ -30,7 +31,15 @@ const FALLBACK_IMAGE = "/assets/sun/prod-walkingstick.png";
 
 export const Route = createFileRoute("/products/$handle")({
   loader: async ({ params }) => {
-    const product = await getShopifyProductByHandle(params.handle);
+    // The candidate pull doesn't depend on this product's specs, so it rides
+    // alongside rather than adding a third serial round-trip.
+    // ponytail: first 100 and filter here — Storefront search can't filter on
+    // custom metafields. Covers the current 68-product catalogue; paginate if
+    // it grows past 100.
+    const [product, candidates] = await Promise.all([
+      getShopifyProductByHandle(params.handle),
+      getShopifyProducts({ first: 100 }).catch(() => []),
+    ]);
     if (!product) {
       // notFound() rather than a plain throw: an unknown handle must answer 404,
       // not 500, or crawlers treat a delisted product as a broken server.
@@ -39,7 +48,7 @@ export const Route = createFileRoute("/products/$handle")({
     // Reviews come from Judge.me and are optional — getProductReviews already
     // swallows its own failures and returns [], so it can't fail the route.
     const reviews = await getProductReviews({ data: { handle: params.handle, perPage: 8 } });
-    return { product, reviews };
+    return { product, reviews, related: pickRelated(product, candidates) };
   },
   head: ({ loaderData }) => {
     const product = loaderData?.product;
@@ -92,7 +101,7 @@ function ProductNotFound() {
 }
 
 function ProductDetailRoute() {
-  const { product, reviews } = Route.useLoaderData();
+  const { product, reviews, related } = Route.useLoaderData();
   const { addToCart } = useCart();
 
   // Option values drive the selection; the variant is derived from them, so a
@@ -170,6 +179,34 @@ function ProductDetailRoute() {
     }
   };
 
+  const selectedSummary = Object.values(selectedOptions).join(" · ");
+
+  // ponytail: one element rendered twice — panel CTA and the end-of-page CTA.
+  const buyActions = (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        disabled={isSoldOut}
+        className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ border: "1px solid var(--u-slate)", color: "var(--u-bone)" }}
+      >
+        <ShoppingBag size={16} />
+        Add to Cart
+      </button>
+
+      <button
+        type="button"
+        onClick={handleBuyNow}
+        disabled={isSoldOut || isInstantBuying}
+        className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
+        style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
+      >
+        {isInstantBuying ? "Processing…" : "Buy It Now"}
+      </button>
+    </div>
+  );
+
   return (
     <div className="u-page u-light" style={{ backgroundColor: "var(--u-navy)", color: "var(--u-bone)" }}>
       <StructuredData json={productJsonLd(product)} />
@@ -240,28 +277,7 @@ function ProductDetailRoute() {
               <QuantityStepper quantity={quantity} onChange={setQuantity} />
             </div>
 
-            <div ref={ctaRef} className="mt-10 grid gap-4 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                disabled={isSoldOut}
-                className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ border: "1px solid var(--u-slate)", color: "var(--u-bone)" }}
-              >
-                <ShoppingBag size={16} />
-                Add to Cart
-              </button>
-
-              <button
-                type="button"
-                onClick={handleBuyNow}
-                disabled={isSoldOut || isInstantBuying}
-                className="u-mono flex cursor-pointer items-center justify-center gap-2 rounded-full py-4 text-xs font-bold uppercase tracking-widest transition-all hover:opacity-95 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50"
-                style={{ backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }}
-              >
-                {isInstantBuying ? "Processing…" : "Buy It Now"}
-              </button>
-            </div>
+            <div ref={ctaRef} className="mt-10">{buyActions}</div>
 
             <TrustRow />
             </BuyPanelCard>
@@ -282,6 +298,34 @@ function ProductDetailRoute() {
         )}
 
         <ProductReviews rating={product.rating} reviews={reviews} />
+
+        <RelatedProducts products={related} index="04" />
+
+        {/* The buy option repeated after the specs, details and reviews, so a
+            customer who reads to the bottom can order without scrolling back. */}
+        <section className="mt-24 md:mt-32">
+          <SectionHeading index="05" title="Ready to Order" />
+          <div className="mt-8 max-w-[540px]">
+            <h3 className="u-fun-head text-2xl" style={{ color: "var(--u-bone)" }}>
+              {product.title}
+            </h3>
+            {selectedSummary && (
+              <p
+                className="u-mono mt-2 text-xs uppercase tracking-[0.14em]"
+                style={{ color: "var(--u-muted)" }}
+              >
+                {selectedSummary} · Qty {quantity}
+              </p>
+            )}
+            <PriceRow
+              price={displayPrice}
+              originalPrice={displayOriginalPrice}
+              discount={displayDiscount}
+              savings={displaySavings}
+            />
+            <div className="mt-8">{buyActions}</div>
+          </div>
+        </section>
       </main>
 
       <BrandBand />

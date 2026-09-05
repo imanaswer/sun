@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { ShopifyProduct } from "@/lib/shopify";
+import type { ProductSpec, ShopifyProduct } from "@/lib/shopify";
 
 /**
  * Collection page presentation. The route owns the data; this is props in,
@@ -46,7 +46,14 @@ export function CollectionHeader({
   );
 }
 
-function ProductCard({ product }: { product: ShopifyProduct }) {
+export function ProductCard({
+  product,
+  specs,
+}: {
+  product: ShopifyProduct;
+  /** Shown only where the parameters matter — the related rail. */
+  specs?: ProductSpec[];
+}) {
   return (
     <Link
       to="/products/$handle"
@@ -91,6 +98,16 @@ function ProductCard({ product }: { product: ShopifyProduct }) {
         >
           {product.title}
         </h2>
+        {specs && specs.length > 0 && (
+          <dl className="u-mono flex flex-col gap-1 text-[10px] uppercase tracking-[0.12em]">
+            {specs.map((spec) => (
+              <div key={spec.key} className="flex justify-between gap-3">
+                <dt style={{ color: "var(--u-muted)" }}>{spec.label}</dt>
+                <dd style={{ color: "var(--u-bone)" }}>{spec.value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
         <div className="mt-auto flex flex-wrap items-baseline gap-2.5">
           <span className="u-mono text-sm font-bold" style={{ color: "var(--u-price)" }}>
             {product.price}

@@ -72,6 +72,9 @@ export interface ShopifyProduct {
   imageAlt: string;
   variantId?: string;
   href: string;
+  /** Only the specs listed in CARD_SPEC_KEYS — deliberately partial. The full
+   *  set lives on ShopifyProductDetail. */
+  specs?: ProductSpec[];
 }
 
 export interface ShopifyCollection {
@@ -136,7 +139,7 @@ export function formatPrice(amount: string | number, currencyCode: string = "INR
 }
 
 const PRODUCTS_QUERY = `
-  query GetProducts($first: Int = 20, $query: String) {
+  query GetProducts($first: Int = 20, $query: String, $identifiers: [HasMetafieldsIdentifier!]!) {
     products(first: $first, query: $query) {
       edges {
         node {
@@ -145,6 +148,11 @@ const PRODUCTS_QUERY = `
           handle
           description
           availableForSale
+          metafields(identifiers: $identifiers) {
+            namespace
+            key
+            value
+          }
           priceRange {
             minVariantPrice {
               amount
@@ -192,6 +200,7 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
           handle: string;
           description: string;
           availableForSale: boolean;
+          metafields: Array<{ namespace: string; key: string; value: string } | null>;
           priceRange: { minVariantPrice: { amount: string; currencyCode: string } };
           compareAtPriceRange?: { minVariantPrice: { amount: string; currencyCode: string } };
           images: { edges: Array<{ node: { url: string; altText: string | null } }> };
@@ -201,7 +210,9 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
     };
   }>({
     query: PRODUCTS_QUERY,
-    variables: { first: options.first ?? 12, query: options.query },
+    // identifiers is non-null in the query, so it comes from here rather than
+    // from options — a caller that forgot it would fail the whole request.
+    variables: { first: options.first ?? 12, query: options.query, identifiers: CARD_METAFIELD_IDENTIFIERS },
   });
 
   return data.products.edges.map(({ node }) => {
@@ -234,6 +245,7 @@ export async function getShopifyProducts(options: { first?: number; query?: stri
       imageAlt: firstImage?.altText || node.title,
       variantId: firstVariant?.id,
       href: `/products/${node.handle}`,
+      specs: readSpecs(node.metafields, CARD_SPEC_KEYS),
     };
   });
 }
@@ -434,6 +446,59 @@ const SPEC_FIELDS: Array<{ key: string; label: string; format?: (raw: string) =>
   { key: "open_diameter", label: "Open Diameter" },
 ];
 
+/** The two parameters the related-products rail matches and displays on. */
+const CARD_SPEC_KEYS = ["open_diameter", "frame_material"] as const;
+
+const CARD_METAFIELD_IDENTIFIERS = CARD_SPEC_KEYS.map((key) => ({ namespace: "custom", key }));
+
+/**
+ * Turn a metafields() answer into spec tiles, in SPEC_FIELDS display order.
+ * Absent keys come back null and are simply skipped.
+ */
+function readSpecs(
+  metafields: Array<{ namespace: string; key: string; value: string } | null> | undefined,
+  keys?: readonly string[],
+): ProductSpec[] {
+  const byKey = new Map<string, string>();
+  for (const field of metafields ?? []) {
+    if (field?.value) byKey.set(`${field.namespace}:${field.key}`, field.value);
+  }
+  return SPEC_FIELDS.flatMap((field) => {
+    if (keys && !keys.includes(field.key)) return [];
+    const raw = byKey.get(`custom:${field.key}`);
+    if (!raw) return [];
+    const value = field.format ? field.format(raw) : raw;
+    return value ? [{ key: field.key, label: field.label, value }] : [];
+  });
+}
+
+/**
+ * Products sharing an open diameter or a frame with the one being viewed,
+ * most matches first. Empty when the current product carries neither spec —
+ * the rail then renders nothing rather than a row of unrelated umbrellas.
+ */
+export function pickRelated(
+  current: { handle: string; specs: ProductSpec[] },
+  candidates: ShopifyProduct[],
+  limit = 8,
+): ShopifyProduct[] {
+  const wanted = new Map(
+    current.specs.filter((s) => CARD_SPEC_KEYS.includes(s.key as (typeof CARD_SPEC_KEYS)[number])).map((s) => [s.key, s.value]),
+  );
+  if (wanted.size === 0) return [];
+
+  return candidates
+    .filter((p) => p.handle !== current.handle)
+    .map((p) => ({
+      product: p,
+      matches: (p.specs ?? []).filter((s) => wanted.get(s.key) === s.value).length,
+    }))
+    .filter((entry) => entry.matches > 0)
+    .sort((a, b) => b.matches - a.matches)
+    .slice(0, limit)
+    .map((entry) => entry.product);
+}
+
 const WEIGHT_UNIT_LABELS: Record<string, string> = {
   GRAMS: "g",
   KILOGRAMS: "kg",
@@ -612,12 +677,7 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
     if (field?.value) metafields.set(`${field.namespace}:${field.key}`, field.value);
   }
 
-  const specs: ProductSpec[] = SPEC_FIELDS.flatMap((field) => {
-    const raw = metafields.get(`custom:${field.key}`);
-    if (!raw) return [];
-    const value = field.format ? field.format(raw) : raw;
-    return value ? [{ key: field.key, label: field.label, value }] : [];
-  });
+  const specs = readSpecs(node.metafields);
 
   const ratingRaw = metafields.get("reviews:rating");
   const ratingCountRaw = metafields.get("reviews:rating_count");
