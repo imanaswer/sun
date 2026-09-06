@@ -28,7 +28,7 @@ export const Route = createFileRoute("/")({
   // falls back to the static BESTSELLERS copy inside the section.
   loader: async () => {
     const [bestsellers, reviews] = await Promise.all([
-      getShopifyProducts({ first: 4 }).catch((error) => {
+      getShopifyProducts({ first: 8 }).catch((error) => {
         console.warn("Shopify bestsellers fetch failed, using static fallback:", error);
         return [];
       }),

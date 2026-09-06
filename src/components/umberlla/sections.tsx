@@ -157,12 +157,14 @@ export function bgLuminance(el: Element | null): number {
 
 export function SiteNav() {
   const { cartCount, openCart } = useCart();
-  // The bar never hides. It only re-tones: navy over the dark hero, bone once
-  // the white storefront begins, so the links stay readable over whichever
-  // section is under it. Keyed to a #hero-end sentinel after the film.
+  // The bar never hides and never paints a slab of its own — it only re-tones
+  // its links to the real background under it, read at the bar's bottom edge.
+  // A background strip here also paints over the logo, which is static while
+  // the pill and cart are positioned. Keyed to a #hero-end sentinel.
   const [menuOpen, setMenuOpen] = useState(false);
   const [navTheme, setNavTheme] = useState<"light" | "dark">("light");
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const headerRef = useRef<HTMLElement>(null);
   useEffect(() => {
     const check = () => {
       const sentinel = document.getElementById("hero-end");
@@ -171,16 +173,20 @@ export function SiteNav() {
       // painted navy links onto navy.
       // Probe at the bar's bottom edge, not its middle: the bar is ~128px tall,
       // so sampling at 90 kept showing the section that had already scrolled
-      // out from under it — a navy bar with navy text over a yellow band.
+      // out from under it. And probe by hit-testing rather than by <section>:
+      // #next-gen is a transparent section over a dark inner div, so asking the
+      // section for its colour walked up to the cream page and painted navy
+      // links onto navy. Three columns, averaged, so one white card under the
+      // middle of the bar can't flip the whole thing.
       const probeY = 130;
-      const band = Array.from(document.querySelectorAll("section, footer")).find(
-        (el) => {
-          const rect = el.getBoundingClientRect();
-          return rect.top <= probeY && rect.bottom >= probeY;
-        },
-      );
-      let currentTheme: "light" | "dark" =
-        bgLuminance(band ?? null) > 0.55 ? "dark" : "light";
+      const header = headerRef.current;
+      const samples = [0.25, 0.5, 0.75].map((fraction) => {
+        const stack = document.elementsFromPoint(window.innerWidth * fraction, probeY);
+        const under = stack.find((el) => !header?.contains(el)) ?? null;
+        return bgLuminance(under);
+      });
+      const luminance = samples.reduce((a, b) => a + b, 0) / samples.length;
+      let currentTheme: "light" | "dark" = luminance > 0.55 ? "dark" : "light";
 
       // If we are above hero-end, we are in the hero (light text)
       if (sentinel && sentinel.getBoundingClientRect().top >= probeY) {
@@ -221,7 +227,8 @@ export function SiteNav() {
 
   return (
     <>
-    <header 
+    <header
+      ref={headerRef}
       className={[
         // Static bar: always on screen, and opaque from md up so the links stay
         // readable over whatever section happens to be under it. The phone
@@ -229,19 +236,6 @@ export function SiteNav() {
         "fixed inset-x-0 top-0 z-50 pt-4 md:pt-4 pointer-events-none",
       ].join(" ")}
     >
-      {/* The bar's own background, so the links never sit on whatever section
-          happens to be under them. Inline colours rather than Tailwind
-          arbitrary values: `bg-[var(--u-bone)]/95` compiles to nothing, which
-          is how this shipped invisible. Phone header is its own dark pill. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 hidden transition-colors duration-300 md:block"
-        style={{
-          backgroundColor: navTheme === "dark" ? "var(--u-bone)" : "var(--u-navy)",
-          borderBottom: `1px solid ${navTheme === "dark" ? "var(--u-slate)" : "rgba(255,255,255,0.12)"}`,
-        }}
-      />
-
       {/* DESKTOP HEADER */}
       <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
         <Link to="/" className="flex h-24 items-center">
@@ -933,10 +927,10 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
           <TypeSequence text="Best sellers" />
         </h2>
 
-        {/* Four tiles on one rail: they fill the row on a desktop and scroll
-            sideways on anything narrower, instead of wrapping into a block. */}
+        {/* Four tiles across, the rest of the eight behind them: the row is a
+            rail you drag sideways rather than a grid that wraps. */}
         <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:gap-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {items.slice(0, 4).map((p, index) => (
+          {items.map((p, index) => (
             <SiteLink
               key={p.name}
               href={p.href}
@@ -1484,7 +1478,7 @@ export function StoreLocationsSection() {
                   ))}
                 </div>
               </div>
-              <div className="h-24 sm:h-28 w-full relative overflow-hidden bg-gray-200">
+              <div className="h-16 sm:h-20 w-full relative overflow-hidden bg-gray-200">
                 <iframe
                   className="absolute top-0 left-0 w-full h-[calc(100%+48px)]"
                   frameBorder="0"
@@ -1497,9 +1491,10 @@ export function StoreLocationsSection() {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
                 
-                <div className="absolute bottom-4 left-4 z-10 flex items-center gap-2 bg-white px-3 py-2 rounded-md shadow-md border border-gray-100 pointer-events-none">
-                  <MapPin size={18} weight="fill" className="text-[var(--u-navy)]/80" />
-                  <span className="text-sm font-semibold text-[var(--u-navy)]">{store.city}</span>
+                {/* Sized down with the map: the old pill filled a 64px strip. */}
+                <div className="absolute bottom-2 left-2 z-10 flex items-center gap-1.5 bg-white px-2 py-1 rounded-md shadow-md border border-gray-100 pointer-events-none">
+                  <MapPin size={14} weight="fill" className="text-[var(--u-navy)]/80" />
+                  <span className="text-xs font-semibold text-[var(--u-navy)]">{store.city}</span>
                 </div>
               </div>
             </div>
