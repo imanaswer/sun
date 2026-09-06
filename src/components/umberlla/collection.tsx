@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ProductSpec, ShopifyProduct } from "@/lib/shopify";
+import { specIcon } from "@/components/umberlla/spec-icons";
 
 /**
  * Collection page presentation. The route owns the data; this is props in,
@@ -100,12 +101,18 @@ export function ProductCard({
         </h2>
         {specs && specs.length > 0 && (
           <dl className="u-mono flex flex-col gap-1 text-[10px] uppercase tracking-[0.12em]">
-            {specs.map((spec) => (
-              <div key={spec.key} className="flex justify-between gap-3">
-                <dt style={{ color: "var(--u-muted)" }}>{spec.label}</dt>
-                <dd style={{ color: "var(--u-bone)" }}>{spec.value}</dd>
-              </div>
-            ))}
+            {specs.map((spec) => {
+              const SpecIcon = specIcon(spec.key);
+              return (
+                <div key={spec.key} className="flex justify-between gap-3">
+                  <dt className="flex items-center gap-1.5" style={{ color: "var(--u-muted)" }}>
+                    <SpecIcon size={13} weight="bold" aria-hidden="true" />
+                    {spec.label}
+                  </dt>
+                  <dd style={{ color: "var(--u-bone)" }}>{spec.value}</dd>
+                </div>
+              );
+            })}
           </dl>
         )}
         <div className="mt-auto flex flex-wrap items-baseline gap-2.5">

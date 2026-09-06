@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Medal, Minus, Plus, ShieldCheck, ShoppingBag, Star, Truck } from "@phosphor-icons/react";
+import { specIcon } from "@/components/umberlla/spec-icons";
 import type { ProductSpec, ShopifyProduct, ShopifyProductDetail } from "@/lib/shopify";
 import { ProductCard } from "@/components/umberlla/collection";
 import type { ProductReview } from "@/lib/api/reviews.functions";
@@ -219,23 +220,32 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
     <section className="mt-24 md:mt-32">
       <SectionHeading index="01" title="Specifications" />
       <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {specs.map((spec) => (
+        {specs.map((spec) => {
+          const SpecIcon = specIcon(spec.key);
+          return (
           <div
             key={spec.key}
             className="rounded-2xl px-5 py-6 transition-colors"
             style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
           >
+            <SpecIcon
+              size={26}
+              weight="bold"
+              aria-hidden="true"
+              style={{ color: "var(--u-accent-text)" }}
+            />
             <div
-              className="u-mono text-[10px] uppercase tracking-[0.16em]"
+              className="u-mono mt-3 text-[10px] uppercase tracking-[0.16em]"
               style={{ color: "var(--u-accent-text)" }}
             >
               {spec.label}
             </div>
-            <div className="mt-3 text-sm leading-snug font-semibold" style={{ color: "var(--u-bone)" }}>
+            <div className="mt-2 text-sm leading-snug font-semibold" style={{ color: "var(--u-bone)" }}>
               {spec.value}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
