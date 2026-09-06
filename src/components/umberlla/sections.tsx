@@ -1115,7 +1115,7 @@ const POLICY_LINKS = [
 /* ── Footer link data matching the original Sun Umbrella website ──────── */
 
 const ABOUT_LINKS = [
-  { label: "About Us", href: "/#sun-brand" },
+  { label: "About Us", href: "/about" },
   { label: "Our Retail Store", href: "/#stores" },
   { label: "Videos", href: "/#videos" },
   { label: "Sun Facts", href: "/#sun-facts" },
