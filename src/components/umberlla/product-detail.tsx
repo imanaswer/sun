@@ -225,15 +225,12 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
           return (
           <div
             key={spec.key}
-            className="rounded-2xl px-5 py-6 transition-colors"
+            className="flex flex-col items-center rounded-2xl px-5 py-7 text-center transition-colors"
             style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
           >
-            <SpecIcon
-              size={26}
-              weight="bold"
-              aria-hidden="true"
-              style={{ color: "var(--u-accent-text)" }}
-            />
+            <span className="inline-flex" style={{ color: "var(--u-accent-text)" }}>
+              <SpecIcon size={34} />
+            </span>
             <div
               className="u-mono mt-3 text-[10px] uppercase tracking-[0.16em]"
               style={{ color: "var(--u-accent-text)" }}
