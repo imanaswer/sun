@@ -1024,7 +1024,73 @@ function TestimonialMarquee() {
   );
 }
 
+/**
+ * Real customer reviews carried over from the previous Sun Umbrella site
+ * (sunumbrellas.in). Used only when Judge.me returns fewer than three live
+ * reviews. Everything here is a real person who bought a Sun umbrella —
+ * never pad this list with invented customers.
+ */
 const LOCAL_REVIEW_FALLBACK: Testimonial[] = [
+  {
+    text: "Excellent quality and packaging, very happy with overall experience.",
+    name: "Anurag Singh",
+    role: "Customer review",
+  },
+  {
+    text: "Awesome, very stylish strong",
+    name: "T.R. Balachandar",
+    role: "Customer review",
+  },
+  {
+    text: "Very good product. The specification and colour match exactly with what is mentioned on the website. Prompt delivery too. Thank you.",
+    name: "Nilay Bhatt",
+    role: "Customer review",
+  },
+  {
+    text: "Excellent quality and very neatly packed and delivered",
+    name: "Francis Rozario",
+    role: "Customer review",
+  },
+  {
+    text: "Excellent service, response, quality... Really a great team to work with... Very happy with the product",
+    name: "Chenthilkumar",
+    role: "Customer review",
+  },
+  {
+    text: "Its really very good quality product. if you want Umbrella buy only SUN Umbrella",
+    name: "Shital Kumbhar",
+    role: "Customer review",
+  },
+  {
+    text: "Sun brand umbrellas - I saw my father using one, I had one while I was in school and now my daughter using one. Love the brand, love the quality.",
+    name: "Suraj Mandrekar",
+    role: "Customer review",
+  },
+  {
+    text: "Umbrella is awesome. And the whole experience of purchase is very nice.",
+    name: "Ramesh C. Meena",
+    role: "Customer review",
+  },
+  {
+    text: "Excellent piece, i have been a fan of a sun umbrella , unbeatable quality",
+    name: "Sunil Kamble",
+    role: "Customer review",
+  },
+  {
+    text: "Very nice product, worth every single penny . Very easy to handle",
+    name: "Kapil Rohatgi",
+    role: "Customer review",
+  },
+  {
+    text: "From my childhood... almost 40+ years trusted brand. Nowadays very difficult to get it in Kerala market. But our trust keep always to follow wherever you are. Good product.",
+    name: "Raghu Dhanya",
+    role: "Customer review",
+  },
+  {
+    text: "Awesome quality. When there's no Sun have Sun in your hand. Sun umbrella",
+    name: "Vipin Bhatia",
+    role: "Customer review",
+  },
   {
     text: "Quality is good, I am using Sun Brand umbrellas for the past 12 years.",
     name: "Ramesh",

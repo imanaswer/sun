@@ -47,7 +47,7 @@ export const Route = createFileRoute("/products/$handle")({
     }
     // Reviews come from Judge.me and are optional — getProductReviews already
     // swallows its own failures and returns [], so it can't fail the route.
-    const reviews = await getProductReviews({ data: { handle: params.handle, perPage: 8 } });
+    const reviews = await getProductReviews({ data: { handle: params.handle, perPage: 50 } });
     return { product, reviews, related: pickRelated(product, candidates) };
   },
   head: ({ loaderData }) => {
