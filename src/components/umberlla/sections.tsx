@@ -13,8 +13,6 @@ import LiquidGrid from "../liquid-grid";
 import DottedBg2 from "../dotted-bg-2";
 import { TypeSequence } from "@/components/umberlla/type-sequence";
 
-import type { Testimonial } from "@/components/ui/testimonials-columns-1";
-import { TestimonialsColumn, TestimonialsRow } from "@/components/ui/testimonials-columns-1";
 import type { ProductReview } from "@/lib/api/reviews.functions";
 import { Reveal } from "@/lib/reveal";
 import ElementalWater from "./../elemental-water";
@@ -1007,99 +1005,6 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
         </div>
       </div>
     </section>
-  );
-}
-
-function TestimonialMarquee() {
-  const items = "★ 5-STAR REVIEWS \u00A0\u00A0 TRUSTED QUALITY \u00A0\u00A0 LOVED BY MILLIONS \u00A0\u00A0 100+ YEARS \u00A0\u00A0 ";
-  return (
-    <div className="u-marquee-banner" aria-hidden="true">
-      <div className="u-marquee">
-        <span>{items}</span>
-        <span>{items}</span>
-        <span>{items}</span>
-        <span>{items}</span>
-      </div>
-    </div>
-  );
-}
-
-/** Below this the wall looks thin rather than social proof, so we show nothing. */
-const MIN_TESTIMONIALS = 3;
-
-/**
- * Real Judge.me reviews only. This section used to render nine invented
- * customers with randomuser.me stock portraits, which is a misrepresentation
- * problem on a live storefront quite apart from the code. Judge.me is the
- * system of record; with no reviews (or no API token configured) the section
- * renders nothing rather than being padded back out with fiction.
- */
-export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[] }) {
-  const testimonials: Testimonial[] = reviews.map((r) => ({
-    text: r.body,
-    name: r.reviewerName,
-    role: `${r.rating}\u2605 \u00B7 Verified buyer`,
-  }));
-
-  if (testimonials.length < MIN_TESTIMONIALS) return null;
-
-  const perColumn = Math.ceil(testimonials.length / 3);
-  const reviewCol1 = testimonials.slice(0, perColumn);
-  const reviewCol2 = testimonials.slice(perColumn, perColumn * 2);
-  const reviewCol3 = testimonials.slice(perColumn * 2);
-
-  return (
-<>
-  <TestimonialMarquee />
-
-  <section
-    id="reviews"
-    className="bg-[var(--u-navy)] relative overflow-hidden px-5 py-24 md:px-8 md:py-32"
-  >
-    <LazyInView className="absolute inset-0 z-0 opacity-40">
-      <FluidField />
-    </LazyInView>
-      <div className="relative z-10 mx-auto max-w-[1400px]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-          viewport={{ once: true }}
-          className="mx-auto flex max-w-[560px] flex-col items-center text-center"
-        >
-          <Sticker tone="yellow" rotate={6} className="mb-5">
-            ❤️ Loved
-          </Sticker>
-          <h2 className="u-fun-heading mt-2 text-4xl md:text-6xl !text-[#F3EFE4]">
-            <TypeSequence text={"What our customers\nsay"} />
-          </h2>
-          <p className="mt-4 text-[#F3EFE4]">
-            Keeping India dry for 100+ years — here&rsquo;s what people carry, and why.
-          </p>
-        </motion.div>
-
-        {/* Desktop Vertical Testimonials */}
-        <div className="hidden md:flex mt-14 max-h-[740px] justify-center gap-6 overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_25%,black_75%,transparent)]">
-          <TestimonialsColumn testimonials={reviewCol1} duration={15} />
-          <TestimonialsColumn
-            testimonials={reviewCol2}
-            className="hidden md:block"
-            duration={19}
-          />
-          <TestimonialsColumn
-            testimonials={reviewCol3}
-            className="hidden lg:block"
-            duration={17}
-          />
-        </div>
-
-        {/* Mobile Horizontal Testimonials */}
-        <div className="md:hidden mt-14 flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)] -mx-5 px-5">
-          <TestimonialsRow testimonials={testimonials} duration={35} />
-        </div>
-      </div>
-    </section>
-    </>
   );
 }
 

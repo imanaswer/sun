@@ -6,14 +6,12 @@ import { MobileHero, useIsMobile } from "@/components/umberlla/mobile-hero";
 import {
   SiteFooter,
   SiteNav,
-  TestimonialsSection,
   VideoReelSection,
   BestsellersSection,
   SunBrandSection,
   RetailSection,
   StoreLocationsSection,
 } from "@/components/umberlla/sections";
-import { getShopReviews } from "@/lib/api/reviews.functions";
 import { getShopifyProducts } from "@/lib/shopify";
 import { StructuredData } from "@/components/StructuredData";
 import { canonical, organizationJsonLd } from "@/lib/seo";
@@ -27,16 +25,11 @@ export const Route = createFileRoute("/")({
   // HTML. Shopify going down must not take the homepage with it, so a failure
   // falls back to the static BESTSELLERS copy inside the section.
   loader: async () => {
-    const [bestsellers, reviews] = await Promise.all([
-      getShopifyProducts({ first: 8 }).catch((error) => {
-        console.warn("Shopify bestsellers fetch failed, using static fallback:", error);
-        return [];
-      }),
-      // Judge.me already swallows its own failures; the section hides itself
-      // when there is nothing real to show.
-      getShopReviews({ data: { perPage: 30 } }).catch(() => []),
-    ]);
-    return { bestsellers, reviews };
+    const bestsellers = await getShopifyProducts({ first: 8 }).catch((error) => {
+      console.warn("Shopify bestsellers fetch failed, using static fallback:", error);
+      return [];
+    });
+    return { bestsellers };
   },
   head: () => ({ links: [canonical("/")] }),
   component: Index,
@@ -49,7 +42,7 @@ function Index() {
   // Phones can't scrub video frames on scroll without severe jank, so they get
   // a lightweight static hero instead of the desktop scrub controller.
   const isMobile = useIsMobile();
-  const { bestsellers, reviews } = Route.useLoaderData();
+  const { bestsellers } = Route.useLoaderData();
   return (
     <div className="u-page" id="top">
       <StructuredData json={organizationJsonLd(STORES)} />
@@ -70,7 +63,6 @@ function Index() {
           <BestsellersSection products={bestsellers} />
         </div>
         <SunBrandSection />
-        <TestimonialsSection reviews={reviews} />
         <RetailSection />
         <StoreLocationsSection />
       </main>
