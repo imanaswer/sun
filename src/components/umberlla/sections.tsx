@@ -18,7 +18,6 @@ import { TestimonialsColumn, TestimonialsRow } from "@/components/ui/testimonial
 import type { ProductReview } from "@/lib/api/reviews.functions";
 import { Reveal } from "@/lib/reveal";
 import ElementalWater from "./../elemental-water";
-import { CardContainer, CardBody, CardItem } from "@/components/ui/3d-card";
 import { Particles } from "@/components/ui/particles";
 import { ProductFocusCarousel } from "@/components/ui/product-focus-carousel";
 import FluidField from "@/components/fluid-field";
@@ -158,45 +157,37 @@ export function bgLuminance(el: Element | null): number {
 
 export function SiteNav() {
   const { cartCount, openCart } = useCart();
-  // Transparent over the dark hero (no logo, light links). Once the hero is
-  // scrolled past and the white storefront begins, the bar turns white and the
-  // logo appears with dark links. Keyed to a #hero-end sentinel after the film.
+  // The bar never hides. It only re-tones: navy over the dark hero, bone once
+  // the white storefront begins, so the links stay readable over whichever
+  // section is under it. Keyed to a #hero-end sentinel after the film.
   const [menuOpen, setMenuOpen] = useState(false);
   const [navTheme, setNavTheme] = useState<"light" | "dark">("light");
-  const [navVisible, setNavVisible] = useState(true);
-  const [isScrolled, setIsScrolled] = useState(false);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-
     const check = () => {
       const sentinel = document.getElementById("hero-end");
-      const currentScrollY = window.scrollY;
-      setIsScrolled(currentScrollY > 20);
-
       // Read the real background under the bar rather than matching section
       // ids — the old allowlist called the navy #reviews section "dark" and
       // painted navy links onto navy.
+      // Probe at the bar's bottom edge, not its middle: the bar is ~128px tall,
+      // so sampling at 90 kept showing the section that had already scrolled
+      // out from under it — a navy bar with navy text over a yellow band.
+      const probeY = 130;
       const band = Array.from(document.querySelectorAll("section, footer")).find(
         (el) => {
           const rect = el.getBoundingClientRect();
-          return rect.top <= 90 && rect.bottom >= 90;
+          return rect.top <= probeY && rect.bottom >= probeY;
         },
       );
       let currentTheme: "light" | "dark" =
         bgLuminance(band ?? null) > 0.55 ? "dark" : "light";
 
       // If we are above hero-end, we are in the hero (light text)
-      if (sentinel && sentinel.getBoundingClientRect().top >= 90) {
+      if (sentinel && sentinel.getBoundingClientRect().top >= probeY) {
         currentTheme = "light";
       }
 
       setNavTheme(currentTheme);
-
-      // Always visible
-      setNavVisible(true);
-      
-      lastScrollY = currentScrollY;
     };
     check();
     window.addEventListener("scroll", check, { passive: true });
@@ -232,10 +223,25 @@ export function SiteNav() {
     <>
     <header 
       className={[
-        "fixed inset-x-0 top-0 z-50 bg-transparent transition-transform duration-300 pt-4 md:pt-4 pointer-events-none",
-        navVisible ? "translate-y-0" : "-translate-y-[150%]"
+        // Static bar: always on screen, and opaque from md up so the links stay
+        // readable over whatever section happens to be under it. The phone
+        // header is its own dark pill, so the bar stays transparent there.
+        "fixed inset-x-0 top-0 z-50 pt-4 md:pt-4 pointer-events-none",
       ].join(" ")}
     >
+      {/* The bar's own background, so the links never sit on whatever section
+          happens to be under them. Inline colours rather than Tailwind
+          arbitrary values: `bg-[var(--u-bone)]/95` compiles to nothing, which
+          is how this shipped invisible. Phone header is its own dark pill. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 hidden transition-colors duration-300 md:block"
+        style={{
+          backgroundColor: navTheme === "dark" ? "var(--u-bone)" : "var(--u-navy)",
+          borderBottom: `1px solid ${navTheme === "dark" ? "var(--u-slate)" : "rgba(255,255,255,0.12)"}`,
+        }}
+      />
+
       {/* DESKTOP HEADER */}
       <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
         <Link to="/" className="flex h-24 items-center">
@@ -927,12 +933,14 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
           <TypeSequence text="Best sellers" />
         </h2>
 
-        <div className="grid grid-cols-2 gap-4 md:gap-8 lg:grid-cols-4">
-          {items.map((p, index) => (
+        {/* Four tiles on one rail: they fill the row on a desktop and scroll
+            sideways on anything narrower, instead of wrapping into a block. */}
+        <div className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:gap-8 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {items.slice(0, 4).map((p, index) => (
             <SiteLink
               key={p.name}
               href={p.href}
-              className="u-card-on-yellow group relative flex flex-col md:[transform:rotate(var(--tilt))]"
+              className="u-card-on-yellow group relative flex w-[72%] max-w-[340px] shrink-0 snap-start flex-col sm:w-[46%] lg:w-[calc((100%-6rem)/4)] lg:max-w-none md:[transform:rotate(var(--tilt))]"
               style={{ "--tilt": `${index % 2 === 0 ? -1 : 1}deg` } as CSSProperties}
             >
               <div className="aspect-square w-full overflow-hidden bg-white">
@@ -1396,37 +1404,31 @@ export function RetailSection() {
           </h2>
         </div>
 
+        {/* No cards behind the logos — each partner's mark sits straight on
+            the yellow, at a size you can actually recognise. */}
         <div className="group relative flex overflow-hidden pb-8 pt-4 gap-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6">
             {RETAIL.map((retail) => (
-              <CardContainer key={retail.name} className="inter-var shrink-0">
-                <CardBody className="w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 group-hover/card:border-[var(--u-navy)]/30 transition-all shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 relative group/card">
-                  <CardItem translateZ="20" className="w-full h-full flex items-center justify-center pointer-events-none">
-                    <img
-                      src={retail.image}
-                      alt={retail.name}
-                      loading="lazy"
-                      className="h-16 md:h-20 w-auto max-w-[85%] object-contain"
-                    />
-                  </CardItem>
-                </CardBody>
-              </CardContainer>
+              <div key={retail.name} className="flex w-[200px] shrink-0 items-center justify-center md:w-[280px]">
+                <img
+                  src={retail.image}
+                  alt={retail.name}
+                  loading="lazy"
+                  className="h-24 w-auto max-w-full object-contain md:h-32"
+                />
+              </div>
             ))}
           </div>
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6" aria-hidden="true">
             {RETAIL.map((retail) => (
-              <CardContainer key={`${retail.name}-dup`} className="inter-var shrink-0">
-                <CardBody className="w-[180px] md:w-[240px] h-[110px] md:h-[140px] flex items-center justify-center bg-white overflow-hidden rounded-2xl border border-[var(--u-slate)]/10 group-hover/card:border-[var(--u-navy)]/30 transition-all shadow-sm group-hover/card:shadow-xl group-hover/card:-translate-y-1 relative group/card">
-                  <CardItem translateZ="20" className="w-full h-full flex items-center justify-center pointer-events-none">
-                    <img
-                      src={retail.image}
-                      alt={retail.name}
-                      loading="lazy"
-                      className="h-16 md:h-20 w-auto max-w-[85%] object-contain"
-                    />
-                  </CardItem>
-                </CardBody>
-              </CardContainer>
+              <div key={`${retail.name}-dup`} className="flex w-[200px] shrink-0 items-center justify-center md:w-[280px]">
+                <img
+                  src={retail.image}
+                  alt={retail.name}
+                  loading="lazy"
+                  className="h-24 w-auto max-w-full object-contain md:h-32"
+                />
+              </div>
             ))}
           </div>
         </div>
@@ -1482,7 +1484,7 @@ export function StoreLocationsSection() {
                   ))}
                 </div>
               </div>
-              <div className="h-32 sm:h-40 w-full relative overflow-hidden bg-gray-200">
+              <div className="h-24 sm:h-28 w-full relative overflow-hidden bg-gray-200">
                 <iframe
                   className="absolute top-0 left-0 w-full h-[calc(100%+48px)]"
                   frameBorder="0"
