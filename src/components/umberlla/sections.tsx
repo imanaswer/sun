@@ -180,13 +180,25 @@ export function SiteNav() {
       // middle of the bar can't flip the whole thing.
       const probeY = 130;
       const header = headerRef.current;
-      const samples = [0.25, 0.5, 0.75].map((fraction) => {
+      const under = [0.25, 0.5, 0.75].map((fraction) => {
         const stack = document.elementsFromPoint(window.innerWidth * fraction, probeY);
-        const under = stack.find((el) => !header?.contains(el)) ?? null;
-        return bgLuminance(under);
+        return stack.find((el) => !header?.contains(el)) ?? null;
       });
-      const luminance = samples.reduce((a, b) => a + b, 0) / samples.length;
-      let currentTheme: "light" | "dark" = luminance > 0.55 ? "dark" : "light";
+
+      // A section whose colour comes from a canvas or a video has no background
+      // to read — #next-gen is transparent over ElementalWater — so it says so
+      // with data-nav and skips the guessing. "light" means light links.
+      const declared = under
+        .map((el) => el?.closest("[data-nav]")?.getAttribute("data-nav"))
+        .find((value) => value === "light" || value === "dark");
+
+      const luminance = under.reduce((sum, el) => sum + bgLuminance(el), 0) / under.length;
+      let currentTheme: "light" | "dark" =
+        declared === "light" || declared === "dark"
+          ? declared
+          : luminance > 0.55
+            ? "dark"
+            : "light";
 
       // If we are above hero-end, we are in the hero (light text)
       if (sentinel && sentinel.getBoundingClientRect().top >= probeY) {
@@ -600,6 +612,9 @@ export function VideoReelSection() {
   return (
     <section
       id="next-gen"
+      // ElementalWater paints this section dark from a canvas, which has no
+      // background colour for SiteNav to read — hence the explicit answer.
+      data-nav="light"
       className="relative z-10 px-5 py-24 md:px-8 md:py-32"
     >
 <LazyInView className="absolute inset-0 z-0">
