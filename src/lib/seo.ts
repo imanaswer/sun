@@ -104,7 +104,7 @@ export function organizationJsonLd(
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_ORIGIN,
-    logo: `${SITE_ORIGIN}/assets/sun/logo.png`,
+    logo: `${SITE_ORIGIN}/assets/brand/Sun-logo.png`,
     contactPoint: {
       "@type": "ContactPoint",
       telephone: stores[0]?.phones[0],

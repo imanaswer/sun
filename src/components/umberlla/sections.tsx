@@ -255,7 +255,7 @@ export function SiteNav() {
             "flex flex-col items-center transition-opacity duration-300 opacity-100"
           ].join(" ")}>
             <img
-              src="/assets/sun/logo-icon-transparent.png"
+              src="/assets/brand/Sun-logo.png"
               alt="Sun Umbrella"
               className="h-16 w-auto"
             />
@@ -387,7 +387,7 @@ export function SiteNav() {
       {/* MOBILE FLOATING PILL HEADER */}
       <div className="md:hidden mx-auto mt-4 flex w-11/12 max-w-[380px] items-center justify-between gap-4 rounded-full bg-[#111111]/60 backdrop-blur-md pl-4 pr-1.5 py-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.25)] border border-white/10 pointer-events-auto">
         <Link to="/" className="flex items-center h-8">
-          <img src="/assets/sun/logo-icon-transparent.png" alt="Sun" className="h-5 w-auto object-contain" />
+          <img src="/assets/brand/Sun-logo.png" alt="Sun" className="h-5 w-auto object-contain" />
         </Link>
         <div className="flex items-center gap-1">
           {/* Cart Icon (Mobile) */}
@@ -441,7 +441,7 @@ export function SiteNav() {
       ].join(" ")}
     >
       <div className="absolute top-0 inset-x-0 z-10 flex items-start justify-between bg-[var(--u-bone)] px-6 pb-3 pt-8">
-        <img src="/assets/sun/logo.png" alt="Sun Umbrella" className="h-11 w-auto" />
+        <img src="/assets/brand/Sun-logo.png" alt="Sun Umbrella" className="h-11 w-auto" />
         <button
           type="button"
           aria-label="Close menu"
