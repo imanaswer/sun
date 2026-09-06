@@ -299,12 +299,12 @@ function ProductDetailRoute() {
 
         <ProductReviews rating={product.rating} reviews={reviews} />
 
-        <RelatedProducts products={related} index="04" />
-
         {/* The buy option repeated after the specs, details and reviews, so a
-            customer who reads to the bottom can order without scrolling back. */}
+            customer who reads to the bottom can order without scrolling back —
+            and before the related rail, so the last thing under the reading is
+            this umbrella rather than a row of other ones. */}
         <section className="mt-24 md:mt-32">
-          <SectionHeading index="05" title="Ready to Order" />
+          <SectionHeading index="04" title="Ready to Order" />
           <div className="mt-8 max-w-[540px]">
             <h3 className="u-fun-head text-2xl" style={{ color: "var(--u-bone)" }}>
               {product.title}
@@ -326,6 +326,8 @@ function ProductDetailRoute() {
             <div className="mt-8">{buyActions}</div>
           </div>
         </section>
+
+        <RelatedProducts products={related} index="05" />
       </main>
 
       <BrandBand />
