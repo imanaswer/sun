@@ -262,7 +262,7 @@ export function ProductReviews({
 
   return (
     <section className="mt-24 md:mt-32">
-      <SectionHeading index="03" title="Customer Reviews" />
+      <SectionHeading index="04" title="Customer Reviews" />
       <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
         <span />
         {rating && (
