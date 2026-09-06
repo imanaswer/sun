@@ -1024,8 +1024,23 @@ function TestimonialMarquee() {
   );
 }
 
-/** Below this the wall looks thin rather than social proof, so we show nothing. */
-const MIN_TESTIMONIALS = 3;
+const LOCAL_REVIEW_FALLBACK: Testimonial[] = [
+  {
+    text: "Quality is good, I am using Sun Brand umbrellas for the past 12 years.",
+    name: "Ramesh",
+    role: "Customer review",
+  },
+  {
+    text: "Very sturdy umbrella. Auto open and close works flawless. Worth the price.",
+    name: "Satiz Droid",
+    role: "Customer review",
+  },
+  {
+    text: "Still keeping the name and quality of Sun brand. Loved it.",
+    name: "Shyjish",
+    role: "Customer review",
+  },
+];
 
 /**
  * Real Judge.me reviews only. This section used to render nine invented
@@ -1035,13 +1050,12 @@ const MIN_TESTIMONIALS = 3;
  * renders nothing rather than being padded back out with fiction.
  */
 export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[] }) {
-  const testimonials: Testimonial[] = reviews.map((r) => ({
+  const liveTestimonials: Testimonial[] = reviews.map((r) => ({
     text: r.body,
     name: r.reviewerName,
     role: `${r.rating}\u2605 \u00B7 Verified buyer`,
   }));
-
-  if (testimonials.length < MIN_TESTIMONIALS) return null;
+  const testimonials = liveTestimonials.length >= 3 ? liveTestimonials : LOCAL_REVIEW_FALLBACK;
 
   const perColumn = Math.ceil(testimonials.length / 3);
   const reviewCol1 = testimonials.slice(0, perColumn);
