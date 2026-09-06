@@ -23,10 +23,10 @@ export const scrollScrubTheme: ScrollScrubTheme = {
 
 export const scrollScrubScenes: ScrollScrubScene[] = [
   {
-    body: "For 100+ years Sun Umbrella has stood between India and the sky. Built to be already in your hand when the monsoon turns, and to open before you are wet.",
+    body: "Sun brings monsoon cheer, year after year. For 100+ years these canopies have popped up cheerfully across India — a tradition of trust you can spot from down the street.",
     clip: "/assets/world/scene-01.mp4",
     id: "scene-01",
-    label: "100+ years",
+    label: "Monsoon cheer",
     mobileClip: "/assets/world/scene-01-mobile.mp4",
     mobileFrameCount: 151,
     mobileFrameOffset: 0,
@@ -39,7 +39,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     title: "Monsoon never\nlooked this good",
   },
   {
-    body: "One touch lifts the ribs in a single push. Auto open-and-close, UV-protective, windproof — it opens with your thumb while your other hand keeps the bag, the phone, the child.",
+    body: "Precision-moulded handles on a frame that snaps open or shut in a single motion. Your thumb does the work — the other hand keeps the bag, the phone, the child.",
     clip: "/assets/world/scene-02.mp4",
     id: "scene-02",
     label: "The mechanism",
@@ -52,13 +52,13 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     poster: "/assets/world/scene-02-poster.png",
     scroll: 1.6,
     tags: ["Auto open & close", "One-hand release"],
-    title: "One hand,\none second",
+    title: "Snap open,\nsnap shut",
   },
   {
-    body: "Rain leaves the canopy instead of soaking in, the frame springs back after a gust, and the sun never gets through. You arrive looking like the weather stayed outside.",
+    body: "Waterproof, UV-protected fabric on ribs that spring back after a gust. Hand-finished in Mysuru, chosen without compromise, and built to last you many monsoons.",
     clip: "/assets/world/scene-03.mp4",
     id: "scene-03",
-    label: "All weather",
+    label: "Made to last",
     mobileClip: "/assets/world/scene-03-mobile.mp4",
     mobileFrameCount: 150,
     mobileFrameOffset: 302,
@@ -67,7 +67,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-03-mobile-poster.png",
     poster: "/assets/world/scene-03-poster.png",
     scroll: 1.6,
-    tags: ["Designed for style", "Built for all weather"],
-    title: "Designed for style",
+    tags: ["UV-protective", "Built for all weather"],
+    title: "Yours for\nmany seasons",
   },
 ];
