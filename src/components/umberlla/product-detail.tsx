@@ -74,13 +74,13 @@ export function ProductGallery({
       {/* A tonal stage rather than a white card: a white slab on a navy page
           reads as a hole punched in it, and boxes the photo twice over. */}
       <div
-        className="relative flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[28px]"
+        className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[28px] md:aspect-[4/5]"
         style={{ border: "1px solid var(--u-slate)", background: "var(--u-stage)" }}
       >
         <img
           src={activeUrl}
           alt={title}
-          className="h-full w-full object-contain p-10 md:p-14"
+          className="h-full w-full object-contain p-6 md:p-14"
           style={{ filter: "var(--u-photo-shadow)" }}
           width={900}
           height={900}
@@ -142,7 +142,7 @@ export function SectionHeading({ index, title }: { index: string; title: string 
 export function BuyPanelCard({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="rounded-[28px] p-7 md:p-9"
+      className="rounded-[28px] p-5 md:p-9"
       style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
     >
       {children}
@@ -373,7 +373,7 @@ export function OptionSwatches({
   if (options.length === 0) return null;
 
   return (
-    <div className="mt-8 space-y-5">
+    <div className="mt-6 space-y-5 md:mt-8">
       {options.map((option) => (
         <div key={option.name} className="space-y-2.5">
           <span className="u-mono text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
@@ -388,7 +388,7 @@ export function OptionSwatches({
                   type="button"
                   onClick={() => onSelect(option.name, value)}
                   aria-pressed={isActive}
-                  className="u-mono cursor-pointer rounded-full px-4 py-2 text-xs transition-all"
+                  className="u-mono cursor-pointer rounded-full px-3 py-2 text-xs transition-all md:px-4"
                   style={
                     isActive
                       ? {
@@ -407,6 +407,20 @@ export function OptionSwatches({
           </div>
         </div>
       ))}
+    </div>
+  );
+}
+
+/**
+ * Price footnotes. On mobile these render under the Add to Cart button instead
+ * of inside the price block: there they sat between the price and the variant
+ * picker, which is the gap that pushed the picker off the first screen.
+ */
+export function TaxNote({ className = "" }: { className?: string }) {
+  return (
+    <div className={`u-mono space-y-1.5 text-[11px] ${className}`} style={{ color: "var(--u-muted)" }}>
+      <div>Price inclusive of all taxes</div>
+      <div>Delivery charges: Free delivery</div>
     </div>
   );
 }
@@ -447,10 +461,7 @@ export function PriceRow({
           You save {savings}
         </div>
       )}
-      <div className="u-mono mt-4 space-y-1.5 text-[11px]" style={{ color: "var(--u-muted)" }}>
-        <div>Price inclusive of all taxes</div>
-        <div>Delivery charges: Free delivery</div>
-      </div>
+      <TaxNote className="mt-4 hidden md:block" />
     </div>
   );
 }

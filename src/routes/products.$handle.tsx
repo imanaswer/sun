@@ -22,6 +22,7 @@ import {
   RatingSummary,
   SectionHeading,
   StickyBuyBar,
+  TaxNote,
   TrustRow,
   useScrolledPast,
 } from "@/components/umberlla/product-detail";
@@ -278,6 +279,10 @@ function ProductDetailRoute() {
             </div>
 
             <div ref={ctaRef} className="mt-10">{buyActions}</div>
+
+            {/* Desktop shows these inside the price block; on mobile they live
+                here so they stop separating the price from the variant picker. */}
+            <TaxNote className="mt-4 md:hidden" />
 
             <TrustRow />
             </BuyPanelCard>
