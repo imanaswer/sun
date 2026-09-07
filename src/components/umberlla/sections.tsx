@@ -1498,24 +1498,24 @@ export function RetailSection() {
         <div className="group relative flex overflow-hidden pb-8 pt-4 gap-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6">
             {RETAIL.map((retail) => (
-              <div key={retail.name} className="flex w-[200px] shrink-0 items-center justify-center md:w-[280px]">
+              <div key={retail.name} className="flex h-[120px] w-[200px] shrink-0 items-center justify-center rounded-2xl bg-white p-4 shadow-sm md:h-[160px] md:w-[280px]">
                 <img
                   src={retail.image}
                   alt={retail.name}
                   loading="lazy"
-                  className="h-24 w-auto max-w-full object-contain md:h-32"
+                  className="max-h-full max-w-full object-contain m-auto"
                 />
               </div>
             ))}
           </div>
           <div className="flex animate-u-marquee min-w-full shrink-0 items-center justify-around gap-6" aria-hidden="true">
             {RETAIL.map((retail) => (
-              <div key={`${retail.name}-dup`} className="flex w-[200px] shrink-0 items-center justify-center md:w-[280px]">
+              <div key={`${retail.name}-dup`} className="flex h-[120px] w-[200px] shrink-0 items-center justify-center rounded-2xl bg-white p-4 shadow-sm md:h-[160px] md:w-[280px]">
                 <img
                   src={retail.image}
                   alt={retail.name}
                   loading="lazy"
-                  className="h-24 w-auto max-w-full object-contain md:h-32"
+                  className="max-h-full max-w-full object-contain m-auto"
                 />
               </div>
             ))}
