@@ -208,7 +208,7 @@ function RootShell({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="bg-q-background-primary text-q-text-primary">
+      <body className="bg-q-background-primary text-q-text-primary overflow-x-hidden md:overflow-x-visible max-w-[100vw] md:max-w-none">
         {children}
         <Scripts />
       </body>
@@ -244,16 +244,18 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
-        <FullScreenLoader />
-        <SmoothScroll />
-        <WaveTransition />
-        <div className="u-grain" aria-hidden="true" />
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <CartDrawer />
-        {/* Cart and checkout failures surface here. They used to be a native
-            alert() on the money path, which said nothing actionable. */}
-        <Toaster position="bottom-right" richColors closeButton />
+        <div className="relative flex flex-col min-h-dvh max-md:w-full max-md:max-w-[100vw] max-md:overflow-x-hidden">
+          <FullScreenLoader />
+          <SmoothScroll />
+          <WaveTransition />
+          <div className="u-grain" aria-hidden="true" />
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+          <Outlet />
+          <CartDrawer />
+          {/* Cart and checkout failures surface here. They used to be a native
+              alert() on the money path, which said nothing actionable. */}
+          <Toaster position="bottom-right" richColors closeButton />
+        </div>
       </CartProvider>
     </QueryClientProvider>
   );
