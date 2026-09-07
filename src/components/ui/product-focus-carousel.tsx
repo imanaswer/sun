@@ -276,10 +276,12 @@ function ProductCard({
             padding: isMobile ? "20px" : "28px",
             display: "flex",
             flexDirection: "column",
+            alignItems: "center",
+            textAlign: "center",
             gap: isMobile ? "8px" : "12px",
           }}
         >
-          <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
             <span
               style={{
                 fontSize: isMobile ? "11px" : "12px",
