@@ -112,6 +112,23 @@ fs.writeFileSync(`${outDir}/config.json`, JSON.stringify({
       headers: { "cache-control": "public, max-age=2592000, stale-while-revalidate=86400" },
       continue: true
     },
+    // Legacy Shopify URLs. Shopify served /pages/* and /blogs/*; this app has no
+    // route for either, and the catch-all below would answer them with a soft
+    // 404 rather than telling crawlers the content moved. Every target here was
+    // checked against a real route. Specific rules first, then a sweep for the
+    // pages that were never indexed. ponytail: plain 301s, no redirect map file
+    // until there are enough of these to be worth one.
+    ...[
+      ["^/pages/contact/?$", "/contact"],
+      ["^/pages/about(-us)?/?$", "/about"],
+      ["^/pages/sun-facts/?$", "/about"],
+      ["^/pages/(our-)?retail-store/?$", "/#stores"],
+      ["^/pages/black-2-fold/?$", "/collections/2-fold-umbrella-black-catagory"],
+      ["^/pages/(delivery-1|shipping-charges-1)/?$", "/policies/shipping-policy"],
+      // No blog here, and nothing equivalent to point the two articles at.
+      ["^/blogs(/.*)?$", "/"],
+      ["^/pages(/.*)?$", "/"]
+    ].map(([src, location]) => ({ src, status: 301, headers: { Location: location } })),
     { handle: "filesystem" },
     { src: "/(.*)", dest: "/" }
   ]
