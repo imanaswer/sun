@@ -106,7 +106,7 @@ export function ProductCard({
               return (
                 <div key={spec.key} className="flex justify-between gap-3">
                   <dt className="flex items-center gap-1.5" style={{ color: "var(--u-muted)" }}>
-                    <SpecIcon size={14} />
+                    {SpecIcon && <SpecIcon size={14} />}
                     {spec.label}
                   </dt>
                   <dd style={{ color: "var(--u-bone)" }}>{spec.value}</dd>

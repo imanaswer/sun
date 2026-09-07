@@ -225,14 +225,18 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
           return (
           <div
             key={spec.key}
-            className="flex flex-col items-center rounded-2xl px-5 py-7 text-center transition-colors"
+            // justify-center: the three descriptive specs have no icon, so
+            // without it their text sits high against the measured tiles beside them.
+            className="flex flex-col items-center justify-center rounded-2xl px-5 py-7 text-center transition-colors"
             style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
           >
-            <span className="inline-flex" style={{ color: "var(--u-accent-text)" }}>
-              <SpecIcon size={34} />
-            </span>
+            {SpecIcon && (
+              <span className="inline-flex" style={{ color: "var(--u-accent-text)" }}>
+                <SpecIcon size={34} />
+              </span>
+            )}
             <div
-              className="u-mono mt-3 text-[10px] uppercase tracking-[0.16em]"
+              className={`u-mono text-[10px] uppercase tracking-[0.16em] ${SpecIcon ? "mt-3" : ""}`}
               style={{ color: "var(--u-accent-text)" }}
             >
               {spec.label}
