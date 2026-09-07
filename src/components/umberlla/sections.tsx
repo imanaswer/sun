@@ -426,7 +426,15 @@ export function SiteNav() {
     </header>
 
     {/* Full-screen mobile menu. `inert` when closed — it is only faded out, so
-        without it every page keeps the whole category menu in the tab order. */}
+        without it every page keeps the whole category menu in the tab order.
+
+        `u-dark` is load-bearing, not decoration. The panel paints itself with
+        --u-bone and writes in --u-ink. Under .u-light, --u-bone remaps to navy
+        (there it is the text colour) while --u-ink is deliberately fixed, so on
+        a product or collection page the menu came out navy-on-navy — invisible.
+        Restoring the dark token set keeps the panel cream and the ink navy on
+        every page; on an already-dark page the selector does not apply and the
+        :root values are the same anyway. */}
     <div
       id="mobile-menu"
       role="dialog"
@@ -434,7 +442,7 @@ export function SiteNav() {
       aria-label="Menu"
       inert={!menuOpen}
       className={[
-        "fixed inset-x-0 top-0 z-[60] h-[100dvh] w-full bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
+        "u-dark fixed inset-x-0 top-0 z-[60] h-[100dvh] w-full bg-[var(--u-bone)] transition-[opacity,transform] duration-300 md:hidden",
         menuOpen
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-2 opacity-0",
