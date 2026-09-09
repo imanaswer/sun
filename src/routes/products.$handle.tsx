@@ -116,6 +116,8 @@ function ProductDetailRoute() {
   const [quantity, setQuantity] = useState(1);
   const [isInstantBuying, setIsInstantBuying] = useState(false);
 
+  // ponytail: the sticky bar is mobile-only, so it tracks the mobile CTA in
+  // the Ready to Order section — the only buy button phones see.
   const ctaRef = useRef<HTMLDivElement>(null);
   const showStickyBar = useScrolledPast(ctaRef);
 
@@ -181,6 +183,24 @@ function ProductDetailRoute() {
   };
 
   const selectedSummary = Object.values(selectedOptions).join(" · ");
+
+  // ponytail: one element rendered once — desktop panel or mobile Ready to Order.
+  const pickerAndQuantity = (
+    <>
+      <OptionSwatches
+        options={product.options}
+        selected={selectedOptions}
+        onSelect={handleSelectOption}
+      />
+
+      <div className="mt-8 space-y-2.5">
+        <span className="u-mono text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
+          Quantity
+        </span>
+        <QuantityStepper quantity={quantity} onChange={setQuantity} />
+      </div>
+    </>
+  );
 
   // ponytail: one element rendered twice — panel CTA and the end-of-page CTA.
   const buyActions = (
@@ -265,23 +285,15 @@ function ProductDetailRoute() {
               savings={displaySavings}
             />
 
-            <OptionSwatches
-              options={product.options}
-              selected={selectedOptions}
-              onSelect={handleSelectOption}
-            />
-
-            <div className="mt-8 space-y-2.5">
-              <span className="u-mono text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
-                Quantity
-              </span>
-              <QuantityStepper quantity={quantity} onChange={setQuantity} />
+            {/* ponytail: phones read the specs and the details before they
+                choose — the picker and the buttons live in Ready to Order
+                below. Wide screens keep them beside the gallery. */}
+            <div className="hidden lg:block">
+              {pickerAndQuantity}
+              <div className="mt-10">{buyActions}</div>
             </div>
 
-            <div ref={ctaRef} className="mt-10">{buyActions}</div>
-
-            {/* Desktop shows these inside the price block; on mobile they live
-                here so they stop separating the price from the variant picker. */}
+            {/* Desktop shows these inside the price block. */}
             <TaxNote className="mt-4 md:hidden" />
 
             <TrustRow />
@@ -313,7 +325,7 @@ function ProductDetailRoute() {
             </h3>
             {selectedSummary && (
               <p
-                className="u-mono mt-2 text-xs uppercase tracking-[0.14em]"
+                className="u-mono mt-2 hidden text-xs uppercase tracking-[0.14em] lg:block"
                 style={{ color: "var(--u-muted)" }}
               >
                 {selectedSummary} · Qty {quantity}
@@ -325,7 +337,8 @@ function ProductDetailRoute() {
               discount={displayDiscount}
               savings={displaySavings}
             />
-            <div className="mt-8">{buyActions}</div>
+            <div className="lg:hidden">{pickerAndQuantity}</div>
+            <div ref={ctaRef} className="mt-8">{buyActions}</div>
           </div>
         </section>
 
