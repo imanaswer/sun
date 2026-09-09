@@ -184,7 +184,7 @@ function ProductDetailRoute() {
 
   const selectedSummary = Object.values(selectedOptions).join(" · ");
 
-  // ponytail: one element rendered once — desktop panel or mobile Ready to Order.
+  // ponytail: one element rendered once — in the buy panel, every width.
   const pickerAndQuantity = (
     <>
       <OptionSwatches
@@ -285,13 +285,11 @@ function ProductDetailRoute() {
               savings={displaySavings}
             />
 
-            {/* ponytail: phones read the specs and the details before they
-                choose — the picker and the buttons live in Ready to Order
-                below. Wide screens keep them beside the gallery. */}
-            <div className="hidden lg:block">
-              {pickerAndQuantity}
-              <div className="mt-10">{buyActions}</div>
-            </div>
+            {/* The picker sits under the price on every width so phones can
+                see and change the colour without scrolling to the bottom.
+                Phones get their buttons in Ready to Order and the sticky bar. */}
+            {pickerAndQuantity}
+            <div className="mt-10 hidden lg:block">{buyActions}</div>
 
             {/* Desktop shows these inside the price block. */}
             <TaxNote className="mt-4 md:hidden" />
@@ -325,7 +323,7 @@ function ProductDetailRoute() {
             </h3>
             {selectedSummary && (
               <p
-                className="u-mono mt-2 hidden text-xs uppercase tracking-[0.14em] lg:block"
+                className="u-mono mt-2 text-xs uppercase tracking-[0.14em]"
                 style={{ color: "var(--u-muted)" }}
               >
                 {selectedSummary} · Qty {quantity}
@@ -337,7 +335,6 @@ function ProductDetailRoute() {
               discount={displayDiscount}
               savings={displaySavings}
             />
-            <div className="lg:hidden">{pickerAndQuantity}</div>
             <div ref={ctaRef} className="mt-8">{buyActions}</div>
           </div>
         </section>
