@@ -947,7 +947,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
           ☂ Trending now
         </Sticker>
         <h2 className="u-fun-heading mb-8 max-w-[20ch] text-4xl md:mb-14 md:text-7xl">
-          <TypeSequence text="Best sellers" />
+          <TypeSequence text="The Monsoon Essentials" />
         </h2>
 
         {/* Four tiles across, the rest of the eight behind them: the row is a
@@ -1159,7 +1159,7 @@ export function TestimonialsSection({ reviews = [] }: { reviews?: ProductReview[
             ❤️ Loved
           </Sticker>
           <h2 className="u-fun-heading mt-2 text-4xl md:text-6xl !text-[#F3EFE4]">
-            <TypeSequence text={"What our customers\nsay"} />
+            <TypeSequence text={"The Review Drops"} />
           </h2>
           <p className="mt-4 text-[#F3EFE4]">
             Keeping India dry for 100+ years — here&rsquo;s what people carry, and why.
@@ -1206,7 +1206,7 @@ const ABOUT_LINKS = [
   { label: "About Us", href: "/about" },
   { label: "Our Retail Store", href: "/#stores" },
   { label: "Videos", href: "/#videos" },
-  { label: "Sun Facts", href: "/#sun-facts" },
+  { label: "Sun Facts", href: "/sun-facts" },
   { label: "Sun Care", href: "/#sun-care" },
   { label: "Profile", href: "/#profile" },
   { label: "Contact Us", href: "/contact" },

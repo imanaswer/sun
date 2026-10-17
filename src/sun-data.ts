@@ -228,7 +228,7 @@ export const STORES = [
   {
     city: "Mysuru",
     address: "#211, Ground Floor, JCK Industrial Park, Phase-2, Belagola Industrial Area, Mysuru - 570016, Karnataka",
-    phones: ["+91 0821 - 2514578"],
+    phones: ["+91 0821 - 2514578", "+91 6364 913526"],
     mapQuery: "Sun Umbrella Private Limited, Mysuru",
     mapLink: "https://maps.google.com/?q=Sun+Umbrella+Private+Limited,+Mysuru",
     marker: "12.355,76.621",
