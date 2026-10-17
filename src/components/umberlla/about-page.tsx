@@ -36,17 +36,17 @@ export function AboutPage() {
             rotate={-2}
             className="mb-6 mx-auto text-xs sm:text-sm py-2 px-5"
           >
-            ☂ ESTABLISHED 1880 · 5TH GENERATION LEADERSHIP
+            ☂ 100+ YEARS · 5TH GENERATION LEADERSHIP
           </Sticker>
 
           <h1 className="u-fun-heading text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-[var(--u-ink)] max-w-[20ch] mx-auto leading-[0.98]">
-            140+ Years of Trust, Durability & Innovation.
+            100+ Years of Trust, Durability & Innovation.
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl md:text-2xl font-medium tracking-tight text-[var(--u-ink)]/80 max-w-[58ch] mx-auto leading-relaxed">
             Sun Umbrella Private Limited is a pioneer and market leader in
             umbrella manufacturing in India. Sheltering generations through every
-            storm with unmatched craftsmanship since 1880.
+            storm with unmatched craftsmanship for 100+ years.
           </p>
 
           {/* Stats Pop Cards */}
@@ -145,7 +145,7 @@ export function AboutPage() {
             </h2>
             <p className="mt-3 text-lg font-medium text-[var(--u-ink)]/70 max-w-[52ch] mx-auto">
               Four timeless commitments that have steered Sun Umbrella through
-              140+ years of monsoons.
+              100+ years of monsoons.
             </p>
           </div>
           <AboutValues />

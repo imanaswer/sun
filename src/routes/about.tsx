@@ -7,7 +7,7 @@ export const Route = createFileRoute("/about")({
     meta: pageMeta({
       title: "About Us | Sun Umbrella Private Limited",
       description:
-        "Sun Umbrella Private Limited — Pioneer and market leader in umbrella manufacturing in India since 1880. Driven by 5th-generation leadership with 140+ years of trust, durability, and innovation.",
+        "Sun Umbrella Private Limited — Pioneer and market leader in umbrella manufacturing in India. Driven by 5th-generation leadership with 100+ years of trust, durability, and innovation.",
     }),
     links: [canonical("/about")],
   }),

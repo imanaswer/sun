@@ -333,7 +333,7 @@ export function SunFactsPage() {
               to="/about"
               className="u-mono rounded-full bg-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-[var(--u-ink)] border-2 border-[var(--u-ink)] shadow-[4px_4px_0_0_rgba(16,27,51,1)] hover:bg-white/90 transition-transform hover:scale-105"
             >
-              Our 140+ Year Story
+              Our 100+ Year Story
             </Link>
           </div>
         </section>

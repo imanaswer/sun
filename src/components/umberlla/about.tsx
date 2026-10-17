@@ -48,7 +48,7 @@ export function Sticker({
  */
 export function AboutMarquee() {
   const items =
-    "★ ESTABLISHED 1880 \u00A0\u00A0 140+ YEARS OF TRUST \u00A0\u00A0 5TH-GENERATION LEADERSHIP \u00A0\u00A0 MYSORE AUTOMATION \u00A0\u00A0 MUMBAI · CALICUT · MYSORE \u00A0\u00A0 UNCOMPROMISING QUALITY \u00A0\u00A0 ";
+    "★ 100+ YEARS OF TRUST \u00A0\u00A0 5TH-GENERATION LEADERSHIP \u00A0\u00A0 MYSORE AUTOMATION \u00A0\u00A0 MUMBAI · CALICUT · MYSORE \u00A0\u00A0 UNCOMPROMISING QUALITY \u00A0\u00A0 ";
   return (
     <div className="u-marquee-banner select-none py-3 shadow-md" aria-hidden="true">
       <div className="u-marquee font-['Fredoka'] tracking-wider text-sm md:text-base uppercase font-bold">
@@ -62,11 +62,11 @@ export function AboutMarquee() {
 }
 
 /**
- * Key brand stats highlighting the 140+ year legacy in playful tactile cards.
+ * Key brand stats highlighting the 100+ year legacy in playful tactile cards.
  */
 const STATS = [
-  { figure: "140+", label: "Years of Trust", note: "Legacy since 1880", rotate: -1.5 },
-  { figure: "1880", label: "Established", note: "Over a century of pride", rotate: 1.5 },
+  { figure: "100+", label: "Years of Trust", note: "Sheltering India", rotate: -1.5 },
+  { figure: "Iconic", label: "Smiling Logo", note: "Known in every home", rotate: 1.5 },
   { figure: "5th Gen", label: "Family Leadership", note: "Generations of care", rotate: -1 },
   { figure: "3 Hubs", label: "National Presence", note: "Mumbai · Calicut · Mysore", rotate: 2 },
 ];
@@ -125,7 +125,7 @@ export function AboutStory() {
         {/* Playful overlapping stickers */}
         <div className="absolute -bottom-5 -right-2 md:-right-6 z-20">
           <Sticker tone="yellow" rotate={5} className="text-xs md:text-sm py-2 px-4 shadow-[4px_4px_0_0_rgba(16,27,51,1)]">
-            ☂ Since 1880
+            ☂ 100+ Years
           </Sticker>
         </div>
         <div className="absolute -top-4 -left-2 z-20">
@@ -151,10 +151,10 @@ export function AboutStory() {
               Sun Umbrella Private Limited
             </strong>{" "}
             is a pioneer and market leader in umbrella manufacturing in India.
-            Established in 1880 and currently driven by 5th-generation
+            Currently driven by 5th-generation
             leadership, the iconic Sun Brand Umbrella—recognized by its cheerful,
             smiling logo—has represented trust, durability, and innovation for
-            over 140 years.
+            100+ years.
           </p>
           <p>
             With offices in{" "}
@@ -244,7 +244,7 @@ export function AboutMissionVision() {
           </span>
           <blockquote className="font-['Fredoka'] text-xl sm:text-2xl md:text-3xl font-bold leading-snug text-[#f3efe4]">
             To remain the world’s most trusted icon in personal umbrella
-            craftsmanship by seamlessly connecting 140+ years of heritage with
+            craftsmanship by seamlessly connecting 100+ years of heritage with
             modern manufacturing excellence, global distribution, and
             sustainable design.
           </blockquote>
@@ -407,7 +407,7 @@ const VALUES: Array<{
     emoji: "🤝",
     title: "Heritage of Trust",
     blurb:
-      "Built on a 140+ year legacy of reliability, honesty, and long-term partnerships with retail chains, corporate clients, and end consumers alike.",
+      "Built on a 100+ year legacy of reliability, honesty, and long-term partnerships with retail chains, corporate clients, and end consumers alike.",
     rotate: 1.5,
   },
   {

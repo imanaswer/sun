@@ -23,7 +23,7 @@ export const scrollScrubTheme: ScrollScrubTheme = {
 
 export const scrollScrubScenes: ScrollScrubScene[] = [
   {
-    body: "Recognized by our iconic smiling logo, Sun Brand Umbrella has been an essential part of Indian homes since 1880—sheltering generations with unmatched quality through every storm.",
+    body: "Recognized by our iconic smiling logo, Sun Brand Umbrella has been an essential part of Indian homes for 100+ years—sheltering generations with unmatched quality through every storm.",
     clip: "/assets/world/scene-01.mp4",
     id: "scene-01",
     label: "Monsoon cheer",
@@ -35,8 +35,8 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-01-mobile-poster.png",
     poster: "/assets/world/scene-01-poster.png",
     scroll: 1.6,
-    tags: ["ESTABLISHED 1880", "ICONIC SUN BRAND"],
-    title: "140+ Years of Trust,\nDurability & Innovation.",
+    tags: ["100+ YEARS", "ICONIC SUN BRAND"],
+    title: "100+ Years of Trust,\nDurability & Innovation.",
   },
   {
     body: "Effortless protection engineered for every season and every generation. Rain glides off the canopy, flexible frames withstand harsh gusts, and UV shielding keeps the sun at bay—so you always arrive looking fresh.",
