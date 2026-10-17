@@ -1,6 +1,7 @@
 import { expect, test } from "bun:test";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { extname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 /**
  * The storefront used to hardcode two old domains — sunumbrella.in (the Shopify
@@ -10,7 +11,7 @@ import { extname, join } from "node:path";
  *
  * They came back more than once. This test is the guard.
  */
-const SRC = new URL("../src", import.meta.url).pathname;
+const SRC = fileURLToPath(new URL("../src", import.meta.url));
 
 /** mailto:info@sunumbrellas.in is the business's real mailbox — Shopify's own
  *  policy copy uses it — so only navigable http(s) links are forbidden. */
@@ -34,9 +35,10 @@ function sourceFiles(dir: string): string[] {
 
 test("no source file links to the old storefront domains", () => {
   const offenders = sourceFiles(SRC).filter((path) => {
-    if (ALLOWED.has(path.slice(SRC.length + 1))) return false;
+    const rel = path.slice(SRC.length + 1).replace(/\\/g, "/");
+    if (ALLOWED.has(rel)) return false;
     return LEGACY_LINK.test(readFileSync(path, "utf8"));
   });
 
-  expect(offenders.map((p) => p.slice(SRC.length + 1))).toEqual([]);
+  expect(offenders.map((p) => p.slice(SRC.length + 1).replace(/\\/g, "/"))).toEqual([]);
 });

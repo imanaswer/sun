@@ -34,19 +34,27 @@ export function TypeSequence({ text, className = "" }: { text: string; className
       aria-label={text}
     >
       <span aria-hidden="true">
-        {text.split("").map((char, index) => {
-          if (char === " ") {
-            return " ";
-          }
-          if (char === "\n") {
-            return <br key={index} />;
-          }
-          return (
-            <motion.span key={index} variants={child} style={{ display: "inline-block" }}>
-              {char}
-            </motion.span>
-          );
-        })}
+        {text.split("\n").map((line, lineIndex) => (
+          <React.Fragment key={lineIndex}>
+            {lineIndex > 0 && <br />}
+            {line.split(" ").map((word, wordIndex) => (
+              <React.Fragment key={wordIndex}>
+                {wordIndex > 0 && " "}
+                <span style={{ display: "inline-block", whiteSpace: "nowrap" }}>
+                  {word.split("").map((char, charIndex) => (
+                    <motion.span
+                      key={charIndex}
+                      variants={child}
+                      style={{ display: "inline-block" }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </span>
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        ))}
       </span>
     </motion.span>
   );

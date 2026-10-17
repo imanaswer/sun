@@ -23,7 +23,7 @@ export const scrollScrubTheme: ScrollScrubTheme = {
 
 export const scrollScrubScenes: ScrollScrubScene[] = [
   {
-    body: "Sun brings monsoon cheer, year after year. For 100+ years these canopies have popped up cheerfully across India — a tradition of trust you can spot from down the street.",
+    body: "Recognized by our iconic smiling logo, Sun Brand Umbrella has been an essential part of Indian homes since 1880—sheltering generations with unmatched quality through every storm.",
     clip: "/assets/world/scene-01.mp4",
     id: "scene-01",
     label: "Monsoon cheer",
@@ -35,11 +35,11 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-01-mobile-poster.png",
     poster: "/assets/world/scene-01-poster.png",
     scroll: 1.6,
-    tags: ["100+ years", "Sheltering India"],
-    title: "Monsoon never\nlooked this good",
+    tags: ["ESTABLISHED 1880", "ICONIC SUN BRAND"],
+    title: "140+ Years of Trust,\nDurability & Innovation.",
   },
   {
-    body: "Precision-moulded handles on a frame that snaps open or shut in a single motion. Your thumb does the work — the other hand keeps the bag, the phone, the child.",
+    body: "Effortless protection engineered for every season and every generation. Rain glides off the canopy, flexible frames withstand harsh gusts, and UV shielding keeps the sun at bay—so you always arrive looking fresh.",
     clip: "/assets/world/scene-02.mp4",
     id: "scene-02",
     label: "The mechanism",
@@ -51,11 +51,11 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-02-mobile-poster.png",
     poster: "/assets/world/scene-02-poster.png",
     scroll: 1.6,
-    tags: ["Auto open & close", "One-hand release"],
-    title: "Snap open,\nsnap shut",
+    tags: ["ALL-WEATHER SHIELD", "FOR EVERY GENERATION"],
+    title: "Designed for Style.\nBuilt for All Weather.",
   },
   {
-    body: "Waterproof, UV-protected fabric on ribs that spring back after a gust. Hand-finished in Mysuru, chosen without compromise, and built to last you many monsoons.",
+    body: "Blending traditional craftsmanship with modern automation. Built with precision-moulded handles, easy-snap frames, and high-grade UV and water-repellent fabrics for ultimate durability.",
     clip: "/assets/world/scene-03.mp4",
     id: "scene-03",
     label: "Made to last",
@@ -67,7 +67,7 @@ export const scrollScrubScenes: ScrollScrubScene[] = [
     mobilePoster: "/assets/world/scene-03-mobile-poster.png",
     poster: "/assets/world/scene-03-poster.png",
     scroll: 1.6,
-    tags: ["UV-protective", "Built for all weather"],
-    title: "Yours for\nmany seasons",
+    tags: ["ADVANCED AUTOMATION", "UV & WATER REPELLENT"],
+    title: "Precision Engineering.\nUncompromising Quality.",
   },
 ];

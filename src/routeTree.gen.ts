@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SunFactsRouteImport } from './routes/sun-facts'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -21,6 +22,11 @@ import { Route as PoliciesHandleRouteImport } from './routes/policies.$handle'
 import { Route as CollectionsHandleRouteImport } from './routes/collections.$handle'
 import { Route as AdminContactsDotcsvRouteImport } from './routes/admin.contacts[.]csv'
 
+const SunFactsRoute = SunFactsRouteImport.update({
+  id: '/sun-facts',
+  path: '/sun-facts',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
   '/policies/$handle': typeof PoliciesHandleRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
     | '/policies/$handle'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SunFactsRoute: typeof SunFactsRoute
   AdminContactsDotcsvRoute: typeof AdminContactsDotcsvRoute
   CollectionsHandleRoute: typeof CollectionsHandleRoute
   PoliciesHandleRoute: typeof PoliciesHandleRoute
@@ -175,6 +188,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sun-facts': {
+      id: '/sun-facts'
+      path: '/sun-facts'
+      fullPath: '/sun-facts'
+      preLoaderRoute: typeof SunFactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SunFactsRoute: SunFactsRoute,
   AdminContactsDotcsvRoute: AdminContactsDotcsvRoute,
   CollectionsHandleRoute: CollectionsHandleRoute,
   PoliciesHandleRoute: PoliciesHandleRoute,

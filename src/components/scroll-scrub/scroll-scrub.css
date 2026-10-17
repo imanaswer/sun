@@ -148,7 +148,7 @@
 
 .scroll-scrub__copy {
   position: relative;
-  width: min(40rem, 48vw);
+  width: min(44rem, 44vw);
   pointer-events: auto;
 }
 
