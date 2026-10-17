@@ -77,11 +77,12 @@ export default async function handler(req, res) {
 `;
 
 fs.writeFileSync(`${funcDir}/index.mjs`, adapterCode);
+// server.js and its chunks are ESM with a .js extension. Without this, Node 22
+// on Vercel loads them as CommonJS and every route dies on `export`.
+fs.writeFileSync(`${funcDir}/package.json`, JSON.stringify({ type: "module" }));
 
 fs.writeFileSync(`${funcDir}/.vc-config.json`, JSON.stringify({
-  // Vercel retired nodejs20.x and now fails the build on it. An earlier move
-  // to 22.x coincided with FUNCTION_INVOCATION_FAILED on every route; if that
-  // returns, check the function logs before blaming the runtime.
+  // Vercel retired nodejs20.x. 22.x needs the package.json above.
   runtime: "nodejs22.x",
   handler: "index.mjs",
   launcherType: "Nodejs"
