@@ -7,6 +7,11 @@
   --u-well: #0b1324;
   --u-slate: #2c3a56;
   --u-bone: #f3efe4;
+  /* Warm off-white page surface for the editorial pages (about, sun-facts). */
+  --u-paper: #faf8f5;
+  /* Sky tints for the sun-facts cards. */
+  --u-sky: #b2d1f7;
+  --u-sky-soft: #e6f0fc;
   --u-yellow: #f2c230;
   --u-muted: #9aa7bf;
   --u-display: "Outfit", "Helvetica Neue", Arial, sans-serif;

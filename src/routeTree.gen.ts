@@ -9,37 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SunFactsRouteImport } from './routes/sun-facts'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProductsIndexRouteImport } from './routes/products.index'
-import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
-import { Route as ProductsHandleRouteImport } from './routes/products.$handle'
-import { Route as PoliciesHandleRouteImport } from './routes/policies.$handle'
-import { Route as CollectionsHandleRouteImport } from './routes/collections.$handle'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SunFactsRouteImport } from './routes/sun-facts'
 import { Route as AdminContactsDotcsvRouteImport } from './routes/admin.contacts[.]csv'
+import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
+import { Route as CollectionsHandleRouteImport } from './routes/collections.$handle'
+import { Route as PoliciesHandleRouteImport } from './routes/policies.$handle'
+import { Route as ProductsIndexRouteImport } from './routes/products.index'
+import { Route as ProductsHandleRouteImport } from './routes/products.$handle'
 
-const SunFactsRoute = SunFactsRouteImport.update({
-  id: '/sun-facts',
-  path: '/sun-facts',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
-  id: '/robots.txt',
-  path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -47,14 +32,29 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductsIndexRoute = ProductsIndexRouteImport.update({
-  id: '/products/',
-  path: '/products/',
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SunFactsRoute = SunFactsRouteImport.update({
+  id: '/sun-facts',
+  path: '/sun-facts',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminContactsDotcsvRoute = AdminContactsDotcsvRouteImport.update({
+  id: '/admin/contacts.csv',
+  path: '/admin/contacts.csv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
@@ -62,9 +62,9 @@ const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
   path: '/collections/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductsHandleRoute = ProductsHandleRouteImport.update({
-  id: '/products/$handle',
-  path: '/products/$handle',
+const CollectionsHandleRoute = CollectionsHandleRouteImport.update({
+  id: '/collections/$handle',
+  path: '/collections/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliciesHandleRoute = PoliciesHandleRouteImport.update({
@@ -72,14 +72,14 @@ const PoliciesHandleRoute = PoliciesHandleRouteImport.update({
   path: '/policies/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionsHandleRoute = CollectionsHandleRouteImport.update({
-  id: '/collections/$handle',
-  path: '/collections/$handle',
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: '/products/',
+  path: '/products/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AdminContactsDotcsvRoute = AdminContactsDotcsvRouteImport.update({
-  id: '/admin/contacts.csv',
-  path: '/admin/contacts.csv',
+const ProductsHandleRoute = ProductsHandleRouteImport.update({
+  id: '/products/$handle',
+  path: '/products/$handle',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -188,32 +188,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/sun-facts': {
-      id: '/sun-facts'
-      path: '/sun-facts'
-      fullPath: '/sun-facts'
-      preLoaderRoute: typeof SunFactsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/robots.txt': {
-      id: '/robots.txt'
-      path: '/robots.txt'
-      fullPath: '/robots.txt'
-      preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -223,18 +202,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/products/': {
-      id: '/products/'
-      path: '/products'
-      fullPath: '/products/'
-      preLoaderRoute: typeof ProductsIndexRouteImport
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sun-facts': {
+      id: '/sun-facts'
+      path: '/sun-facts'
+      fullPath: '/sun-facts'
+      preLoaderRoute: typeof SunFactsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/contacts.csv': {
+      id: '/admin/contacts.csv'
+      path: '/admin/contacts.csv'
+      fullPath: '/admin/contacts.csv'
+      preLoaderRoute: typeof AdminContactsDotcsvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections/': {
@@ -244,11 +244,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/products/$handle': {
-      id: '/products/$handle'
-      path: '/products/$handle'
-      fullPath: '/products/$handle'
-      preLoaderRoute: typeof ProductsHandleRouteImport
+    '/collections/$handle': {
+      id: '/collections/$handle'
+      path: '/collections/$handle'
+      fullPath: '/collections/$handle'
+      preLoaderRoute: typeof CollectionsHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/policies/$handle': {
@@ -258,18 +258,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliciesHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collections/$handle': {
-      id: '/collections/$handle'
-      path: '/collections/$handle'
-      fullPath: '/collections/$handle'
-      preLoaderRoute: typeof CollectionsHandleRouteImport
+    '/products/': {
+      id: '/products/'
+      path: '/products'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ProductsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/admin/contacts.csv': {
-      id: '/admin/contacts.csv'
-      path: '/admin/contacts.csv'
-      fullPath: '/admin/contacts.csv'
-      preLoaderRoute: typeof AdminContactsDotcsvRouteImport
+    '/products/$handle': {
+      id: '/products/$handle'
+      path: '/products/$handle'
+      fullPath: '/products/$handle'
+      preLoaderRoute: typeof ProductsHandleRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
