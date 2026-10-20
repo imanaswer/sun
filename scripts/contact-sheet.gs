@@ -45,7 +45,32 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+  sendAcknowledgement_(row.email);
   return json_({ ok: true });
+}
+
+/**
+ * Thank-you email to the enquirer. Fixed text on purpose: echoing their name or
+ * message would let anyone use the form to send our email to any address.
+ * Sent from the Google account that owns this script (Gmail daily limits apply).
+ */
+function sendAcknowledgement_(email) {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+  try {
+    MailApp.sendEmail({
+      to: email,
+      replyTo: 'info@sunumbrellas.in',
+      name: 'Sun Umbrella',
+      subject: 'Thank you for contacting Sun Umbrella',
+      body:
+        'Thank you for contacting Sun Umbrella.\n\n' +
+        'We have received your message and will get back to you within 24–48 working hours.\n\n' +
+        'Warm regards,\nSun Umbrella Pvt. Ltd.\n+91 821 2514578 | info@sunumbrellas.in',
+    });
+  } catch (err) {
+    // The row is already saved; a failed email must not fail the submission.
+    console.error('Acknowledgement email failed: ' + err);
+  }
 }
 
 function doGet(e) {

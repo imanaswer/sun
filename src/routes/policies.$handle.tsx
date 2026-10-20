@@ -3,30 +3,25 @@ import { getShopPolicy, isShopPolicyHandle } from "@/lib/shopify";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
 import { RouteLoadError } from "@/components/umberlla/route-error";
 import { canonical, pageMeta } from "@/lib/seo";
-
-/** Shopify's default privacy policy wraps every paragraph in a link back to the
- *  old storefront's contact page, which renders as a wall of blue text and
- *  leaks the old domain. Unwrap those, keeping the words. */
-function unwrapLegacyLinks(html: string): string {
-  return html.replace(/<a\b[^>]*href="[^"]*sunumbrellas?\.in[^"]*"[^>]*>([\s\S]*?)<\/a>/gi, "$1");
-}
+import { cleanPolicyHtml } from "@/lib/policy-html";
+import { POLICY_OVERRIDES } from "@/lib/policy-overrides";
 
 /**
  * Privacy, refund, terms and shipping — the four policies the Consumer
  * Protection (E-Commerce) Rules 2020 expect a storefront to display. Bodies are
- * authored in Shopify admin and fetched live, so there is nothing to keep in
- * sync here; editing them in Shopify updates these pages.
+ * authored in Shopify admin and fetched live, except the ones the business
+ * wrote for us directly (see policy-overrides.ts).
  */
 export const Route = createFileRoute("/policies/$handle")({
   loader: async ({ params }) => {
     if (!isShopPolicyHandle(params.handle)) throw notFound();
-    const policy = await getShopPolicy(params.handle);
+    const policy = POLICY_OVERRIDES[params.handle] ?? (await getShopPolicy(params.handle));
     // An unwritten policy is a missing page, not a server error.
     if (!policy) throw notFound();
     // Strip here rather than at render: the loader's return value is also
     // serialised into the SSR payload, so sanitising later leaves the raw
     // old-domain markup in the HTML anyway.
-    return { policy: { ...policy, body: unwrapLegacyLinks(policy.body) } };
+    return { policy: { ...policy, body: cleanPolicyHtml(policy.body) } };
   },
   head: ({ loaderData, params }) => {
     const policy = loaderData?.policy;

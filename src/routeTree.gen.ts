@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SunCareRouteImport } from './routes/sun-care'
 import { Route as SunFactsRouteImport } from './routes/sun-facts'
 import { Route as AdminContactsDotcsvRouteImport } from './routes/admin.contacts[.]csv'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
@@ -45,6 +46,11 @@ const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SunCareRoute = SunCareRouteImport.update({
+  id: '/sun-care',
+  path: '/sun-care',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SunFactsRoute = SunFactsRouteImport.update({
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-care': typeof SunCareRoute
   '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
@@ -103,6 +110,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-care': typeof SunCareRoute
   '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
@@ -118,6 +126,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/sun-care': typeof SunCareRoute
   '/sun-facts': typeof SunFactsRoute
   '/admin/contacts.csv': typeof AdminContactsDotcsvRoute
   '/collections/$handle': typeof CollectionsHandleRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-care'
     | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
@@ -148,6 +158,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-care'
     | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
@@ -162,6 +173,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/sun-care'
     | '/sun-facts'
     | '/admin/contacts.csv'
     | '/collections/$handle'
@@ -177,6 +189,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  SunCareRoute: typeof SunCareRoute
   SunFactsRoute: typeof SunFactsRoute
   AdminContactsDotcsvRoute: typeof AdminContactsDotcsvRoute
   CollectionsHandleRoute: typeof CollectionsHandleRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sun-care': {
+      id: '/sun-care'
+      path: '/sun-care'
+      fullPath: '/sun-care'
+      preLoaderRoute: typeof SunCareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sun-facts': {
@@ -281,6 +301,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  SunCareRoute: SunCareRoute,
   SunFactsRoute: SunFactsRoute,
   AdminContactsDotcsvRoute: AdminContactsDotcsvRoute,
   CollectionsHandleRoute: CollectionsHandleRoute,

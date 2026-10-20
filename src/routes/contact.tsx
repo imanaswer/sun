@@ -29,7 +29,7 @@ function ContactPage() {
 
         <div className="mt-14 grid gap-8 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-5">
-            <h2 className="u-mono text-xs uppercase tracking-[0.18em]" style={{ color: "var(--u-accent-text)" }}>
+            <h2 className="u-mono text-base font-bold uppercase tracking-[0.18em] md:text-lg" style={{ color: "var(--u-accent-text)" }}>
               Address
             </h2>
             <div className="mt-5">
@@ -38,7 +38,7 @@ function ContactPage() {
           </div>
 
           <div className="lg:col-span-7">
-            <h2 className="u-mono text-xs uppercase tracking-[0.18em]" style={{ color: "var(--u-accent-text)" }}>
+            <h2 className="u-mono text-base font-bold uppercase tracking-[0.18em] md:text-lg" style={{ color: "var(--u-accent-text)" }}>
               Send a message
             </h2>
             <div className="mt-5">

@@ -31,7 +31,7 @@ export function ContactAddress() {
     >
       <div className="flex gap-3">
         <MapPin size={18} weight="bold" style={{ color: "var(--u-accent-text)" }} className="mt-0.5 shrink-0" />
-        <address className="text-sm leading-[1.9] not-italic" style={{ color: "var(--u-bone)" }}>
+        <address className="text-base font-semibold leading-[1.9] not-italic md:text-lg" style={{ color: "var(--u-bone)" }}>
           {ADDRESS_LINES.map((line) => (
             <span key={line} className="block">
               {line}

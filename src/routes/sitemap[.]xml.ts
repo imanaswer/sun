@@ -45,6 +45,8 @@ export const Route = createFileRoute("/sitemap.xml")({
           urlEntry(`${origin}/collections`, today, "weekly", "0.9"),
           urlEntry(`${origin}/about`, today, "monthly", "0.5"),
           urlEntry(`${origin}/contact`, today, "monthly", "0.5"),
+          urlEntry(`${origin}/sun-facts`, today, "monthly", "0.5"),
+          urlEntry(`${origin}/sun-care`, today, "monthly", "0.5"),
           urlEntry(`${origin}/collections/all`, today, "weekly", "0.9"),
           ...collections.map((collection) =>
             urlEntry(`${origin}/collections/${encodeURIComponent(collection.handle)}`, today, "weekly", "0.7"),

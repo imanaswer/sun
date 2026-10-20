@@ -28,7 +28,16 @@ request ends — the sheet is the store.
 6. Redeploy the site so the functions pick the variables up.
 
 After any edit to the script, **Deploy → Manage deployments → Edit → New
-version**, or the old code keeps serving.
+version**, or the old code keeps serving. (A *new deployment* changes the URL
+and breaks `CONTACT_SHEET_WEBHOOK_URL`.)
+
+## Thank-you email
+
+When the enquirer leaves an email address, the script emails them a fixed
+"we'll get back to you within 24–48 working hours" note, from the Google account
+that owns the script, with replies going to info@sunumbrellas.in. Google asks
+you to approve the "send email as you" permission the first time. Gmail caps
+script email at roughly 100/day on a free account, 1,500/day on Workspace.
 
 ## Downloading the CSV
 
