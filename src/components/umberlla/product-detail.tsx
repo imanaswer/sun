@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Medal, Minus, Plus, ShieldCheck, ShoppingBag, Star, Truck } from "@phosphor-icons/react";
+import { CaretLeft, CaretRight, Medal, Minus, Plus, ShieldCheck, ShoppingBag, Star, Truck } from "@phosphor-icons/react";
 import { specIcon } from "@/components/umberlla/spec-icons";
 import type { ProductSpec, ShopifyProduct, ShopifyProductDetail } from "@/lib/shopify";
 import { ProductCard } from "@/components/umberlla/collection";
@@ -20,9 +20,11 @@ import type { ProductReview } from "@/lib/api/reviews.functions";
 export function RatingStars({ value, size = 16 }: { value: number; size?: number }) {
   const pct = Math.max(0, Math.min(100, (value / 5) * 100));
   const row = (weight: "regular" | "fill") => (
-    <div className="flex gap-0.5">
+    // w-max + shrink-0: the fill row lives in a box clipped to pct%, and
+    // without these the stars squeeze to fit it and drift off the outlines.
+    <div className="flex w-max gap-0.5">
       {[0, 1, 2, 3, 4].map((i) => (
-        <Star key={i} size={size} weight={weight} style={{ color: "var(--u-yellow)" }} />
+        <Star key={i} size={size} weight={weight} className="shrink-0" style={{ color: "var(--u-yellow)" }} />
       ))}
     </div>
   );
@@ -68,27 +70,29 @@ export function ProductGallery({
   onSelect: (url: string) => void;
 }) {
   const hasThumbs = images.length > 1;
+  const index = Math.max(0, images.findIndex((img) => img.url === activeUrl));
+  const step = (delta: number) => onSelect(images[(index + delta + images.length) % images.length].url);
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row-reverse md:items-start">
-      {/* White stage so the white-background product shots run edge to edge
-          instead of floating as a small box inside a tinted frame. Contain, not
-          cover: the shots are landscape and cover would crop the canopy tips. */}
+    <div className="flex flex-col gap-4">
+      {/* Square white stage, as on the original storefront. Contain, not
+          cover: cover cropped the canopy tips off the landscape shots. The
+          shots are on white, so the stage reads as one picture edge to edge. */}
       <div
-        className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[28px] md:aspect-[4/5]"
+        className="relative aspect-square w-full overflow-hidden rounded-[28px]"
         style={{ border: "1px solid var(--u-slate)", background: "white" }}
       >
-        <img
-          src={activeUrl}
-          alt={title}
-          className="h-full w-full object-contain"
-          width={900}
-          height={900}
-        />
+        <img src={activeUrl} alt={title} className="h-full w-full object-contain" width={900} height={900} />
+        {hasThumbs && (
+          <>
+            <GalleryArrow side="left" onClick={() => step(-1)} />
+            <GalleryArrow side="right" onClick={() => step(1)} />
+          </>
+        )}
       </div>
 
       {hasThumbs && (
-        <div className="flex shrink-0 gap-3 overflow-x-auto md:flex-col md:overflow-visible">
+        <div className="flex gap-2.5 overflow-x-auto pb-1">
           {images.map((img) => {
             const isActive = activeUrl === img.url;
             return (
@@ -98,12 +102,11 @@ export function ProductGallery({
                 onClick={() => onSelect(img.url)}
                 aria-label={`View image: ${img.altText}`}
                 aria-current={isActive}
-                className="flex h-[74px] w-[74px] shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-2xl p-2 transition-all"
+                className="h-[68px] w-[68px] shrink-0 cursor-pointer overflow-hidden rounded-xl transition-all"
                 style={{
-                  backgroundColor: "var(--u-well)",
-                  border: `1px solid ${isActive ? "var(--u-yellow)" : "var(--u-slate)"}`,
-                  boxShadow: isActive ? "0 0 0 3px rgba(242,194,48,0.18)" : "none",
-                  opacity: isActive ? 1 : 0.55,
+                  background: "white",
+                  border: `2px solid ${isActive ? "var(--u-yellow)" : "var(--u-slate)"}`,
+                  opacity: isActive ? 1 : 0.6,
                 }}
               >
                 <img src={img.url} alt="" className="h-full w-full object-contain" />
@@ -113,6 +116,21 @@ export function ProductGallery({
         </div>
       )}
     </div>
+  );
+}
+
+function GalleryArrow({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
+  const Icon = side === "left" ? CaretLeft : CaretRight;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={side === "left" ? "Previous image" : "Next image"}
+      className={`absolute top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full shadow-md transition-transform active:scale-95 ${side === "left" ? "left-3" : "right-3"}`}
+      style={{ backgroundColor: "white", color: "var(--u-ink)", border: "1px solid var(--u-slate)" }}
+    >
+      <Icon size={18} weight="bold" />
+    </button>
   );
 }
 
@@ -217,9 +235,11 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
   if (specs.length === 0) return null;
 
   return (
-    <section className="mt-24 md:mt-32">
-      <SectionHeading index="01" title="Specifications" />
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+    <section className="mt-8">
+      <h2 className="u-fun-head text-xl" style={{ color: "var(--u-bone)" }}>
+        Features
+      </h2>
+      <div className="mt-4 grid grid-cols-3 gap-2.5">
         {specs.map((spec) => {
           const SpecIcon = specIcon(spec.key);
           return (
@@ -227,12 +247,12 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
             key={spec.key}
             // justify-center: the three descriptive specs have no icon, so
             // without it their text sits high against the measured tiles beside them.
-            className="flex flex-col items-center justify-center rounded-2xl px-5 py-7 text-center transition-colors"
+            className="flex flex-col items-center justify-center rounded-2xl px-2 py-5 text-center transition-colors"
             style={{ border: "1px solid var(--u-slate)", background: "var(--u-card)" }}
           >
             {SpecIcon && (
               <span className="inline-flex" style={{ color: "var(--u-accent-text)" }}>
-                <SpecIcon size={34} />
+                <SpecIcon size={30} />
               </span>
             )}
             <div
@@ -241,7 +261,7 @@ export function ProductSpecs({ specs }: { specs: ProductSpec[] }) {
             >
               {spec.label}
             </div>
-            <div className="mt-2 text-sm leading-snug font-semibold" style={{ color: "var(--u-bone)" }}>
+            <div className="mt-2 text-xs leading-snug font-semibold sm:text-sm" style={{ color: "var(--u-bone)" }}>
               {spec.value}
             </div>
           </div>
@@ -269,12 +289,9 @@ export function ProductReviews({
   rating?: { value: number; count: number };
   reviews: ProductReview[];
 }) {
-  if (!rating && reviews.length === 0) return null;
-
   return (
-    <section className="mt-24 md:mt-32">
-      <SectionHeading index="04" title="Customer Reviews" />
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
+    <div>
+      <div className="flex flex-wrap items-end justify-between gap-4">
         <span />
         {rating && (
           <div className="flex items-center gap-3">
@@ -321,6 +338,64 @@ export function ProductReviews({
             : "No reviews yet."}
         </p>
       )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ tabs --- */
+
+/** Description and reviews as two tabs, as on the original storefront. */
+export function ProductTabs({
+  descriptionHtml,
+  rating,
+  reviews,
+}: {
+  descriptionHtml?: string;
+  rating?: { value: number; count: number };
+  reviews: ProductReview[];
+}) {
+  const tabs = [
+    descriptionHtml ? { id: "features", label: "Special Features" } : null,
+    { id: "reviews", label: "Customer Reviews" },
+  ].filter((t) => t !== null);
+  const [active, setActive] = useState(tabs[0].id);
+
+  return (
+    <section className="mt-16 md:mt-24">
+      <div role="tablist" className="inline-flex gap-1 rounded-full p-1" style={{ border: "1px solid var(--u-slate)" }}>
+        {tabs.map((tab) => {
+          const selected = tab.id === active;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={selected}
+              onClick={() => setActive(tab.id)}
+              className="u-mono cursor-pointer rounded-full px-5 py-2.5 text-xs font-bold uppercase tracking-widest transition-colors"
+              style={
+                selected
+                  ? { backgroundColor: "var(--u-yellow)", color: "var(--u-ink)" }
+                  : { color: "var(--u-muted)" }
+              }
+            >
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      <div role="tabpanel" className="mt-8">
+        {active === "features" && descriptionHtml ? (
+          <div
+            className="prose prose-invert max-w-[80ch] text-sm leading-[1.85]"
+            style={{ color: "var(--u-bone)" }}
+            dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+          />
+        ) : (
+          <ProductReviews rating={rating} reviews={reviews} />
+        )}
+      </div>
     </section>
   );
 }

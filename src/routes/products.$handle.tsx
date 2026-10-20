@@ -15,12 +15,11 @@ import {
   OptionSwatches,
   PriceRow,
   ProductGallery,
-  ProductReviews,
+  ProductTabs,
   ProductSpecs,
   RelatedProducts,
   QuantityStepper,
   RatingSummary,
-  SectionHeading,
   StickyBuyBar,
   TaxNote,
   TrustRow,
@@ -116,8 +115,7 @@ function ProductDetailRoute() {
   const [quantity, setQuantity] = useState(1);
   const [isInstantBuying, setIsInstantBuying] = useState(false);
 
-  // ponytail: the sticky bar is mobile-only, so it tracks the mobile CTA in
-  // the Ready to Order section — the only buy button phones see.
+  // The sticky bar shows once the buy panel's buttons scroll out of view.
   const ctaRef = useRef<HTMLDivElement>(null);
   const showStickyBar = useScrolledPast(ctaRef);
 
@@ -182,17 +180,8 @@ function ProductDetailRoute() {
     }
   };
 
-  const selectedSummary = Object.values(selectedOptions).join(" · ");
-
-  // ponytail: one element rendered once — in the buy panel, every width.
-  const pickerAndQuantity = (
+  const quantityPicker = (
     <>
-      <OptionSwatches
-        options={product.options}
-        selected={selectedOptions}
-        onSelect={handleSelectOption}
-      />
-
       <div className="mt-8 space-y-2.5">
         <span className="u-mono text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
           Quantity
@@ -202,7 +191,6 @@ function ProductDetailRoute() {
     </>
   );
 
-  // ponytail: one element rendered twice — panel CTA and the end-of-page CTA.
   const buyActions = (
     <div className="grid gap-4 sm:grid-cols-2">
       <button
@@ -245,7 +233,7 @@ function ProductDetailRoute() {
 
         {/* A <section> here so SiteNav resolves dark links over this light page. */}
         <section className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
             <div className="lg:sticky lg:top-28">
               <ProductGallery
                 images={product.images}
@@ -285,63 +273,31 @@ function ProductDetailRoute() {
               savings={displaySavings}
             />
 
-            {/* The picker sits under the price on every width so phones can
-                see and change the colour without scrolling to the bottom.
-                Phones get their buttons in Ready to Order and the sticky bar. */}
-            {pickerAndQuantity}
-            <div className="mt-10 hidden lg:block">{buyActions}</div>
+            {/* Colour under the price on every width so phones can see and
+                change it without scrolling. Layout follows the original
+                storefront: colour, features, then quantity and buttons. */}
+            <OptionSwatches
+              options={product.options}
+              selected={selectedOptions}
+              onSelect={handleSelectOption}
+            />
 
-            {/* Desktop shows these inside the price block. */}
+            {/* Desktop shows this inside the price block. */}
             <TaxNote className="mt-4 md:hidden" />
+
+            <ProductSpecs specs={product.specs} />
+
+            {quantityPicker}
+            <div ref={ctaRef} className="mt-8">{buyActions}</div>
 
             <TrustRow />
             </BuyPanelCard>
           </div>
         </section>
 
-        <ProductSpecs specs={product.specs} />
+        <ProductTabs descriptionHtml={product.descriptionHtml} rating={product.rating} reviews={reviews} />
 
-        {product.descriptionHtml && (
-          <section className="mt-24 md:mt-32">
-            <SectionHeading index="02" title="Product Details" />
-            <div
-              className="prose prose-invert mt-8 max-w-[68ch] text-sm leading-[1.85]"
-              style={{ color: "var(--u-bone)" }}
-              dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
-            />
-          </section>
-        )}
-
-        {/* The buy option again once the specs and the details are read, so
-            the decision and the button are in the same place — reviews and the
-            related rail continue below it. */}
-        <section className="mt-24 md:mt-32">
-          <SectionHeading index="03" title="Ready to Order" />
-          <div className="mt-8 max-w-[540px]">
-            <h3 className="u-fun-head text-2xl" style={{ color: "var(--u-bone)" }}>
-              {product.title}
-            </h3>
-            {selectedSummary && (
-              <p
-                className="u-mono mt-2 text-xs uppercase tracking-[0.14em]"
-                style={{ color: "var(--u-muted)" }}
-              >
-                {selectedSummary} · Qty {quantity}
-              </p>
-            )}
-            <PriceRow
-              price={displayPrice}
-              originalPrice={displayOriginalPrice}
-              discount={displayDiscount}
-              savings={displaySavings}
-            />
-            <div ref={ctaRef} className="mt-8">{buyActions}</div>
-          </div>
-        </section>
-
-        <ProductReviews rating={product.rating} reviews={reviews} />
-
-        <RelatedProducts products={related} index="05" />
+        <RelatedProducts products={related} index="01" />
       </main>
 
       <BrandBand />
