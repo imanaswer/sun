@@ -71,17 +71,17 @@ export function ProductGallery({
 
   return (
     <div className="flex flex-col gap-4 md:flex-row-reverse md:items-start">
-      {/* A tonal stage rather than a white card: a white slab on a navy page
-          reads as a hole punched in it, and boxes the photo twice over. */}
+      {/* White stage so the white-background product shots run edge to edge
+          instead of floating as a small box inside a tinted frame. Contain, not
+          cover: the shots are landscape and cover would crop the canopy tips. */}
       <div
         className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-[28px] md:aspect-[4/5]"
-        style={{ border: "1px solid var(--u-slate)", background: "var(--u-stage)" }}
+        style={{ border: "1px solid var(--u-slate)", background: "white" }}
       >
         <img
           src={activeUrl}
           alt={title}
-          className="h-full w-full object-contain p-6 md:p-14"
-          style={{ filter: "var(--u-photo-shadow)" }}
+          className="h-full w-full object-contain"
           width={900}
           height={900}
         />
