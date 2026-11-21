@@ -14,6 +14,10 @@ import { canonical, metaDescription, pageMeta } from "@/lib/seo";
 // so a category never silently shows a truncated set.
 const PRODUCTS_PER_COLLECTION = 250;
 
+/** Cheapest first. Every product in a collection is loaded, so this orders the whole list. */
+const byPrice = <T extends { priceNumeric: number }>(products: T[]) =>
+  [...products].sort((a, b) => a.priceNumeric - b.priceNumeric);
+
 export const Route = createFileRoute("/collections/$handle")({
   loader: async ({ params }) => {
     // "all" is the handle Shopify themes use for the whole catalog, and the
@@ -26,7 +30,7 @@ export const Route = createFileRoute("/collections/$handle")({
           id: "all",
           title: "All Umbrellas",
           description: "Every Sun Umbrella currently in stock.",
-          products,
+          products: byPrice(products),
         },
       };
     }
@@ -37,7 +41,7 @@ export const Route = createFileRoute("/collections/$handle")({
       // not 500, or crawlers treat a dead category as a broken server.
       throw notFound();
     }
-    return { collection };
+    return { collection: { ...collection, products: byPrice(collection.products) } };
   },
   head: ({ loaderData, params }) => {
     const collection = loaderData?.collection;
