@@ -70,7 +70,7 @@ export function ProductCard({
           src={product.image}
           alt={product.imageAlt}
           loading="lazy"
-          className="h-full w-full scale-[1.15] object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.2]"
+          className="h-full w-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.04]"
         />
         {product.discount && (
           <span
