@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { computeDiscount, formatDimension, imageVariantLabels, inStockOptions, parseRatingValue } from "../src/lib/shopify";
+import { colourOptionName, computeDiscount, formatDimension, galleryForColour, imageColour, imageVariantLabels, inStockOptions, parseRatingValue } from "../src/lib/shopify";
 
 // The product page renders these three straight into the buy panel, so a bad
 // parse shows a wrong price or a wrong spec on a live storefront.
@@ -97,5 +97,44 @@ describe("imageVariantLabels", () => {
 
   test("leaves a shared photo unlabelled when no filename match", () => {
     expect(imageVariantLabels([{ title: "Blue", image: `${cdn}a.jpg` }, { title: "Pink", image: `${cdn}a.jpg` }])).toEqual({});
+  });
+});
+
+describe("colour galleries", () => {
+  const colours = ["Blue", "Royal Blue", "Red"];
+  const img = (url: string, altText: string) => ({ url, altText });
+  const images = [
+    img("main.jpg", "Umbrella"),
+    img("red-1.jpg", "Red"),
+    img("blue-1.jpg", "blue umbrella, open"),
+    img("royal-1.jpg", "Royal Blue side view"),
+    img("red-2.jpg", "Red folded"),
+  ];
+
+  test("finds the colour option by name", () => {
+    expect(colourOptionName([{ name: "Size" }, { name: "Colour" }])).toBe("Colour");
+    expect(colourOptionName([{ name: "Size" }])).toBeUndefined();
+  });
+
+  test("longest colour in the alt text wins", () => {
+    expect(imageColour("Royal Blue side view", colours)).toBe("Royal Blue");
+    expect(imageColour("blue umbrella, open", colours)).toBe("Blue");
+    expect(imageColour("Reddish", colours)).toBeUndefined();
+  });
+
+  test("shows only the selected colour's photos, variant photo first", () => {
+    expect(galleryForColour(images, colours, "Red", "red-2.jpg?v=1", "Umbrella").map((i) => i.url)).toEqual([
+      "red-2.jpg",
+      "red-1.jpg",
+    ]);
+  });
+
+  test("falls back to every photo when the colour has none tagged", () => {
+    expect(galleryForColour(images, [...colours, "Green"], "Green", undefined, "Umbrella")).toEqual(images);
+  });
+
+  test("ignores alt text that is just the product title", () => {
+    const titled = [img("a.jpg", "Red Umbrella"), img("b.jpg", "Red Umbrella")];
+    expect(galleryForColour(titled, colours, "Blue", undefined, "Red Umbrella")).toEqual(titled);
   });
 });

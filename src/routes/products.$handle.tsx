@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getShopifyProductByHandle, getShopifyProducts, pickRelated, createCheckoutUrl, imageVariantLabels } from "@/lib/shopify";
+import { getShopifyProductByHandle, getShopifyProducts, pickRelated, createCheckoutUrl, imageVariantLabels, colourOptionName, galleryForColour, imageColour } from "@/lib/shopify";
 import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
@@ -127,11 +127,31 @@ function ProductDetailRoute() {
     return match ?? product.variants[0] ?? null;
   }, [product.variants, selectedOptions]);
 
-  const imageLabels = useMemo(() => imageVariantLabels(product.variants), [product.variants]);
+  // Photos tagged with a colour in their alt text show only for that colour.
+  const colourOption = colourOptionName(product.options);
+  const colours = useMemo(
+    () => product.options.find((o) => o.name === colourOption)?.values ?? [],
+    [product.options, colourOption]
+  );
+  const selectedColour = colourOption ? selectedOptions[colourOption] : undefined;
+  const galleryImages = useMemo(
+    () => galleryForColour(product.images, colours, selectedColour, selectedVariant?.image, product.title),
+    [product.images, colours, selectedColour, selectedVariant?.image, product.title]
+  );
+
+  // Thumbnail names: the alt-text colour tag first, then the variant that uses the photo.
+  const imageLabels = useMemo(() => {
+    const labels = imageVariantLabels(product.variants);
+    for (const img of product.images) {
+      const tag = img.altText !== product.title ? imageColour(img.altText, colours) : undefined;
+      if (tag) labels[img.url.split("?")[0]] = tag;
+    }
+    return labels;
+  }, [product.variants, product.images, product.title, colours]);
 
   // An explicit thumbnail click wins; otherwise follow the selected variant.
   const activeImage =
-    pickedImage ?? selectedVariant?.image ?? product.images[0]?.url ?? FALLBACK_IMAGE;
+    pickedImage ?? selectedVariant?.image ?? galleryImages[0]?.url ?? FALLBACK_IMAGE;
 
   // Every price-related figure comes from the same variant, so a colour that
   // costs more can't show the cheapest colour's badge next to its own price.
@@ -239,7 +259,7 @@ function ProductDetailRoute() {
           <div className="min-w-0 lg:col-span-7">
             <div className="lg:sticky lg:top-28">
               <ProductGallery
-                images={product.images}
+                images={galleryImages}
                 title={product.title}
                 activeUrl={activeImage}
                 onSelect={setPickedImage}

@@ -585,6 +585,42 @@ export function imageVariantLabels(
   return labels;
 }
 
+/** The option that holds colours: "Color" or "Colour", any case. */
+export function colourOptionName(options: Array<{ name: string }>): string | undefined {
+  return options.find((o) => /^colou?r$/i.test(o.name.trim()))?.name;
+}
+
+/**
+ * Which colour a photo is tagged with, read from its alt text. The longest
+ * colour named wins, so "Royal Blue umbrella" is Royal Blue, not Blue.
+ */
+export function imageColour(altText: string, colours: string[]): string | undefined {
+  const alt = ` ${altText.toLowerCase().replace(/[^a-z0-9]+/g, " ")} `;
+  const named = colours.filter((c) => alt.includes(` ${c.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()} `));
+  return named.sort((a, b) => b.length - a.length)[0];
+}
+
+/**
+ * Photos for the selected colour: those whose alt text names it, with the
+ * variant's own photo first. A colour with no tagged photos gets every photo,
+ * so no colour ever shows an empty gallery. Alt text equal to the product
+ * title is ignored, since that is the fallback for photos with no alt text.
+ */
+export function galleryForColour(
+  images: Array<{ url: string; altText: string }>,
+  colours: string[],
+  selected: string | undefined,
+  variantImage: string | undefined,
+  productTitle: string,
+): Array<{ url: string; altText: string }> {
+  if (!selected) return images;
+  const base = (url: string) => url.split("?")[0];
+  const tagged = images.filter((img) => img.altText !== productTitle && imageColour(img.altText, colours) === selected);
+  if (tagged.length === 0) return images;
+  const lead = variantImage ? images.find((img) => base(img.url) === base(variantImage)) : undefined;
+  return lead ? [lead, ...tagged.filter((img) => base(img.url) !== base(lead.url))] : tagged;
+}
+
 export function computeDiscount(
   price: number,
   compareAt: number | null,
@@ -634,7 +670,7 @@ const PRODUCT_BY_HANDLE_QUERY = `
           currencyCode
         }
       }
-      images(first: 10) {
+      images(first: 50) {
         edges {
           node {
             url
