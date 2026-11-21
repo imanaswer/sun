@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useRouterState } from "@tanstack/react-router";
+import { useRouter } from "@tanstack/react-router";
 import Lenis from "lenis";
 
 /**
@@ -10,7 +10,7 @@ import Lenis from "lenis";
  */
 export function SmoothScroll() {
   const lenisRef = useRef<Lenis | null>(null);
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const router = useRouter();
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -37,25 +37,31 @@ export function SmoothScroll() {
     };
   }, []);
 
-  // A new page has to start at the top. The router does set the document there,
+  // A new page has to start at the top. The router sets the document there,
   // but Lenis keeps its own scroll value and snaps back to the old offset on
-  // the next wheel tick — which is why a product page opened halfway down.
+  // the next wheel tick. The sync has to wait for the router's "rendered"
+  // event, which is when it applies scroll: the URL changes as soon as a link
+  // is clicked, but the page only swaps once Shopify answers, so syncing on the
+  // URL change caught the old page's offset on a slow load.
   // Syncing to window.scrollY rather than to 0 keeps back/forward restoration.
   useEffect(() => {
-    const lenis = lenisRef.current;
-    if (!lenis) return;
-    const sync = () => lenis.scrollTo(window.scrollY, { immediate: true, force: true });
-    sync();
-    // The router doesn't apply its scroll in one go — a new page lands on this
-    // frame, a restored back/forward position a little later — so follow it for
-    // a moment rather than reading once and trusting it.
-    const frame = requestAnimationFrame(sync);
-    const settle = window.setTimeout(sync, 200);
+    let frame = 0;
+    let settle = 0;
+    const sync = () => lenisRef.current?.scrollTo(window.scrollY, { immediate: true, force: true });
+    const unsubscribe = router.subscribe("onRendered", (event) => {
+      if (!event.pathChanged) return;
+      sync();
+      cancelAnimationFrame(frame);
+      window.clearTimeout(settle);
+      frame = requestAnimationFrame(sync);
+      settle = window.setTimeout(sync, 200);
+    });
     return () => {
+      unsubscribe();
       cancelAnimationFrame(frame);
       window.clearTimeout(settle);
     };
-  }, [pathname]);
+  }, [router]);
 
   return null;
 }
