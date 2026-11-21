@@ -103,6 +103,7 @@ export function WeightIcon(props: SpecIconProps) {
  */
 const SPEC_ICONS: Record<string, (props: SpecIconProps) => React.ReactElement> = {
   open_diameter: OpenDiameterIcon,
+  open_canopy: OpenDiameterIcon,
   closed_length: ClosedLengthIcon,
   weight: WeightIcon,
 };

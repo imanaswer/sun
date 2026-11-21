@@ -444,10 +444,11 @@ const SPEC_FIELDS: Array<{ key: string; label: string; format?: (raw: string) =>
   { key: "weight", label: "Weight", format: formatDimension },
   { key: "closed_length", label: "Closed Length" },
   { key: "open_diameter", label: "Open Diameter" },
+  { key: "open_canopy", label: "Open Canopy" },
 ];
 
 /** The two parameters the related-products rail matches and displays on. */
-const CARD_SPEC_KEYS = ["open_diameter", "frame_material"] as const;
+const CARD_SPEC_KEYS = ["open_diameter", "open_canopy", "frame_material"] as const;
 
 const CARD_METAFIELD_IDENTIFIERS = CARD_SPEC_KEYS.map((key) => ({ namespace: "custom", key }));
 
@@ -538,6 +539,27 @@ export function parseRatingValue(raw: string): number | null {
  * each variant so a colour that costs more can't show the cheapest colour's
  * "% OFF". Returns empty when compareAt is missing or not above the price.
  */
+/**
+ * Option values narrowed to the ones a purchasable variant actually carries.
+ * Shopify lists every value the product was ever set up with; a colour whose
+ * stock is gone must not appear as a choice. A group with nothing left is
+ * dropped rather than rendered empty.
+ */
+export function inStockOptions(
+  options: Array<{ name: string; values: string[] }>,
+  variants: Array<{ availableForSale: boolean; selectedOptions: Array<{ name: string; value: string }> }>
+): Array<{ name: string; values: string[] }> {
+  const live = variants.filter((v) => v.availableForSale);
+  return options
+    .map((o) => ({
+      name: o.name,
+      values: o.values.filter((value) =>
+        live.some((v) => v.selectedOptions.some((so) => so.name === o.name && so.value === value))
+      ),
+    }))
+    .filter((o) => o.values.length > 0);
+}
+
 export function computeDiscount(
   price: number,
   compareAt: number | null,
@@ -726,7 +748,10 @@ export async function getShopifyProductByHandle(handle: string): Promise<Shopify
     specs,
     // "Title / Default Title" is Shopify's placeholder for products with no real
     // options — showing it as a swatch group would be noise.
-    options: (node.options ?? []).filter((o) => o.name !== "Title"),
+    options: inStockOptions(
+      (node.options ?? []).filter((o) => o.name !== "Title"),
+      variants
+    ),
     images,
     variants,
   };

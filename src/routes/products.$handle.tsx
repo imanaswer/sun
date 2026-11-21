@@ -105,12 +105,13 @@ function ProductDetailRoute() {
   const { addToCart } = useCart();
 
   // Option values drive the selection; the variant is derived from them, so a
-  // multi-option product can't land on a variant that doesn't exist.
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() =>
-    Object.fromEntries(
-      (product.variants[0]?.selectedOptions ?? []).map((option) => [option.name, option.value])
-    )
-  );
+  // multi-option product can't land on a variant that doesn't exist. Start on
+  // the first purchasable variant: the swatches only list in-stock colours, so
+  // defaulting to a sold-out one would leave nothing highlighted.
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    const first = product.variants.find((v) => v.availableForSale) ?? product.variants[0];
+    return Object.fromEntries((first?.selectedOptions ?? []).map((option) => [option.name, option.value]));
+  });
   const [pickedImage, setPickedImage] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isInstantBuying, setIsInstantBuying] = useState(false);

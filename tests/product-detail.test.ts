@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { computeDiscount, formatDimension, parseRatingValue } from "../src/lib/shopify";
+import { computeDiscount, formatDimension, inStockOptions, parseRatingValue } from "../src/lib/shopify";
 
 // The product page renders these three straight into the buy panel, so a bad
 // parse shows a wrong price or a wrong spec on a live storefront.
@@ -58,5 +58,23 @@ describe("computeDiscount", () => {
       discount: undefined,
       savings: "₹1.00",
     });
+  });
+});
+
+describe("inStockOptions", () => {
+  const options = [{ name: "Color", values: ["Blue", "Maroon", "Green"] }];
+  const variant = (value: string, availableForSale: boolean) => ({
+    availableForSale,
+    selectedOptions: [{ name: "Color", value }],
+  });
+
+  test("keeps only the values that some purchasable variant carries", () => {
+    const variants = [variant("Blue", false), variant("Maroon", true), variant("Green", true)];
+    expect(inStockOptions(options, variants)).toEqual([{ name: "Color", values: ["Maroon", "Green"] }]);
+  });
+
+  test("drops an option group entirely when every value is sold out", () => {
+    const variants = [variant("Blue", false), variant("Maroon", false)];
+    expect(inStockOptions(options, variants)).toEqual([]);
   });
 });

@@ -62,17 +62,15 @@ export function ProductCard({
       className="group flex flex-col overflow-hidden rounded-2xl transition-colors"
       style={{ border: "1px solid var(--u-slate)", backgroundColor: "var(--u-well)" }}
     >
-      {/* Same tonal stage as the product page gallery, so a card and the page it
-          opens read as the same product rather than two different treatments. */}
-      <div
-        className="relative flex aspect-square w-full items-center justify-center overflow-hidden"
-        style={{ background: "var(--u-stage)" }}
-      >
+      {/* Stage shares the card colour. Multiply turns any white photo
+          background into that colour, so every upload blends into the card.
+          ponytail: needs a light card; on the dark theme multiply would darken the photo. */}
+      <div className="relative flex aspect-square w-full items-center justify-center overflow-hidden">
         <img
           src={product.image}
           alt={product.imageAlt}
           loading="lazy"
-          className="h-full w-full object-contain p-6 transition-transform duration-500 group-hover:scale-[1.04]"
+          className="h-full w-full scale-[1.15] object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.2]"
         />
         {product.discount && (
           <span

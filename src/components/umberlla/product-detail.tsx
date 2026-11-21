@@ -74,7 +74,9 @@ export function ProductGallery({
   const step = (delta: number) => onSelect(images[(index + delta + images.length) % images.length].url);
 
   return (
-    <div className="flex flex-col gap-4">
+    // Desktop: cap width by viewport height so the square stage plus the
+    // thumbnail row fit under the sticky top offset on a laptop screen.
+    <div className="mx-auto flex w-full flex-col gap-4 lg:max-w-[min(100%,calc(100svh-15rem))]">
       {/* Square white stage, as on the original storefront. Contain, not
           cover: cover cropped the canopy tips off the landscape shots. The
           shots are on white, so the stage reads as one picture edge to edge. */}
@@ -388,7 +390,7 @@ export function ProductTabs({
       <div role="tabpanel" className="mt-8">
         {active === "features" && descriptionHtml ? (
           <div
-            className="prose prose-invert max-w-[80ch] text-sm leading-[1.85]"
+            className="prose prose-invert max-w-none text-sm leading-[1.85] lg:columns-2 lg:gap-16 [&_h1,&_h2,&_h3,&_h4,&_strong]:break-after-avoid"
             style={{ color: "var(--u-bone)" }}
             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
           />
@@ -555,7 +557,7 @@ export function RelatedProducts({ products, index }: { products: ShopifyProduct[
     <section className="mt-24 md:mt-32">
       <SectionHeading index={index} title="Related Umbrellas" />
       <p className="u-mono mt-4 text-xs uppercase tracking-[0.14em]" style={{ color: "var(--u-muted)" }}>
-        Matched on open diameter and frame
+        Matched on open size and frame
       </p>
       <div
         role="region"
