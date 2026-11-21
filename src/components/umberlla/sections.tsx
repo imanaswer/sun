@@ -968,7 +968,7 @@ export function BestsellersSection({ products }: { products?: ShopifyProduct[] }
                   src={p.image}
                   alt={p.name}
                   loading="lazy"
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.05]"
+                  className="h-full w-full object-contain transition-transform duration-500 group-hover:scale-[1.04]"
                 />
               </div>
               <div className="flex flex-1 flex-col bg-white p-3.5 md:p-5">
