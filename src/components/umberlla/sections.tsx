@@ -251,8 +251,11 @@ export function SiteNav() {
       {/* DESKTOP HEADER */}
       <div className="hidden md:flex mx-auto h-28 max-w-[1400px] items-center justify-between px-8 pointer-events-auto">
         <Link to="/" className="flex h-24 items-center">
+          {/* Frosted tile on light pages: the header is fixed and see-through,
+              so page titles scrolled under the logo and the two collided. */}
           <div className={[
-            "flex flex-col items-center transition-opacity duration-300 opacity-100"
+            "flex flex-col items-center rounded-2xl px-3 py-2 transition-colors duration-300",
+            navTheme === "dark" ? "bg-white/80 backdrop-blur-md shadow-[0_4px_24px_rgba(0,0,0,0.06)]" : "",
           ].join(" ")}>
             <img
               src="/assets/brand/Sun-logo.png"
