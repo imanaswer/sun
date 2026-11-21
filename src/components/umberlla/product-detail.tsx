@@ -63,11 +63,14 @@ export function ProductGallery({
   title,
   activeUrl,
   onSelect,
+  labels = {},
 }: {
   images: ShopifyProductDetail["images"];
   title: string;
   activeUrl: string;
   onSelect: (url: string) => void;
+  /** Colour name per photo URL (no query string), shown under its thumbnail. */
+  labels?: Record<string, string>;
 }) {
   const hasThumbs = images.length > 1;
   const index = Math.max(0, images.findIndex((img) => img.url === activeUrl));
@@ -97,9 +100,10 @@ export function ProductGallery({
         <div className="flex gap-2.5 overflow-x-auto pb-1">
           {images.map((img) => {
             const isActive = activeUrl === img.url;
+            const label = labels[img.url.split("?")[0]];
             return (
+              <div key={img.url} className="flex w-[68px] shrink-0 flex-col items-center gap-1.5">
               <button
-                key={img.url}
                 type="button"
                 onClick={() => onSelect(img.url)}
                 aria-label={`View image: ${img.altText}`}
@@ -113,6 +117,15 @@ export function ProductGallery({
               >
                 <img src={img.url} alt="" className="h-full w-full object-contain" />
               </button>
+              {label && (
+                <span
+                  className="w-full text-center text-[11px] leading-tight"
+                  style={{ color: isActive ? "var(--u-bone)" : "var(--u-muted)", fontWeight: isActive ? 600 : 400 }}
+                >
+                  {label}
+                </span>
+              )}
+              </div>
             );
           })}
         </div>

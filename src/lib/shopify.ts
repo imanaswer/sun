@@ -560,6 +560,31 @@ export function inStockOptions(
     .filter((o) => o.values.length > 0);
 }
 
+/**
+ * Colour name per gallery photo, keyed by URL without its query string.
+ * Shopify lets several variants point at one photo (a colour with no shot of
+ * its own often borrows the main one), so a shared photo is labelled only with
+ * the variant its filename names; otherwise it gets no label rather than a wrong one.
+ */
+export function imageVariantLabels(
+  variants: Array<{ title: string; image?: string }>
+): Record<string, string> {
+  const byImage = new Map<string, string[]>();
+  for (const v of variants) {
+    if (!v.image || v.title === "Default Title") continue;
+    const key = v.image.split("?")[0];
+    byImage.set(key, [...(byImage.get(key) ?? []), v.title]);
+  }
+  const squash = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const labels: Record<string, string> = {};
+  for (const [url, titles] of byImage) {
+    const file = squash(url.split("/").pop() ?? "");
+    const label = titles.length === 1 ? titles[0] : titles.find((t) => file.includes(squash(t)));
+    if (label) labels[url] = label;
+  }
+  return labels;
+}
+
 export function computeDiscount(
   price: number,
   compareAt: number | null,

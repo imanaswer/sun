@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { computeDiscount, formatDimension, inStockOptions, parseRatingValue } from "../src/lib/shopify";
+import { computeDiscount, formatDimension, imageVariantLabels, inStockOptions, parseRatingValue } from "../src/lib/shopify";
 
 // The product page renders these three straight into the buy panel, so a bad
 // parse shows a wrong price or a wrong spec on a live storefront.
@@ -76,5 +76,26 @@ describe("inStockOptions", () => {
   test("drops an option group entirely when every value is sold out", () => {
     const variants = [variant("Blue", false), variant("Maroon", false)];
     expect(inStockOptions(options, variants)).toEqual([]);
+  });
+});
+
+describe("imageVariantLabels", () => {
+  const cdn = "https://cdn.shopify.com/files/";
+  test("labels own photos, and a shared photo only with the colour its filename names", () => {
+    const labels = imageVariantLabels([
+      { title: "Blue", image: `${cdn}Z_series_Maroon_3.jpg?v=1` },
+      { title: "Maroon", image: `${cdn}Z_series_Maroon_3.jpg?v=1` },
+      { title: "Royal Blue", image: `${cdn}Z_series_Royal_Blue_3_94f2.jpg?v=1` },
+      { title: "Dark Purple", image: `${cdn}Z_series_Purple_3.jpg` },
+    ]);
+    expect(labels).toEqual({
+      [`${cdn}Z_series_Maroon_3.jpg`]: "Maroon",
+      [`${cdn}Z_series_Royal_Blue_3_94f2.jpg`]: "Royal Blue",
+      [`${cdn}Z_series_Purple_3.jpg`]: "Dark Purple",
+    });
+  });
+
+  test("leaves a shared photo unlabelled when no filename match", () => {
+    expect(imageVariantLabels([{ title: "Blue", image: `${cdn}a.jpg` }, { title: "Pink", image: `${cdn}a.jpg` }])).toEqual({});
   });
 });

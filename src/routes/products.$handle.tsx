@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { getShopifyProductByHandle, getShopifyProducts, pickRelated, createCheckoutUrl } from "@/lib/shopify";
+import { getShopifyProductByHandle, getShopifyProducts, pickRelated, createCheckoutUrl, imageVariantLabels } from "@/lib/shopify";
 import { getProductReviews } from "@/lib/api/reviews.functions";
 import { useCart } from "@/context/cart-context";
 import { SiteNav, SiteFooter } from "@/components/umberlla/sections";
@@ -127,6 +127,8 @@ function ProductDetailRoute() {
     return match ?? product.variants[0] ?? null;
   }, [product.variants, selectedOptions]);
 
+  const imageLabels = useMemo(() => imageVariantLabels(product.variants), [product.variants]);
+
   // An explicit thumbnail click wins; otherwise follow the selected variant.
   const activeImage =
     pickedImage ?? selectedVariant?.image ?? product.images[0]?.url ?? FALLBACK_IMAGE;
@@ -241,6 +243,7 @@ function ProductDetailRoute() {
                 title={product.title}
                 activeUrl={activeImage}
                 onSelect={setPickedImage}
+                labels={imageLabels}
               />
             </div>
           </div>
